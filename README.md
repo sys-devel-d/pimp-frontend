@@ -1,5 +1,16 @@
 # PimpFrontend
 
+## Setup
+All commands require angular-cli. You can install it globally **OR** use the one that gets installed locally.
+
+###### Global (might require `sudo`)
+`ǹpm i -g angular-cli`
+
+###### Local
+First install all dependencies via
+`npm i`.
+Then angular-cli is available as `node_modules/angular-cli/bin/ng` which you then have to use instead of `ǹg`.
+
 ## Development server
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
