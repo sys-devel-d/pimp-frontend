@@ -1,0 +1,7 @@
+<li *ngFor='let message of messages'>
+  <u>{{ message.message }}</u>
+</li>
+<form (ngSubmit)="send()">
+  <input type="text" [(ngModel)]="text" class="form-control"
+    placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
+</form>
