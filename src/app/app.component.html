@@ -1,4 +1,14 @@
-<h1>
-  {{title}}
-</h1>
-<app-chat></app-chat>
+<div>
+  <h1>{{title}}</h1>
+</div>
+<div>
+<div>
+  <nav>
+    <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    <a routerLink="/chat" routerLinkActive="active">Chat</a>
+  </nav>
+</div>
+  <div>
+    <router-outlet></router-outlet>
+  </div>
+</div>
