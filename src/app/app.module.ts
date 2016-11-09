@@ -5,16 +5,20 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { ChatComponent } from './chat/chat.component';
+import { LoginComponent } from './login/login.component';
 import { RouterModule } from "@angular/router";
 import { ProfileComponent } from './profile/profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ChatComponent,
+    LoginComponent,
     ProfileComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +26,9 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     HttpModule,
     RouterModule.forRoot([
       { path: 'chat', component: ChatComponent },
+      { path: 'login', component: LoginComponent },
       { path: 'profile', component: ProfileComponent },
+      { path: 'register', component: RegisterComponent },
       { path: '', component: ProfileComponent },
       { path: '**', component: PageNotFoundComponent }
     ])
