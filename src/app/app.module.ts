@@ -10,6 +10,8 @@ import { RouterModule } from "@angular/router";
 import { ProfileComponent } from './profile/profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RegisterComponent } from './register/register.component';
+import { AuthGuard } from "./commons/auth.guard";
+import { AuthService } from "./services/auth.service";
 
 @NgModule({
   declarations: [
@@ -25,15 +27,18 @@ import { RegisterComponent } from './register/register.component';
     FormsModule,
     HttpModule,
     RouterModule.forRoot([
-      { path: 'chat', component: ChatComponent },
+      { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
-      { path: 'profile', component: ProfileComponent },
+      { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'register', component: RegisterComponent },
-      { path: '', component: ProfileComponent },
+      { path: '', component: LoginComponent },
       { path: '**', component: PageNotFoundComponent }
     ])
   ],
-  providers: [],
+  providers: [
+    AuthGuard,
+    AuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
