@@ -1,35 +1,34 @@
 import { Component, OnInit } from '@angular/core';
-import * as SockJS from 'sockjs-client';
-import * as Stomp from 'stompjs';
+import { MessageService } from '../services/message.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  styleUrls: ['./chat.component.css'],
+  providers: [MessageService]
 })
 export class ChatComponent implements OnInit {
-  stompClient: any;
   roomId: any;
   text: any;
+  messageService: MessageService;
   messages: Array<String> = new Array<String>();
 
+  constructor(messageService: MessageService) {
+    this.messageService = messageService;
+    this.roomId = "general"
+  }
+
   send() {
-    this.stompClient.send('/app/broker', {},
-      JSON.stringify({ 'message': this.text }));
+    this.messageService.publish(this.roomId, this.text);
     this.text = "";
   }
 
   ngOnInit() {
-    var that = this;
-    var socket = new SockJS('http://localhost:8080/chat')
-    this.stompClient = Stomp.over(socket);
-    this.stompClient.connect({}, function (frame) {
-        that.stompClient.subscribe('/rooms/message', function (message) {
-          that.messages.push(JSON.parse(message.body));
-        });
-    }, function (err) {
-        console.log('err', err);
-    });
+    let callback = (message: any) => {
+      let convertedMessage = JSON.parse(message);
+      convertedMessage['date'] = new Date();
+      this.messages.push(convertedMessage);
+    }
+    this.messageService.subscribe(this.roomId, callback);
   }
-
 }

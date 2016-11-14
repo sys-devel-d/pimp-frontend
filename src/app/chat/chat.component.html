@@ -1,5 +1,5 @@
 <li *ngFor='let message of messages'>
-  <u>{{ message.message }}</u>
+  <u>{{message.date}} {{message.userName}} : {{ message.message }}</u>
 </li>
 <form (ngSubmit)="send()">
   <input type="text" [(ngModel)]="text" class="form-control"
