@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { MessageService } from '../services/message.service';
 import { User } from "../models/user";
 import { Router } from "@angular/router";
 
@@ -12,10 +13,12 @@ import { Router } from "@angular/router";
 export class LoginComponent implements OnInit {
   private router: Router;
   private authService: AuthService;
+  private messageService: MessageService;
   user: User = new User();
   error: String;
-  constructor(authService: AuthService, router: Router) {
+  constructor(authService: AuthService, router: Router, messageService: MessageService) {
     this.authService = authService;
+    this.messageService = messageService;
     this.router = router;
   }
 
@@ -27,6 +30,7 @@ export class LoginComponent implements OnInit {
       .subscribe(result => {
         if (result === true) {
           this.router.navigate(['profile']);
+          this.messageService.init();
         } else {
           this.error = 'Username or password is incorrect';
         }
