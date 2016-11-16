@@ -1,7 +1,11 @@
-<li *ngFor='let message of messages'>
-  <u>{{message.date}} {{message.userName}} : {{ message.message }}</u>
+<li *ngFor='let message of currentMessages'>
+  <ul>{{message.date}} {{message.userName}} : {{ message.message }}</ul>
 </li>
-<form (ngSubmit)="send()">
+<form (ngSubmit)="send()" style="margin: 10px 0">
   <input type="text" [(ngModel)]="text" class="form-control"
     placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
 </form>
+<span>Change room: </span>
+<span *ngFor='let room of rooms' (click)="changeRoom(room)">
+  <button>{{room}}</button>
+</span>
