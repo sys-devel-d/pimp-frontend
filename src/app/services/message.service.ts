@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { Message, MessageCollection } from '../models/message';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class MessageService {
@@ -9,19 +10,23 @@ export class MessageService {
   stompClient: any;
   sessionPool: {};
   currentRoom = "general";
-
   messages: MessageCollection = {};
   rooms: string[] = [];
 
-  constructor() {
+  constructor(private authService: AuthService) {
+    if(authService.isLoggedIn()) {
+      this.init();
+    }
+  }
+
+  init() {
     /*
     Each room in the `message: MessageCollection` must be initialized with an empty array,
     otherwise Angular does not pick up changes in this nested data structure.
     Need to find out how it behaves when a room is added dynamically.
     */
     this.getInitialRooms().then( (rooms: string[]) => {
-
-      let token = JSON.parse(localStorage.getItem('currentUser')).token;
+      let token = this.authService.getToken();
       // TODO: move url to config. might be different on production
       let socket = new SockJS('http://localhost:8080/chat/' + '?access_token=' + token);
       this.stompClient = Stomp.over(socket);
@@ -58,14 +63,14 @@ export class MessageService {
   subscribe(rooms: string[]) {
     var that = this;
     this.stompClient.connect({}, (frame) => {
-        for(let roomId of rooms) {
-          that.stompClient.subscribe('/rooms/message/' + roomId, function ( { body } ) {
-          let message: Message = JSON.parse(body);
-          // The timestamp should come from the server to prevent timezone issues
-          message.date = new Date();
-          that.messages[roomId].push(message);
-        });
-        }
+      for(let roomId of rooms) {
+        that.stompClient.subscribe('/rooms/message/' + roomId, function ( { body } ) {
+        let message: Message = JSON.parse(body);
+        // The timestamp should come from the server to prevent timezone issues
+        message.date = new Date();
+        that.messages[roomId].push(message);
+      });
+    }
         
     }, (err) => {
         console.log('err', err);
@@ -76,11 +81,11 @@ export class MessageService {
     return this.messages;
   }
 
-  getRoomId() {
+  getCurrentRoom() {
     return this.currentRoom;
   }
 
-  setRoomId(room) {
+  setCurrentRoom(room) {
     this.currentRoom = room;
   }
 

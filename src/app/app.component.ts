@@ -7,7 +7,7 @@ import { MessageService } from "./services/message.service";
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [MessageService]
+  providers: [MessageService, AuthService]
 })
 export class AppComponent {
   title = 'PIMP';

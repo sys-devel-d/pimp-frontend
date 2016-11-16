@@ -6,6 +6,6 @@
     placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
 </form>
 <span>Change room: </span>
-<span *ngFor='let room of rooms' (click)="changeRoom(room)">
+<span *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
   <button>{{room}}</button>
 </span>

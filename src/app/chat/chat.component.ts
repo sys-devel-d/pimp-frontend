@@ -17,7 +17,7 @@ export class ChatComponent implements OnInit {
 
   constructor(messageService: MessageService) {
     this.messageService = messageService;
-    this.currentRoom = messageService.getRoomId();
+    this.currentRoom = messageService.getCurrentRoom();
     this.rooms = messageService.getRooms();
   }
 
@@ -31,8 +31,8 @@ export class ChatComponent implements OnInit {
     this.currentMessages = this.messages[this.currentRoom];
   }
 
-  changeRoom(room) {
-    this.messageService.setRoomId(room);
+  setCurrentRoom(room) {
+    this.messageService.setCurrentRoom(room);
     this.currentRoom = room;
     this.currentMessages = this.messages[room];
   }
