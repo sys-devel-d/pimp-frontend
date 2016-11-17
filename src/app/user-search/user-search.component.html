@@ -1,0 +1,8 @@
+<div>
+  <input type="text" #term (input)="update.emit(term.value)" class="form-control input"/>
+  <div class="options" *ngIf="results.length > 0">
+    <div *ngFor="let result of results">
+      <a class="element" (click)="select(result)">{{result.firstName}} {{result.lastName}}</a>
+    </div>
+  </div>
+</div>

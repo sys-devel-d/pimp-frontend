@@ -23,4 +23,19 @@ export class UserService {
       .catch((error:any) => Observable
         .throw(error.json().error || 'Server error while fetching user.'));
   }
+
+  search(term: string) {
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    let headers = new Headers();
+    headers.append('Authorization', 'Bearer ' + currentUser.token );
+    let options = new RequestOptions({ headers: headers });
+
+    return this.http
+      .get(Globals.BACKEND + 'users/search/' + term, options)
+      .map((res: Response) => {
+        return res.json()
+      })
+      .catch((error:any) => Observable
+        .throw(error.json().error || 'Server error while searching for users.'));
+  }
 }
