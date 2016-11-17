@@ -50,7 +50,6 @@ export class MessageService {
   }
 
   publish(roomId: String, message: string) {
-    console.log("Publishing room " + roomId)
     let userName = JSON.parse(localStorage.getItem('currentUser')).username;
     this.stompClient.send('/app/broker/' + roomId, {},
       JSON.stringify({
@@ -91,6 +90,12 @@ export class MessageService {
 
   getRooms() {
     return this.rooms;
+  }
+
+  tearDown() {
+    this.stompClient.disconnect()
+    this.messages = {}
+    this.rooms =  []
   }
 
 }
