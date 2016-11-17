@@ -23,7 +23,7 @@ export class AuthService {
     urlSearchParams.append('username', username);
     urlSearchParams.append('password', password);
     return this.http
-      .post(Globals.API + 'oauth/token', urlSearchParams.toString(), {headers: headers})
+      .post(Globals.BACKEND + 'oauth/token', urlSearchParams.toString(), {headers: headers})
       .map((res: Response) => {
         let token = res.json() && res.json().access_token;
         if (token) {
