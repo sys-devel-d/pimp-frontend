@@ -29,11 +29,14 @@ export class AuthService {
         if (token) {
           this.token = token;
           localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-          return true;
         }
-        return false;
+        return token && true;
       })
-      .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+      .catch( (error:any) => {
+        const err = (400 >= error.status && error.status < 500) ?
+                    'Username or password is wrong' : 'Server Error'
+        return Observable.throw(err)
+      });
   }
 
   logout(): void {
