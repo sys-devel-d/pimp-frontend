@@ -7,9 +7,10 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class MessageService {
 
+  socket: any;
   stompClient: any;
   sessionPool: {};
-  currentRoom = "general";
+  currentRoom: string;
   messages: MessageCollection = {};
   rooms: string[] = [];
 
@@ -29,6 +30,7 @@ export class MessageService {
       let token = this.authService.getToken();
       // TODO: move url to config. might be different on production
       let socket = new SockJS('http://localhost:8080/chat/' + '?access_token=' + token);
+      this.socket = socket;
       this.stompClient = Stomp.over(socket);
       this.stompClient.debug = null;
 
@@ -45,12 +47,14 @@ export class MessageService {
   getInitialRooms() {
     return new Promise( (resolve, reject) => {
       // Make HTTP call when the endpoint is implemented
-      resolve( [this.currentRoom, "watercooler", "beer"] );
+      // For now fake the response
+      const rooms = ["general", "watercooler", "beer"];
+      this.currentRoom = rooms[0];
+      resolve( rooms );
     });
   }
 
   publish(roomId: String, message: string) {
-    console.log("Publishing room " + roomId)
     let userName = JSON.parse(localStorage.getItem('currentUser')).username;
     this.stompClient.send('/app/broker/' + roomId, {},
       JSON.stringify({
@@ -91,6 +95,13 @@ export class MessageService {
 
   getRooms() {
     return this.rooms;
+  }
+
+  tearDown() {
+    this.stompClient.disconnect()
+    this.socket.close()
+    this.messages = {}
+    this.rooms =  []
   }
 
 }
