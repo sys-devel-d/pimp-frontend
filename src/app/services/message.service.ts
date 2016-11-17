@@ -68,12 +68,34 @@ export class MessageService {
     var that = this;
     this.stompClient.connect({}, (frame) => {
       for(let roomId of rooms) {
-        that.stompClient.subscribe('/rooms/message/' + roomId, function ( { body } ) {
-        let message: Message = JSON.parse(body);
-        // The timestamp should come from the server to prevent timezone issues
-        message.date = new Date();
-        that.messages[roomId].push(message);
-      });
+        
+        /** 
+         * This maps to the @SubscripeMapping in Spring and is only
+         * invoked once the user joins a room
+         */
+        that.stompClient.subscribe('/app/initial-messages/' + roomId, ( { body } ) => {
+          let initialMessages: Message[] = JSON.parse(body).map( msg => {
+            // This is wrong. Need db timestamp.
+            msg.date = new Date()
+            return msg
+          })
+
+          // Prepend the initialMessages to the messages
+          // (There could already be new messages in it from the other subscription)
+          that.messages[roomId].unshift.apply(
+            that.messages[roomId], initialMessages
+          )
+          // Now we can actually unsubscribe... This will not be invoked again.
+          that.stompClient.unsubscribe('/app/initial-messages/' + roomId)
+        })
+
+        that.stompClient.subscribe('/rooms/message/' + roomId, ( { body } ) => {
+          let message: Message = JSON.parse(body)
+          // The timestamp should come from the server to prevent timezone issues
+          message.date = new Date()
+          that.messages[roomId].push(message)
+        })
+
     }
         
     }, (err) => {
