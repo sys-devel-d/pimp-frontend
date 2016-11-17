@@ -2,12 +2,14 @@
   <h2>Profil</h2>
   <div class="row">
     <div class="col-md-4"><img src="https://placekitten.com/g/200/200" alt="Selfhtml"></div>
+    <div class="col-md-2">Username: </div>
+    <div class="col-md-6" id="username">{{ user.username }} </div>
     <div class="col-md-2">Name: </div>
-    <div class="col-md-6" id="username">username</div>
+    <div class="col-md-6" id="name">{{ user.firstName }} {{ user.lastName }} </div>
     <div class="col-md-2">Telefon: </div>
     <div class="col-md-6" id="phonenumber">0123456789</div>
     <div class="col-md-2">E-Mail: </div>
-    <div class="col-md-6" id="email">example@example.com</div>
+    <div class="col-md-6" id="email">{{ user.email }}</div>
     <div class="col-md-2">Status: </div>
     <div class="col-md-6" id="state">Abwesend</div>
     <div class="col-md-2">Team: </div>
