@@ -74,11 +74,9 @@ export class MessageService {
          * invoked once the user joins a room
          */
         that.stompClient.subscribe('/app/initial-messages/' + roomId, ( { body } ) => {
-          let initialMessages: Message[] = JSON.parse(body).map( msg => {
-            // This is wrong. Need db timestamp.
-            msg.date = new Date()
-            return msg
-          })
+          let initialMessages: Message[] = JSON.parse(body).map(
+            msg => this.dbEntityToMessage(msg)
+          )
 
           // Prepend the initialMessages to the messages
           // (There could already be new messages in it from the other subscription)
@@ -90,9 +88,7 @@ export class MessageService {
         })
 
         that.stompClient.subscribe('/rooms/message/' + roomId, ( { body } ) => {
-          let message: Message = JSON.parse(body)
-          // The timestamp should come from the server to prevent timezone issues
-          message.date = new Date()
+          let message: Message = this.dbEntityToMessage(JSON.parse(body))
           that.messages[roomId].push(message)
         })
 
@@ -103,11 +99,20 @@ export class MessageService {
     });
   }
 
-  getMessages() {
+  private dbEntityToMessage(dbMessage): Message {
+    const date = new Date(dbMessage.creationDate.epochSecond * 1000)
+    return {
+      message: String(dbMessage.message),
+      userName: String(dbMessage.userName),
+      date
+    }
+  }
+
+  getMessages(): MessageCollection {
     return this.messages;
   }
 
-  getCurrentRoom() {
+  getCurrentRoom(): string {
     return this.currentRoom;
   }
 
@@ -115,7 +120,7 @@ export class MessageService {
     this.currentRoom = room;
   }
 
-  getRooms() {
+  getRooms(): String[] {
     return this.rooms;
   }
 

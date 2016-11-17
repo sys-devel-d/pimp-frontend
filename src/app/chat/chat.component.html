@@ -1,5 +1,5 @@
 <li *ngFor='let message of currentMessages'>
-  <ul>{{message.date}} {{message.userName}} : {{ message.message }}</ul>
+  <ul>[{{message.date.toLocaleString()}}] => {{message.userName}}: {{ message.message }}</ul>
 </li>
 <form (ngSubmit)="send()" style="margin: 10px 0">
   <input type="text" [(ngModel)]="text" class="form-control"

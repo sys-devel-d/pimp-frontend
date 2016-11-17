@@ -1,7 +1,7 @@
 export class Message {
   date: Date
-  userName; String
-  message: String
+  userName: string
+  message: string
 }
 
 // holds messages of all rooms
