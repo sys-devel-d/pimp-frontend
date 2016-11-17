@@ -23,17 +23,22 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    if(this.authService.isLoggedIn()) {
+      this.router.navigate(['profile'])
+    }
   }
 
   login() {
     this.authService.login(this.user.username, this.user.password)
-      .subscribe(result => {
-        if (result === true) {
-          this.router.navigate(['profile']);
-          this.messageService.init();
-        } else {
-          this.error = 'Username or password is incorrect';
-        }
-      });
+      .subscribe(
+        result => {
+          if (result === true) {
+            this.router.navigate(['profile']);
+            this.messageService.init();
+          } else {
+            this.error = 'We are sorry. We could not log you in. Please try again.';
+          }
+        },
+        error => { this.error = 'Username or password is incorrect' });
   }
 }

@@ -29,11 +29,9 @@ export class AuthService {
         if (token) {
           this.token = token;
           localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-          return true;
         }
-        return false;
+        return token && true;
       })
-      .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
   }
 
   logout(): void {
