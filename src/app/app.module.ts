@@ -14,6 +14,7 @@ import { AuthGuard } from "./commons/auth.guard";
 import { AuthService } from "./services/auth.service";
 import { UserService } from "./services/user.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
+import { HighlightDirective } from './directives/highlight.directive';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { UserSearchComponent } from "./user-search/user-search.component";
     ProfileComponent,
     PageNotFoundComponent,
     RegisterComponent,
-    UserSearchComponent
+    UserSearchComponent,
+    HighlightDirective
   ],
   imports: [
     BrowserModule,

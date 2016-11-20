@@ -9,8 +9,14 @@ export class UserSearchComponent implements OnInit {
   @Output() update = new EventEmitter();
   @Input() results: Object[];
   @Input() callbackOnSelection: Function;
+  term: string;
 
   ngOnInit() {
+    this.reset();
+  }
+
+  reset() {
+    this.term = '';
     this.results = [];
     this.update.emit('');
   }

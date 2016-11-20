@@ -6,6 +6,7 @@
     [callbackOnSelection]="callbackOnSelection"
     [results]="users">
   </searchField>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
 </div>
 <li *ngFor='let message of currentMessages'>
   <ul>{{message.date}} {{message.userName}} : {{ message.message }}</ul>
