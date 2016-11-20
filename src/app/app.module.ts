@@ -2,8 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { CalendarModule } from 'angular-calendar'
 
 import { AppComponent } from './app.component';
+import { CalendarComponent } from './calendar/calendar.component';
 import { ChatComponent } from './chat/chat.component';
 import { LoginComponent } from './login/login.component';
 import { RouterModule } from "@angular/router";
@@ -12,11 +14,12 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from "./commons/auth.guard";
 import { AuthService } from "./services/auth.service";
-import {UserService} from "./services/user.service";
+import { UserService} from "./services/user.service";
 
 @NgModule({
   declarations: [
     AppComponent,
+    CalendarComponent,
     ChatComponent,
     LoginComponent,
     ProfileComponent,
@@ -27,7 +30,9 @@ import {UserService} from "./services/user.service";
     BrowserModule,
     FormsModule,
     HttpModule,
+    CalendarModule.forRoot(),
     RouterModule.forRoot([
+      { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
       { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
