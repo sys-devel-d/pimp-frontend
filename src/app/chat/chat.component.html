@@ -1,3 +1,13 @@
+<div>
+  <label>User</label>
+  <searchField
+    (update)="term = $event"
+    (keyup)="searchForUser(term)"
+    [callbackOnSelection]="callbackOnSelection"
+    [results]="users">
+  </searchField>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+</div>
 <li *ngFor='let message of currentMessages'>
   <ul>[{{message.date.toLocaleString()}}] => {{message.userName}}: {{ message.message }}</ul>
 </li>

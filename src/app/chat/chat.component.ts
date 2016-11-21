@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from '../services/message.service';
 import { Message, MessageCollection } from '../models/message';
+import {UserService} from "../services/user.service";
+import {User} from "../models/user";
 
 @Component({
   selector: 'app-chat',
@@ -14,11 +16,37 @@ export class ChatComponent implements OnInit {
   currentMessages: Message[];
   rooms: String[];
   messageService: MessageService;
+  userService: UserService;
+  error: string;
+  users: User[];
+  term: string;
+  public callbackOnSelection: Function;
 
-  constructor(messageService: MessageService) {
-    this.messageService = messageService;
-    this.currentRoom = messageService.getCurrentRoom();
-    this.rooms = messageService.getRooms();
+
+  constructor(messageService: MessageService, userService: UserService) {
+      this.messageService = messageService;
+      this.currentRoom = messageService.getCurrentRoom();
+      this.rooms = messageService.getRooms();
+      this.userService = userService;
+      this.callbackOnSelection = this.searchCallback.bind(this);
+  }
+
+  searchForUser() {
+    if (this.term.length >= 3) {
+      this.userService.search(this.term)
+        .subscribe(
+          res => {
+            //filter for users with no room open and filter myself out
+            this.users = res;
+          },
+          err => this.error = <any>err
+        );
+    }
+  }
+
+  searchCallback(user: User) {
+    // open new room with user here
+    console.log(user);
   }
 
   send() {

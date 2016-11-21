@@ -1,0 +1,23 @@
+.options {
+  position: absolute;
+  padding: 0;
+  z-index: 5;
+  list-style-type: none;
+  overflow-y: auto;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  width: 20rem;
+  background: #ffffff;
+}
+
+.element {
+  display: flex;
+  flex-direction: row;
+  padding: .8rem 1.3rem;
+  cursor: pointer;
+}
+
+.input {
+  width: 20rem;
+}
