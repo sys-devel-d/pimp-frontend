@@ -35,8 +35,7 @@ export class CalendarComponent {
 
   activeDayIsOpen: boolean = true;
 
-  actions: CalendarEventAction[] = [{
-  }];
+  actions: CalendarEventAction[] = [];
 
   refresh: Subject<any> = new Subject();
 
