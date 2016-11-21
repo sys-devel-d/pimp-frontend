@@ -2,8 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { CalendarModule } from 'angular-calendar'
 
 import { AppComponent } from './app.component';
+import { CalendarComponent } from './calendar/calendar.component';
 import { ChatComponent } from './chat/chat.component';
 import { LoginComponent } from './login/login.component';
 import { RouterModule } from "@angular/router";
@@ -19,6 +21,7 @@ import { HighlightDirective } from './directives/highlight.directive';
 @NgModule({
   declarations: [
     AppComponent,
+    CalendarComponent,
     ChatComponent,
     LoginComponent,
     ProfileComponent,
@@ -31,7 +34,9 @@ import { HighlightDirective } from './directives/highlight.directive';
     BrowserModule,
     FormsModule,
     HttpModule,
+    CalendarModule.forRoot(),
     RouterModule.forRoot([
+      { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
       { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
