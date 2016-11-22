@@ -5,29 +5,26 @@ import 'rxjs/add/operator/map';
 
 import { User } from '../models/user';
 import { Globals } from "../commons/globals";
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private http: Http) {
-  }
+  constructor(private http: Http, private authService: AuthService) {}
 
   getProfileInformation(): Observable<User> {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
     let headers = new Headers();
-    headers.append('Authorization', 'Bearer ' + currentUser.token );
+    headers.append('Authorization', 'Bearer ' + this.authService.getToken() );
     let options = new RequestOptions({ headers: headers });
     return this.http
-      .get(Globals.BACKEND + 'users/' + currentUser.username , options)
+      .get(Globals.BACKEND + 'users/' + this.authService.getCurrentUserName() , options)
       .map((res: Response) => res.json() as User)
       .catch((error:any) => Observable
         .throw(error.json().error || 'Server error while fetching user.'));
   }
 
   search(term: string) {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
     let headers = new Headers();
-    headers.append('Authorization', 'Bearer ' + currentUser.token );
+    headers.append('Authorization', 'Bearer ' + this.authService.getToken() );
     let options = new RequestOptions({ headers: headers });
 
     return this.http
