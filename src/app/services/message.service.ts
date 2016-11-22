@@ -64,7 +64,7 @@ export class MessageService {
   }
 
   publish(roomId: String, message: string): void {
-    let userName = JSON.parse(localStorage.getItem('currentUser')).username;
+    let userName = this.authService.getCurrentUserName();
     this.stompClient.send('/app/broker/' + roomId, {},
       JSON.stringify({
         message,
@@ -82,7 +82,8 @@ export class MessageService {
          * This maps to the @SubscripeMapping in Spring and is only
          * invoked once the user joins a room
          */
-        that.stompClient.subscribe('/app/initial-messages/' + roomId, ( { body } ) => {
+        const url = `/app/initial-messages/${roomId}/${this.authService.getCurrentUserName()}`;
+        that.stompClient.subscribe(url, ( { body } ) => {
           let initialMessages: Message[] = JSON.parse(body).map(
             msg => this.dbEntityToMessage(msg)
           );
