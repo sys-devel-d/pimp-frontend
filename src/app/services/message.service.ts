@@ -94,7 +94,7 @@ export class MessageService {
             that.messages[roomId], initialMessages
           );
 
-          that.messagesChange.next(this.getMessages());
+          // that.messagesChange.next(this.getMessages());
           // Now we can actually unsubscribe... This will not be invoked again.
           that.stompClient.unsubscribe('/app/initial-messages/' + roomId);
         })
