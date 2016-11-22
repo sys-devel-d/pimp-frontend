@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from '../services/message.service';
 import { Message, MessageCollection } from '../models/message';
 import {UserService} from "../services/user.service";
@@ -20,15 +20,31 @@ export class ChatComponent implements OnInit {
   error: string;
   users: User[];
   term: string;
-  public callbackOnSelection: Function;
+  callbackOnSelection: Function;
 
 
   constructor(messageService: MessageService, userService: UserService) {
       this.messageService = messageService;
-      this.currentRoom = messageService.getCurrentRoom();
-      this.rooms = messageService.getRooms();
       this.userService = userService;
       this.callbackOnSelection = this.searchCallback.bind(this);
+      
+      /**
+       * Need to subscribe to data changes in MessageService. At this time
+       * the init() method of MessageService might not be finished with its
+       * request.
+       */
+      this.messageService.currentRoomChange.subscribe( currentRoom => {
+        this.currentRoom = currentRoom;
+        this.currentMessages = this.messages[currentRoom];
+      });
+
+      this.messageService.roomsChange.subscribe ( rooms => {
+        this.rooms = rooms;
+      });
+
+      this.messageService.messagesChange.subscribe( messages => {
+        this.messages = messages;
+      });
   }
 
   searchForUser() {
@@ -55,6 +71,8 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.currentRoom = this.messageService.getCurrentRoom();
+    this.rooms = this.messageService.getRooms();
     this.messages = this.messageService.getMessages();
     this.currentMessages = this.messages[this.currentRoom];
   }
@@ -63,5 +81,10 @@ export class ChatComponent implements OnInit {
     this.messageService.setCurrentRoom(room);
     this.currentRoom = room;
     this.currentMessages = this.messages[room];
+  }
+
+  ngOnDestroy() {
+    // Maybe unsubscribe from subcriptions to save mem?
+    // http://stackoverflow.com/a/34714574
   }
 }

@@ -7,15 +7,17 @@ import { Globals } from '../commons/globals';
 
 @Injectable()
 export class AuthService {
-  public token: string;
+  private token: string;
+  private userName: string;
 
   constructor(private http: Http) {
-    var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
+    this.userName = currentUser && currentUser.username;
   }
 
   login(username, password): Observable<boolean> {
-    var headers = new Headers();
+    const headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
     headers.append('Authorization', 'Basic ' + btoa('angularClient:secret123'));
     let urlSearchParams = new URLSearchParams();
@@ -28,6 +30,7 @@ export class AuthService {
         let token = res.json() && res.json().access_token;
         if (token) {
           this.token = token;
+          this.userName = username;
           localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
         }
         return token && true;
@@ -50,6 +53,10 @@ export class AuthService {
 
   getToken(): string {
     return this.token;
+  }
+
+  getCurrentUserName(): string {
+    return this.userName;
   }
 
 }
