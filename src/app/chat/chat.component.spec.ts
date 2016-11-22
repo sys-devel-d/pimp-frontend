@@ -52,9 +52,9 @@ describe('ChatComponent', () => {
     expect(messages.length).toBe(2);
     const [msg1, msg2] = messages;
     expect(msg1.nativeElement.textContent.trim())
-        .toEqual('[11/22/2016, 8:16:05 PM] => test1: Hi')
+        .toContain('=> test1: Hi')
     expect(msg2.nativeElement.textContent.trim())
-        .toEqual('[11/22/2016, 8:16:15 PM] => test2: Hu')
+        .toContain('=> test2: Hu')
   });
 
   it('should switch between rooms by clicking buttons', () => {
@@ -71,7 +71,7 @@ describe('ChatComponent', () => {
     expect(messageContainer.children.length).toBe(1);
     const [msg] = messageContainer.children;
     expect(msg.nativeElement.textContent.trim())
-        .toEqual('[11/22/2016, 8:16:05 PM] => Napoleon: Bitte ein Bit!');
+        .toContain('=> Napoleon: Bitte ein Bit!');
 
   });
 });
