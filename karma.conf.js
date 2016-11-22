@@ -29,7 +29,7 @@ module.exports = function (config) {
     },
     reporters: config.angularCli && config.angularCli.codeCoverage
               ? ['progress', 'karma-remap-istanbul']
-              : ['progress'],
+              : ['dots'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
