@@ -12,6 +12,7 @@ export class MessageService {
 
   socket: any;
   stompClient: any;
+  connected = false;
   currentRoom: string;
   currentRoomChange: Subject<string> = new Subject<string>();
   messages: MessageCollection = {};
@@ -19,35 +20,34 @@ export class MessageService {
   rooms: string[] = [];
   roomsChange : Subject<string[]> = new Subject<string[]>();
 
-  constructor(private authService: AuthService, private http: Http) {
-    if(authService.isLoggedIn()) {
-      this.init();
-    }
-  }
+  constructor(private authService: AuthService, private http: Http) {}
 
   init() {
-    this.getInitialRooms().subscribe( (rooms: string[]) => {
-      let socket = new SockJS(`${Globals.BACKEND}chat/?access_token=${this.authService.getToken()}`);
-      this.socket = socket;
-      this.stompClient = Stomp.over(socket);
-      this.stompClient.debug = null;
+    if(!this.connected) {
+      this.getInitialRooms().subscribe( (rooms: string[]) => {
+        let socket = new SockJS(`${Globals.BACKEND}chat/?access_token=${this.authService.getToken()}`);
+        this.socket = socket;
+        this.stompClient = Stomp.over(socket);
+        this.stompClient.debug = null;
 
-      if(rooms.length > 0) {
-        
-        /**
-         * Each room in the `message: MessageCollection` must be 
-         * initialized with an empty array,
-         * otherwise we cannot push/unshift
-         */
-        for(let room of rooms) {
-          this.messages[room] = [];
+        if(rooms.length > 0) {
+          
+          /**
+           * Each room in the `message: MessageCollection` must be 
+           * initialized with an empty array,
+           * otherwise we cannot push/unshift
+           */
+          for(let room of rooms) {
+            this.messages[room] = [];
+          }
+
+          this.setCurrentRoom(rooms[0]);
+          this.setRooms(rooms);
+          this.subscribe(rooms);
         }
-
-        this.setCurrentRoom(rooms[0]);
-        this.setRooms(rooms);
-        this.subscribe(rooms);
-      }
-    } );
+        this.connected = true;
+      });
+    }
   }
 
   /* Get all rooms in which user is member */
@@ -142,10 +142,11 @@ export class MessageService {
   }
 
   tearDown(): void {
-    this.stompClient.disconnect()
-    this.socket.close()
-    this.messages = {}
-    this.rooms =  []
+    this.stompClient.disconnect();
+    this.socket.close();
+    this.messages = {};
+    this.rooms =  [];
+    this.connected = false;
   }
 
 }
