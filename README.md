@@ -1,5 +1,7 @@
 # PimpFrontend
 
+[![Build Status](https://travis-ci.org/sys-devel-d/pimp-frontend.svg?branch=master)](https://travis-ci.org/sys-devel-d/pimp-frontend)
+
 ## Setup
 All commands require angular-cli. You can install it globally **OR** use the one that gets installed locally.
 
