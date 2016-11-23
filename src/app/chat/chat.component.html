@@ -8,14 +8,20 @@
   </searchField>
   <div *ngIf="error" class="alert alert-danger">{{error}}</div>
 </div>
-<li *ngFor='let message of currentMessages'>
-  <ul>[{{message.date.toLocaleString()}}] => {{message.userName}}: {{ message.message }}</ul>
-</li>
+<div id="chat-message-container">
+  <div class="chat-message" *ngFor='let message of currentMessages'>
+    [{{message.date.toLocaleString()}}] => {{message.userName}}: {{ message.message }}
+  </div>
+</div>
 <form (ngSubmit)="send()" style="margin: 10px 0">
   <input type="text" [(ngModel)]="text" class="form-control"
     placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
 </form>
-<span>Change room: </span>
-<span *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
-  <button>{{room}}</button>
-</span>
+<div>
+  <span>Change room: </span>
+  <div id="change-room-btn-container">
+    <button *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
+      {{room}}
+    </button>
+  </div>
+</div>
