@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
@@ -12,23 +12,22 @@ export class UserService {
   constructor(private http: Http, private authService: AuthService) {}
 
   getProfileInformation(): Observable<User> {
-    let headers = new Headers();
-    headers.append('Authorization', 'Bearer ' + this.authService.getToken() );
-    let options = new RequestOptions({ headers: headers });
     return this.http
-      .get(Globals.BACKEND + 'users/' + this.authService.getCurrentUserName() , options)
+      .get(
+        Globals.BACKEND + 'users/' + this.authService.getCurrentUserName(),
+        { headers: this.authService.getTokenHeader() }
+      )
       .map((res: Response) => res.json() as User)
       .catch((error:any) => Observable
         .throw(error.json().error || 'Server error while fetching user.'));
   }
 
   search(term: string) {
-    let headers = new Headers();
-    headers.append('Authorization', 'Bearer ' + this.authService.getToken() );
-    let options = new RequestOptions({ headers: headers });
-
     return this.http
-      .get(Globals.BACKEND + 'users/search/' + term, options)
+      .get(
+        Globals.BACKEND + 'users/search/' + term,
+        { headers: this.authService.getTokenHeader() }
+      )
       .map((res: Response) => {
         return res.json()
       })

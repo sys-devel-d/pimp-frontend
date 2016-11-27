@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from '../services/message.service';
 import { Message, MessageCollection } from '../models/message';
-import {UserService} from "../services/user.service";
-import {User} from "../models/user";
+import { UserService } from "../services/user.service";
+import { User } from "../models/user";
+declare var $:any;
 
 @Component({
   selector: 'app-chat',
@@ -15,15 +16,14 @@ export class ChatComponent implements OnInit {
   messages: MessageCollection;
   currentMessages: Message[];
   rooms: String[];
-  messageService: MessageService;
-  userService: UserService;
   error: string;
   users: User[];
   term: string;
   callbackOnSelection: Function;
+  selectedUser: User
 
 
-  constructor(messageService: MessageService, userService: UserService) {
+  constructor(private messageService: MessageService, private userService: UserService) {
       this.messageService = messageService;
       this.userService = userService;
       this.callbackOnSelection = this.searchCallback.bind(this);
@@ -60,9 +60,14 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  startPrivatChat(user: User) {
+    this.messageService.initPrivateChat(user);
+  }
+
   searchCallback(user: User) {
     // open new room with user here
-    console.log(user);
+    this.selectedUser = user;
+    $('#chat-modal').modal('show');
   }
 
   send() {
