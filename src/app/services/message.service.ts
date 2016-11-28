@@ -17,9 +17,11 @@ export class MessageService {
   private currentRoom: string;
   currentRoomChange: Subject<string> = new Subject<string>();
   private messages: MessageCollection = {};
-  messagesChange : Subject<MessageCollection> = new Subject<MessageCollection>();
+  messagesChange: Subject<MessageCollection> = new Subject<MessageCollection>();
   private rooms: string[] = [];
-  roomsChange : Subject<string[]> = new Subject<string[]>();
+  roomsChange: Subject<string[]> = new Subject<string[]>();
+
+  chatErrorMessageChange : Subject<string> = new Subject<string>();
 
   constructor(private authService: AuthService, private http: Http) {}
 
@@ -55,7 +57,7 @@ export class MessageService {
   private getInitialRooms(): Observable<string[]> {
     return this.http
       .get(
-        `${Globals.BACKEND}users/${this.authService.getCurrentUserName()}/rooms`,
+        `${Globals.BACKEND}rooms/${this.authService.getCurrentUserName()}/rooms`,
         { headers: this.authService.getTokenHeader() }
       )
       .map((res: Response) => {
@@ -67,22 +69,52 @@ export class MessageService {
 
   publish(roomId: String, message: string): void {
     let userName = this.authService.getCurrentUserName();
-    this.stompClient.send('/app/broker/' + roomId, {},
-      JSON.stringify({
-        message,
-        roomId,
-        userName
-      }));
+    const msg = JSON.stringify({
+      message,
+      roomId,
+      userName
+    });
+    this.stompClient.send('/app/broker/' + roomId, {}, msg);
   }
 
   initPrivateChat(user: User) {
-    console.log(user);
-    /**
-     * Now make POST call to API requesting initialization of room with `user`.
-     * The API should generate a unique (md5?) room name and check if it already exists.
-     * The API's answer must include the room name.
-     */
-    //this.subscribeToRoom(roomName);
+    this.http.post(
+      `${Globals.BACKEND}rooms/init`,
+      {
+        invitee: this.authService.getCurrentUserName(),
+        invited: user.username,
+        roomType: 'PRIVATE'
+      },
+      {
+        headers: this.authService.getTokenHeader()
+      }
+    )
+    .map( (res: Response) => {
+      if(res.status == 200) {
+        return res.json();
+      }
+      return {
+        error: 'We are sorry. We could not open a room with this user.'
+      }
+    })
+    .subscribe(
+      res => {
+        if(res.error) {
+          this.chatErrorMessageChange.next(res.error);
+        }
+        else {
+          this.subscribeToRoom(res.roomName);
+          this.rooms.push(res.roomName);
+          this.roomsChange.next(this.rooms);
+        }
+      },
+      err => {
+        const message = err.status == 409 ?
+          'It seems you are already in a room with this user' :
+          'We are sorry. There has been an error initializing the chatroom.'
+        this.chatErrorMessageChange.next(message);
+      }
+    );
   }
 
   private connectAndSubscribeMultiple(rooms: string[]): void {
@@ -105,6 +137,10 @@ export class MessageService {
         msg => this.dbEntityToMessage(msg)
       );
 
+      if(!this.messages[room]) {
+        this.messages[room] = [];
+      }
+
       // Prepend the initialMessages to the messages
       // (There could already be new messages in it from the other subscription)
       this.messages[room].unshift.apply(
@@ -117,6 +153,7 @@ export class MessageService {
     })
 
     this.stompClient.subscribe('/rooms/message/' + room, ( { body } ) => {
+      console.log("asdadada");
       let message: Message = this.dbEntityToMessage(JSON.parse(body));
       this.messages[room].push(message);
       //that.messagesChange.next(that.getMessages());
@@ -145,7 +182,7 @@ export class MessageService {
     this.currentRoom = room;
   }
 
-  getRooms(): String[] {
+  getRooms(): string[] {
     return this.rooms;
   }
 
