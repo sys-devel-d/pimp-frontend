@@ -26,6 +26,7 @@ export class MessageService {
   constructor(private authService: AuthService, private http: Http) {}
 
   init() {
+    
     if(!this.connected) {
       this.getInitialRooms().subscribe( (rooms: string[]) => {
         let socket = new SockJS(`${Globals.BACKEND}chat/?access_token=${this.authService.getToken()}`);
@@ -46,9 +47,8 @@ export class MessageService {
 
           this.setCurrentRoom(rooms[0]);
           this.setRooms(rooms);
-          this.connectAndSubscribeMultiple(rooms);
         }
-        this.connected = true;
+        this.connectAndSubscribeMultiple(rooms);
       });
     }
   }
@@ -78,13 +78,10 @@ export class MessageService {
   }
 
   initPrivateChat(user: User) {
+    // need to remove this key, otherwise API crashes. why is this key there anyway?
+    delete user['authorities'];
     this.http.post(
-      `${Globals.BACKEND}rooms/init`,
-      {
-        invitee: this.authService.getCurrentUserName(),
-        invited: user.username,
-        roomType: 'PRIVATE'
-      },
+      `${Globals.BACKEND}rooms/init-private`, user,
       {
         headers: this.authService.getTokenHeader()
       }
@@ -93,20 +90,13 @@ export class MessageService {
       if(res.status == 200) {
         return res.json();
       }
-      return {
-        error: 'We are sorry. We could not open a room with this user.'
-      }
     })
     .subscribe(
       res => {
-        if(res.error) {
-          this.chatErrorMessageChange.next(res.error);
-        }
-        else {
-          this.subscribeToRoom(res.roomName);
-          this.rooms.push(res.roomName);
-          this.roomsChange.next(this.rooms);
-        }
+        this.subscribeToRoom(res.roomName);
+        this.rooms.push(res.roomName);
+        this.roomsChange.next(this.rooms);
+        this.currentRoomChange.next(res.roomName);
       },
       err => {
         const message = err.status == 409 ?
@@ -119,10 +109,10 @@ export class MessageService {
 
   private connectAndSubscribeMultiple(rooms: string[]): void {
     this.stompClient.connect({}, (/*frame*/) => {
+      this.connected = true;
       for(let room of rooms) {
         this.subscribeToRoom(room);
       }
-        
     }, err => console.log('err', err) );
   }
 
@@ -153,10 +143,9 @@ export class MessageService {
     })
 
     this.stompClient.subscribe('/rooms/message/' + room, ( { body } ) => {
-      console.log("asdadada");
       let message: Message = this.dbEntityToMessage(JSON.parse(body));
       this.messages[room].push(message);
-      //that.messagesChange.next(that.getMessages());
+      this.messagesChange.next(this.getMessages());
     });
   }
 

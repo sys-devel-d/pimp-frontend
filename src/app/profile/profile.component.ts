@@ -17,24 +17,15 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getCurrentUser();
+    this.setCurrentUser();
   }
 
-  private getCurrentUser() {
+  private setCurrentUser() {
     this.userService
       .getProfileInformation()
       .subscribe(
-        result => this.user = this.convertToUser(result),
+        result => this.user = result as User,
         error => this.error = <any>error
       );
-  }
-
-  private convertToUser(result): User{
-    let newUser = new User();
-    newUser.username = result.userName;
-    newUser.firstName = result.firstName;
-    newUser.lastName = result.lastName;
-    newUser.email = result.email;
-    return newUser;
   }
 }

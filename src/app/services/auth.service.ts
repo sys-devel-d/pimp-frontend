@@ -13,16 +13,16 @@ export class AuthService {
   constructor(private http: Http) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
-    this.userName = currentUser && currentUser.username;
+    this.userName = currentUser && currentUser.userName;
   }
 
-  login(username, password): Observable<boolean> {
+  login(userName, password): Observable<boolean> {
     const headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
     headers.append('Authorization', 'Basic ' + btoa('angularClient:secret123'));
     let urlSearchParams = new URLSearchParams();
     urlSearchParams.append('grant_type', 'password');
-    urlSearchParams.append('username', username);
+    urlSearchParams.append('username', userName);
     urlSearchParams.append('password', password);
     return this.http
       .post(Globals.BACKEND + 'oauth/token', urlSearchParams.toString(), {headers: headers})
@@ -30,8 +30,8 @@ export class AuthService {
         let token = res.json() && res.json().access_token;
         if (token) {
           this.token = token;
-          this.userName = username;
-          localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
+          this.userName = userName;
+          localStorage.setItem('currentUser', JSON.stringify({ userName: userName, token: token }));
         }
         return token && true;
       })

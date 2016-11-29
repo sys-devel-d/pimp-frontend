@@ -18,7 +18,9 @@
     placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
 </form>
 <div>
-  <span>Change room: </span>
+  <div *ngIf="currentRoom">
+    <p>Current room: {{ currentRoom }}</p>
+  </div>
   <div id="change-room-btn-container">
     <button *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
       {{room}}

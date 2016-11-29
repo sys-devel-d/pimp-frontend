@@ -9,7 +9,7 @@ export class UserServiceStub extends UserService {
   getProfileInformation() {
       return Observable.of(
           {
-            username: "foo",
+            userName: "foo",
             password: "secret",
             firstName: "foobart",
             lastName: "bar",

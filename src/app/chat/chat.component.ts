@@ -44,6 +44,9 @@ export class ChatComponent implements OnInit {
 
       this.messageService.messagesChange.subscribe( messages => {
         this.messages = messages;
+        if(!this.currentMessages) {
+          this.currentMessages = messages[this.currentRoom];
+        }
       });
 
       this.messageService.chatErrorMessageChange.subscribe( err => {
