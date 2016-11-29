@@ -3,22 +3,25 @@ import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { Message, MessageCollection } from '../models/message';
 import { AuthService } from './auth.service';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { Observable, Subject } from 'rxjs';
+import { User } from '../models/user';
 
 @Injectable()
 export class MessageService {
 
-  socket: any;
-  stompClient: any;
+  private socket: any;
+  private stompClient: any;
   connected = false;
-  currentRoom: string;
+  private currentRoom: string;
   currentRoomChange: Subject<string> = new Subject<string>();
-  messages: MessageCollection = {};
-  messagesChange : Subject<MessageCollection> = new Subject<MessageCollection>();
-  rooms: string[] = [];
-  roomsChange : Subject<string[]> = new Subject<string[]>();
+  private messages: MessageCollection = {};
+  messagesChange: Subject<MessageCollection> = new Subject<MessageCollection>();
+  private rooms: string[] = [];
+  roomsChange: Subject<string[]> = new Subject<string[]>();
+
+  chatErrorMessageChange : Subject<string> = new Subject<string>();
 
   constructor(private authService: AuthService, private http: Http) {}
 
@@ -43,7 +46,7 @@ export class MessageService {
 
           this.setCurrentRoom(rooms[0]);
           this.setRooms(rooms);
-          this.subscribe(rooms);
+          this.connectAndSubscribeMultiple(rooms);
         }
         this.connected = true;
       });
@@ -51,11 +54,12 @@ export class MessageService {
   }
 
   /* Get all rooms in which user is member */
-  getInitialRooms(): Observable<string[]> {
-    let headers = new Headers();
-    headers.append('Authorization', 'Bearer ' + this.authService.getToken());
+  private getInitialRooms(): Observable<string[]> {
     return this.http
-      .get(`${Globals.BACKEND}users/${this.authService.getCurrentUserName()}/rooms`, {headers: headers})
+      .get(
+        `${Globals.BACKEND}rooms/${this.authService.getCurrentUserName()}/rooms`,
+        { headers: this.authService.getTokenHeader() }
+      )
       .map((res: Response) => {
         return res.json();
       }).catch( (error: any) => {
@@ -65,49 +69,95 @@ export class MessageService {
 
   publish(roomId: String, message: string): void {
     let userName = this.authService.getCurrentUserName();
-    this.stompClient.send('/app/broker/' + roomId, {},
-      JSON.stringify({
-        message,
-        roomId,
-        userName
-      }));
+    const msg = JSON.stringify({
+      message,
+      roomId,
+      userName
+    });
+    this.stompClient.send('/app/broker/' + roomId, {}, msg);
   }
 
-  subscribe(rooms: string[]): void {
-    var that = this;
-    this.stompClient.connect({}, (frame) => {
-      for(let roomId of rooms) {
-        
-        /** 
-         * This maps to the @SubscripeMapping in Spring and is only
-         * invoked once the user joins a room
-         */
-        const url = `/app/initial-messages/${roomId}/${this.authService.getCurrentUserName()}`;
-        that.stompClient.subscribe(url, ( { body } ) => {
-          let initialMessages: Message[] = JSON.parse(body).map(
-            msg => this.dbEntityToMessage(msg)
-          );
+  initPrivateChat(user: User) {
+    this.http.post(
+      `${Globals.BACKEND}rooms/init`,
+      {
+        invitee: this.authService.getCurrentUserName(),
+        invited: user.username,
+        roomType: 'PRIVATE'
+      },
+      {
+        headers: this.authService.getTokenHeader()
+      }
+    )
+    .map( (res: Response) => {
+      if(res.status == 200) {
+        return res.json();
+      }
+      return {
+        error: 'We are sorry. We could not open a room with this user.'
+      }
+    })
+    .subscribe(
+      res => {
+        if(res.error) {
+          this.chatErrorMessageChange.next(res.error);
+        }
+        else {
+          this.subscribeToRoom(res.roomName);
+          this.rooms.push(res.roomName);
+          this.roomsChange.next(this.rooms);
+        }
+      },
+      err => {
+        const message = err.status == 409 ?
+          'It seems you are already in a room with this user' :
+          'We are sorry. There has been an error initializing the chatroom.'
+        this.chatErrorMessageChange.next(message);
+      }
+    );
+  }
 
-          // Prepend the initialMessages to the messages
-          // (There could already be new messages in it from the other subscription)
-          that.messages[roomId].unshift.apply(
-            that.messages[roomId], initialMessages
-          );
-
-          // that.messagesChange.next(this.getMessages());
-          // Now we can actually unsubscribe... This will not be invoked again.
-          that.stompClient.unsubscribe('/app/initial-messages/' + roomId);
-        })
-
-        that.stompClient.subscribe('/rooms/message/' + roomId, ( { body } ) => {
-          let message: Message = this.dbEntityToMessage(JSON.parse(body));
-          that.messages[roomId].push(message);
-          //that.messagesChange.next(that.getMessages());
-        })
-
-    }
+  private connectAndSubscribeMultiple(rooms: string[]): void {
+    this.stompClient.connect({}, (/*frame*/) => {
+      for(let room of rooms) {
+        this.subscribeToRoom(room);
+      }
         
     }, err => console.log('err', err) );
+  }
+
+  private subscribeToRoom(room) {
+    /**
+     * This maps to the @SubscripeMapping in Spring and is only
+     * invoked once the user joins a room
+     */
+    const url = `/app/initial-messages/${room}/${this.authService.getCurrentUserName()}`;
+    this.stompClient.subscribe(url, ( { body } ) => {
+      let initialMessages: Message[] = JSON.parse(body).map(
+        msg => this.dbEntityToMessage(msg)
+      );
+
+      if(!this.messages[room]) {
+        this.messages[room] = [];
+      }
+
+      // Prepend the initialMessages to the messages
+      // (There could already be new messages in it from the other subscription)
+      this.messages[room].unshift.apply(
+        this.messages[room], initialMessages
+      );
+
+      // that.messagesChange.next(this.getMessages());
+      // Now we can actually unsubscribe... This will not be invoked again.
+      this.stompClient.unsubscribe('/app/initial-messages/' + room);
+    })
+
+    this.stompClient.subscribe('/rooms/message/' + room, ( { body } ) => {
+      console.log("asdadada");
+      let message: Message = this.dbEntityToMessage(JSON.parse(body));
+      this.messages[room].push(message);
+      //that.messagesChange.next(that.getMessages());
+    });
   }
 
   private dbEntityToMessage(dbMessage): Message {
@@ -132,7 +182,7 @@ export class MessageService {
     this.currentRoom = room;
   }
 
-  getRooms(): String[] {
+  getRooms(): string[] {
     return this.rooms;
   }
 

@@ -42,6 +42,12 @@ export class AuthService {
       });
   }
 
+  getTokenHeader(): Headers {
+    const headers = new Headers();
+    headers.append('Authorization', 'Bearer ' + this.getToken());
+    return headers;
+  }
+
   logout(): void {
     this.token = null;
     localStorage.removeItem('currentUser');

@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from '../services/message.service';
 import { Message, MessageCollection } from '../models/message';
-import {UserService} from "../services/user.service";
-import {User} from "../models/user";
+import { UserService } from "../services/user.service";
+import { User } from "../models/user";
+declare var $:any;
 
 @Component({
   selector: 'app-chat',
@@ -14,16 +15,15 @@ export class ChatComponent implements OnInit {
   text: string;
   messages: MessageCollection;
   currentMessages: Message[];
-  rooms: String[];
-  messageService: MessageService;
-  userService: UserService;
+  rooms: string[];
   error: string;
   users: User[];
   term: string;
   callbackOnSelection: Function;
+  selectedUser: User
 
 
-  constructor(messageService: MessageService, userService: UserService) {
+  constructor(private messageService: MessageService, private userService: UserService) {
       this.messageService = messageService;
       this.userService = userService;
       this.callbackOnSelection = this.searchCallback.bind(this);
@@ -45,6 +45,10 @@ export class ChatComponent implements OnInit {
       this.messageService.messagesChange.subscribe( messages => {
         this.messages = messages;
       });
+
+      this.messageService.chatErrorMessageChange.subscribe( err => {
+        this.setError(err);
+      });
   }
 
   searchForUser() {
@@ -55,19 +59,26 @@ export class ChatComponent implements OnInit {
             //filter for users with no room open and filter myself out
             this.users = res;
           },
-          err => this.error = <any>err
+          err => this.setError(err)
         );
     }
   }
 
+  startPrivatChat(user: User) {
+    this.messageService.initPrivateChat(user);
+    $('#chat-modal').modal('hide');
+  }
+
   searchCallback(user: User) {
-    // open new room with user here
-    console.log(user);
+    this.selectedUser = user;
+    $('#chat-modal').modal('show');
   }
 
   send() {
-    this.messageService.publish(this.currentRoom, this.text);
-    this.text = "";
+    if(this.text != "") {
+      this.messageService.publish(this.currentRoom, this.text);
+      this.text = "";
+    }
   }
 
   ngOnInit() {
@@ -86,5 +97,10 @@ export class ChatComponent implements OnInit {
   ngOnDestroy() {
     // Maybe unsubscribe from subcriptions to save mem?
     // http://stackoverflow.com/a/34714574
+  }
+
+  private setError(err:string): void {
+    this.error = err;
+    setTimeout( () => this.error = '', 3000);
   }
 }
