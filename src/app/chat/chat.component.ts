@@ -3,6 +3,7 @@ import { MessageService } from '../services/message.service';
 import { Message, MessageCollection } from '../models/message';
 import { UserService } from "../services/user.service";
 import { User } from "../models/user";
+import Room from '../models/room';
 declare var $:any;
 
 @Component({
@@ -11,11 +12,9 @@ declare var $:any;
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
-  currentRoom: string;
   text: string;
-  messages: MessageCollection;
-  currentMessages: Message[];
-  rooms: string[];
+  rooms: Room[];
+  currentRoom: Room;
   error: string;
   users: User[];
   term: string;
@@ -33,20 +32,12 @@ export class ChatComponent implements OnInit {
        * the init() method of MessageService might not be finished with its
        * request.
        */
-      this.messageService.currentRoomChange.subscribe( currentRoom => {
+      this.messageService.currentRoomChange.subscribe( (currentRoom:Room) => {
         this.currentRoom = currentRoom;
-        this.currentMessages = this.messages[currentRoom];
       });
 
-      this.messageService.roomsChange.subscribe ( rooms => {
+      this.messageService.roomsChange.subscribe ( (rooms:Room[]) => {
         this.rooms = rooms;
-      });
-
-      this.messageService.messagesChange.subscribe( messages => {
-        this.messages = messages;
-        if(!this.currentMessages) {
-          this.currentMessages = messages[this.currentRoom];
-        }
       });
 
       this.messageService.chatErrorMessageChange.subscribe( err => {
@@ -58,10 +49,7 @@ export class ChatComponent implements OnInit {
     if (this.term.length >= 3) {
       this.userService.search(this.term)
         .subscribe(
-          res => {
-            //filter for users with no room open and filter myself out
-            this.users = res;
-          },
+          (users: User[]) => this.users = users,
           err => this.setError(err)
         );
     }
@@ -79,7 +67,7 @@ export class ChatComponent implements OnInit {
 
   send() {
     if(this.text != "") {
-      this.messageService.publish(this.currentRoom, this.text);
+      this.messageService.publish(this.currentRoom.roomName, this.text);
       this.text = "";
     }
   }
@@ -87,14 +75,11 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
     this.currentRoom = this.messageService.getCurrentRoom();
     this.rooms = this.messageService.getRooms();
-    this.messages = this.messageService.getMessages();
-    this.currentMessages = this.messages[this.currentRoom];
   }
 
-  setCurrentRoom(room) {
+  setCurrentRoom(room:Room) {
     this.messageService.setCurrentRoom(room);
     this.currentRoom = room;
-    this.currentMessages = this.messages[room];
   }
 
   ngOnDestroy() {

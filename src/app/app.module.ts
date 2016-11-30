@@ -18,6 +18,7 @@ import { UserService } from "./services/user.service";
 import { MessageService } from "./services/message.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
+import { JDatePipe } from './pipes/jdate-pipe'
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { HighlightDirective } from './directives/highlight.directive';
     PageNotFoundComponent,
     RegisterComponent,
     UserSearchComponent,
-    HighlightDirective
+    HighlightDirective,
+    JDatePipe
   ],
   imports: [
     BrowserModule,

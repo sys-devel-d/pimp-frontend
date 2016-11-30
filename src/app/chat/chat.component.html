@@ -8,9 +8,9 @@
   </searchField>
   <div *ngIf="error" class="alert alert-danger">{{error}}</div>
 </div>
-<div id="chat-message-container">
-  <div class="chat-message" *ngFor='let message of currentMessages'>
-    [{{message.date.toLocaleString()}}] => {{message.userName}}: {{ message.message }}
+<div *ngIf="currentRoom" id="chat-message-container">
+  <div class="chat-message" *ngFor='let message of currentRoom.messages'>
+    [{{ message.creationDate | jdate }}] => {{message.userName}}: {{ message.message }}
   </div>
 </div>
 <form (ngSubmit)="send()" style="margin: 10px 0">
@@ -19,11 +19,11 @@
 </form>
 <div>
   <div *ngIf="currentRoom">
-    <p>Current room: {{ currentRoom }}</p>
+    <p>Current room: {{ currentRoom.roomName }}</p>
   </div>
   <div id="change-room-btn-container">
     <button *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
-      {{room}}
+      {{ room.roomName }}
     </button>
   </div>
 </div>
