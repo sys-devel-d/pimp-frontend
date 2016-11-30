@@ -1,31 +1,38 @@
-<div>
-  <label>User</label>
-  <searchField
-    (update)="term = $event"
-    (keyup)="searchForUser(term)"
-    [callbackOnSelection]="callbackOnSelection"
-    [results]="users">
-  </searchField>
-  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
-</div>
-<div *ngIf="currentRoom" id="chat-message-container">
-  <div class="chat-message" *ngFor='let message of currentRoom.messages'>
-    [{{ message.creationDate | jdate }}] => {{message.userName}}: {{ message.message }}
+<div class="row">
+
+  <div class="col-md-4">
+
+    <div id="user-search-container">
+      <searchField
+        (update)="term = $event"
+        (keyup)="searchForUser(term)"
+        [callbackOnSelection]="callbackOnSelection"
+        [results]="users">
+      </searchField>
+      <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+    </div>
+
+    <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
+      <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
+        <p>{{ room.roomName }}</p>
+        <small>{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</small>
+      </div>
+    </div>
+
   </div>
-</div>
-<form (ngSubmit)="send()" style="margin: 10px 0">
-  <input type="text" [(ngModel)]="text" class="form-control"
-    placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
-</form>
-<div>
-  <div *ngIf="currentRoom">
-    <p>Current room: {{ currentRoom.roomName }}</p>
+
+  <div class="col-md-8 pull-right">
+    <div *ngIf="currentRoom" id="chat-message-container">
+      <div class="chat-message" *ngFor='let message of currentRoom.messages'>
+        [{{ message.creationDate | jdate }}] => {{message.userName}}: {{ message.message }}
+      </div>
+    </div>
+    <form (ngSubmit)="send()" style="margin: 10px 0">
+      <input type="text" [(ngModel)]="text" class="form-control"
+        placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
+    </form>
   </div>
-  <div id="change-room-btn-container">
-    <button *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
-      {{ room.roomName }}
-    </button>
-  </div>
+
 </div>
 
 <!-- Modal that is shown when you click on a user in search results -->

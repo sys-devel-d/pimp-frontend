@@ -1,0 +1,31 @@
+#chat-message-container {
+    height: 300px;
+    overflow: auto;
+
+    .chat-message {
+        width: 100%;
+    }
+}
+
+#user-search-container {
+    margin: 5px 0;
+}
+
+.room-container {
+    padding: 8px 0;
+    background-color: darkgray;
+    margin-bottom: 1px;
+    cursor: pointer;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    p {
+        margin: 0;
+    }
+
+    &.selected {
+        background-color: lightgray;
+    }
+}

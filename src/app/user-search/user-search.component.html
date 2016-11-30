@@ -1,5 +1,5 @@
 <div>
-  <input type="text" #ctrl [(ngModel)]="term" (input)="update.emit(ctrl.value)" class="form-control input"/>
+  <input type="text" placeholder="Search users" #ctrl [(ngModel)]="term" (input)="update.emit(ctrl.value)" class="form-control input"/>
   <div class="options" *ngIf="term.length > 2 && results.length > 0">
     <div [highlight]="results" *ngFor="let result of results">
       <a class="element" (click)="select(result)">{{result.firstName}} {{result.lastName}}</a>
