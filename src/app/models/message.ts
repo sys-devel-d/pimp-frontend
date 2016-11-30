@@ -3,8 +3,3 @@ export class Message {
   userName: string
   message: string
 }
-
-// holds messages of all rooms
-export interface MessageCollection {
-  [room:string]: Message[]
-}

@@ -12,10 +12,12 @@
       <div *ngIf="error" class="alert alert-danger">{{error}}</div>
     </div>
 
-    <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
-      <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
-        <p>{{ room.roomName }}</p>
-        <small>{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</small>
+    <div id="room-container">
+      <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
+        <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
+          <p>{{ room.roomName }}</p>
+          <small>{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</small>
+        </div>
       </div>
     </div>
 

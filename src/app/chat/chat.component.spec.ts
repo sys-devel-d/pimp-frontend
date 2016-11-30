@@ -12,6 +12,7 @@ import { UserServiceStub } from '../services/test/user.service.stub';
 import { UserSearchComponent } from "../user-search/user-search.component";
 import { FormsModule } from '@angular/forms';
 import { HighlightDirective } from '../directives/highlight.directive';
+import { JDatePipe } from '../pipes/jdate-pipe'
 
 import { BaseRequestOptions, Response, ResponseOptions } from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
@@ -21,12 +22,11 @@ describe('ChatComponent', () => {
   let component: ChatComponent;
   let fixture: ComponentFixture<ChatComponent>;
   let messageContainer: DebugElement
-  let buttons: DebugElement
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule ],
-      declarations: [ ChatComponent, UserSearchComponent, HighlightDirective ],
+      declarations: [ ChatComponent, UserSearchComponent, HighlightDirective, JDatePipe ],
       providers: [
         {
           provide: MessageService, useClass: MessageServiceStub
@@ -44,7 +44,7 @@ describe('ChatComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     messageContainer = fixture.debugElement.query(By.css('#chat-message-container'));
-    buttons = fixture.debugElement.query(By.css('#change-room-btn-container'))
+    
   });
 
   it('should show messages', () => {
@@ -57,14 +57,15 @@ describe('ChatComponent', () => {
         .toContain('=> test2: Hu')
   });
 
-  it('should switch between rooms by clicking buttons', () => {
+  it('should switch between when clicking on room', () => {
     fixture.detectChanges();
+    const roomContainers = fixture.debugElement.query(By.css('#room-container'));
     const messages = messageContainer.children;
     expect(messages.length).toBe(2);
-    const [btn1, btn2] = buttons.children;
-    expect(btn1.nativeElement.textContent.trim())
+    const [btn1, btn2] = roomContainers.children;
+    expect(btn1.query(By.css('p')).nativeElement.textContent.trim())
         .toEqual("general");
-    expect(btn2.nativeElement.textContent.trim())
+    expect(btn2.query(By.css('p')).nativeElement.textContent.trim())
         .toEqual("watercooler");
     btn2.nativeElement.click();
     fixture.detectChanges();

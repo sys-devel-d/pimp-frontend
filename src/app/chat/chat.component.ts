@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from '../services/message.service';
-import { Message, MessageCollection } from '../models/message';
+import { Message } from '../models/message';
 import { UserService } from "../services/user.service";
 import { User } from "../models/user";
 import Room from '../models/room';

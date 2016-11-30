@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
-import { Message, MessageCollection } from '../models/message';
+import { Message } from '../models/message';
 import { AuthService } from './auth.service';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';

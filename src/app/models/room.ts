@@ -3,7 +3,7 @@ import { Message } from './message'
 
 export default class Room {
     roomName: string
-    roomType: boolean
+    roomType: string
     messages: Message[]
     participants: User[]
 }
