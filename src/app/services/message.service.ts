@@ -67,11 +67,21 @@ export class MessageService {
     this.stompClient.send('/app/broker/' + roomId, {}, msg);
   }
 
-  initPrivateChat(user: User) {
-    // need to remove this key, otherwise API crashes. why is this key there anyway?
-    delete user['authorities'];
-    this.http.post(
-      `${Globals.BACKEND}rooms/init-private`, user,
+  initChatWith(users: User[], roomType:string, displayName?:string) {
+    for(let user of users) {
+      delete user['authorities']
+    }
+    let url = Globals.BACKEND + 'rooms/';
+    let payload:any = users;
+    if(roomType == 'PRIVATE' && users.length == 1) {
+      payload = users[0];
+      url = url + 'init-private'
+    }
+    else {
+      url = url + 'init-group/' + displayName
+    }
+    
+    this.http.post(url, payload,
       {
         headers: this.authService.getTokenHeader()
       }

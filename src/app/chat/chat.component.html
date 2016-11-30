@@ -15,7 +15,7 @@
     <div id="room-container">
       <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
         <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
-          <p>{{ room.roomName }}</p>
+          <p>{{ room | roomName }}</p>
           <small>{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</small>
         </div>
       </div>
@@ -53,7 +53,7 @@
             <button class="btn btn-primary" (click)="startPrivatChat(selectedUser)">Privatchat</button>
           </div>
           <div class="col-md-6 centered-content">
-            <button class="btn btn-default">Gruppenchat</button>
+            <button class="btn btn-default" (click)="startGroupChat()">Gruppenchat</button>
           </div>
         </div>
       </div>

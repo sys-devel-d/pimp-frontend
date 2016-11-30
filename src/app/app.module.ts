@@ -18,7 +18,8 @@ import { UserService } from "./services/user.service";
 import { MessageService } from "./services/message.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
-import { JDatePipe } from './pipes/jdate-pipe'
+import { JDatePipe } from './pipes/jdate.pipe'
+import { RoomNamePipe } from './pipes/room-name.pipe'
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { JDatePipe } from './pipes/jdate-pipe'
     RegisterComponent,
     UserSearchComponent,
     HighlightDirective,
-    JDatePipe
+    JDatePipe,
+    RoomNamePipe
   ],
   imports: [
     BrowserModule,

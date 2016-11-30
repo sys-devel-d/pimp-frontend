@@ -3,6 +3,7 @@ import { MessageService } from '../services/message.service';
 import { Message } from '../models/message';
 import { UserService } from "../services/user.service";
 import { User } from "../models/user";
+import { Globals } from '../commons/globals'
 import Room from '../models/room';
 declare var $:any;
 
@@ -56,7 +57,12 @@ export class ChatComponent implements OnInit {
   }
 
   startPrivatChat(user: User) {
-    this.messageService.initPrivateChat(user);
+    this.messageService.initChatWith([user], Globals.CHATROOM_TYPE_PRIVATE);
+    $('#chat-modal').modal('hide');
+  }
+
+  startGroupChat(displayName:string = 'Affenzirkus', users: User[] = []) {
+    this.messageService.initChatWith(users, Globals.CHATROOM_TYPE_GROUP, displayName);
     $('#chat-modal').modal('hide');
   }
 

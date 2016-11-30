@@ -6,4 +6,5 @@ export default class Room {
     roomType: string
     messages: Message[]
     participants: User[]
+    displayNames: {}
 }
