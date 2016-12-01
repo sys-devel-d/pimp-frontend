@@ -17,11 +17,13 @@
     <div id="room-container">
       <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
         <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
-          <div class="inline roomname">{{ room | roomName }}</div>
-          <div class="inline pull-right edit-room-actions">
+          <div class="col-md-8 room-content">
+            <div class="roomname">{{ room | roomName }}</div>
+            <div class="most-recent-message">{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</div>
+          </div>
+          <div class="col-md-4 edit-room-actions">
             <div class="unicode-action" *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)">&#9998;</div>
           </div>
-          <div class="most-recent-message">{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</div>
         </div>
       </div>
     </div>

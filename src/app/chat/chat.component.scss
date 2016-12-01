@@ -19,11 +19,16 @@
         font-weight: 600;
     }
 
-    padding: 8px;
+    .room-content {
+        cursor: pointer;
+        height: 100%;
+        padding: 8px;
+    }
+
     background-color: darkgray;
     margin-bottom: 1px;
-    cursor: pointer;
     height: 50px;
+    width: calc(100%);
 
     white-space: nowrap;
     overflow: hidden;
@@ -38,13 +43,12 @@
     }
 
     .edit-room-actions {
+        padding: 8px;
         text-align: right;
-        width: 100px;
         height: 100%;
     }
 
     .most-recent-message {
-        width: calc(75%);
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 11px;
@@ -52,7 +56,10 @@
 }
 
 .unicode-action {
+    color: #337ab7;
     font-size: 17px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     &:hover {
         text-decoration: none;
