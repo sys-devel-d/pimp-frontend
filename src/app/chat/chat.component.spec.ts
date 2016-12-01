@@ -58,14 +58,11 @@ describe('ChatComponent', () => {
   });
 
   it('should switch between when clicking on room', () => {
-    fixture.detectChanges();
     const roomContainers = fixture.debugElement.query(By.css('#room-container'));
-    const messages = messageContainer.children;
-    expect(messages.length).toBe(2);
     const [btn1, btn2] = roomContainers.children;
-    expect(btn1.query(By.css('p')).nativeElement.textContent.trim())
+    expect(btn1.query(By.css('.roomname')).nativeNode.textContent.trim())
         .toEqual("general");
-    expect(btn2.query(By.css('p')).nativeElement.textContent.trim())
+    expect(btn2.query(By.css('.roomname')).nativeNode.textContent.trim())
         .toEqual("watercooler");
     btn2.nativeElement.click();
     fixture.detectChanges();
