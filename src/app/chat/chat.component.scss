@@ -30,6 +30,14 @@
     }
 }
 
+.group-user-selection {
+    font-size: 15px;
+    cursor: pointer;
+    &:hover {
+        text-decoration: none;
+    }
+}
+
 .form-control.invalid-params {
     animation: shake .5s linear;
     -webkit-animation: shake .5s linear;

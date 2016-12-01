@@ -90,13 +90,12 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  addUserToSelectedGroupUsers(event, user) {
-    if(event.target.checked) {
-      this.selectedGroupChatUsers.add(user);
-    }
-    else {
-      this.selectedGroupChatUsers.delete(user);
-    }
+  addUserToSelectedGroupUsers(user) {
+    this.selectedGroupChatUsers.add(user);
+  }
+
+  removeUserFromSelectedGroupUsers(user: User) {
+    this.selectedGroupChatUsers.delete(user);
   }
 
   ngOnInit() {
