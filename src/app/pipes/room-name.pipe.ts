@@ -7,7 +7,17 @@ import { Globals } from '../commons/globals'
 export class RoomNamePipe implements PipeTransform {
   userName:string;
   constructor() {
-      this.userName = JSON.parse(localStorage.getItem('currentUser')).userName;
+      /*
+        This needs refactoring. Accessing local storage here is not good.
+      */
+      const userFromStorage = localStorage.getItem('currentUser');
+      if(userFromStorage) {
+          this.userName = JSON.parse(localStorage.getItem('currentUser')).userName;
+      }
+      else {
+          this.userName = "SYSTEM";
+      }
+      
   }
 
   transform(room: Room): string {

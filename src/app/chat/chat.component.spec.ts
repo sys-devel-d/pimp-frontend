@@ -11,7 +11,8 @@ import { UserServiceStub } from '../services/test/user.service.stub';
 import { UserSearchComponent } from "../user-search/user-search.component";
 import { FormsModule } from '@angular/forms';
 import { HighlightDirective } from '../directives/highlight.directive';
-import { JDatePipe } from '../pipes/jdate-pipe'
+import { JDatePipe } from '../pipes/jdate.pipe'
+import { RoomNamePipe } from '../pipes/room-name.pipe'
 
 import { BaseRequestOptions, Response, ResponseOptions } from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
@@ -25,7 +26,7 @@ describe('ChatComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule ],
-      declarations: [ ChatComponent, UserSearchComponent, HighlightDirective, JDatePipe ],
+      declarations: [ ChatComponent, UserSearchComponent, HighlightDirective, JDatePipe, RoomNamePipe ],
       providers: [
         {
           provide: MessageService, useClass: MessageServiceStub

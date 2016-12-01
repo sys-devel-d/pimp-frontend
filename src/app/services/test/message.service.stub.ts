@@ -3,7 +3,8 @@ import { MessageService } from '../message.service';
 import { Observable } from "rxjs";
 import { Message } from '../../models/message';
 import { Http } from '@angular/http';
-import Room from '../../models/room'
+import Room from '../../models/room';
+import { Globals } from '../../commons/globals'
 
 import { AuthServiceStub } from '../../services/test/auth.service.stub'
 
@@ -29,17 +30,23 @@ const watercoolerMessages = [
 ];
 
 const roomgeneral = {
-  roomName: "general",
+  roomName: 'rhefhdjkfhkjwh92zre9z23478wi',
   roomType: "GROUP",
   messages: generalMessages,
-  participants: []
+  participants: [],
+  displayNames: {
+    [Globals.HASH_KEY_DISPLAY_NAME_GROUP]: 'general'
+  }
 }
 
 const roomWatercooler = {
-  roomName: "watercooler",
+  roomName: '90u90iwojdfju23rfiohwe89fhio',
   roomType: "GROUP",
   messages: watercoolerMessages,
-  participants: []
+  participants: [],
+  displayNames: {
+    [Globals.HASH_KEY_DISPLAY_NAME_GROUP]: 'watercooler'
+  }
 }
 
 @Injectable()
