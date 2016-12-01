@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import Room from '../models/room'
-import { User } from '../models/user'
+import { User, Room } from '../models/base'
 import { Globals } from '../commons/globals'
 
 @Pipe({name: 'roomName'})

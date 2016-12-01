@@ -3,7 +3,7 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { User } from '../models/user';
+import { User } from '../models/base';
 import { Globals } from "../commons/globals";
 import { AuthService } from './auth.service';
 

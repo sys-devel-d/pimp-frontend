@@ -1,6 +1,6 @@
 <div class="row">
 
-  <div class="col-md-4">
+  <div class="col-md-4 chat-col">
 
     <div id="user-search-container">
       <searchField
@@ -17,27 +17,27 @@
     <div id="room-container">
       <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
         <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
-          <div class="inline">{{ room | roomName }}</div>
-          <div class="inline pull-right edit-room-action">
-            <a *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)">&#9998;</a>
+          <div class="inline roomname">{{ room | roomName }}</div>
+          <div class="inline pull-right edit-room-actions">
+            <div class="unicode-action" *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)">&#9998;</div>
           </div>
-          <small>{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</small>
+          <div class="most-recent-message">{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</div>
         </div>
       </div>
     </div>
 
   </div>
 
-  <div class="col-md-8 pull-right">
+  <div class="col-md-8 pull-right chat-col">
+    <form (ngSubmit)="send()">
+      <input id="message-input" type="text" [(ngModel)]="text" class="form-control"
+        placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
+    </form>
     <div *ngIf="currentRoom" id="chat-message-container">
       <div class="chat-message" *ngFor='let message of currentRoom.messages'>
         [{{ message.creationDate | jdate }}] => {{message.userName}}: {{ message.message }}
       </div>
     </div>
-    <form (ngSubmit)="send()" style="margin: 10px 0">
-      <input type="text" [(ngModel)]="text" class="form-control"
-        placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
-    </form>
   </div>
 
 </div>
@@ -65,7 +65,7 @@
                   <h4>Füge Teilnehmer hinzu</h4>
                   <div *ngFor="let user of groupChatUsers">
                     <div>
-                      <a class="group-user-selection" (click)="addUserToSelectedGroupUsers(user)">&#43;</a>
+                      <a class="unicode-action" (click)="addUserToSelectedGroupUsers(user)">&#43;</a>
                       {{ user.firstName }} {{ user.lastName }} ({{ user.userName }})
                     </div>
                   </div>
@@ -74,7 +74,7 @@
                 <div class="col-md-6">
                   <h4>{{ isInChatRoomEditMode ? 'Teilnehmer' : 'Hinzugefügt'}}: {{ selectedGroupChatUsers.length }}</h4>
                   <div *ngFor="let user of selectedGroupChatUsers">
-                    <a *ngIf="!isInChatRoomEditMode" class="group-user-selection" (click)="removeUserFromSelectedGroupUsers(user)">&#8722;</a>
+                    <a *ngIf="!isInChatRoomEditMode" class="unicode-action" (click)="removeUserFromSelectedGroupUsers(user)">&#8722;</a>
                     {{ user.userName }}
                   </div>
                 </div>

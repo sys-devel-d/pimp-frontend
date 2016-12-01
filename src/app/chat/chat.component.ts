@@ -98,9 +98,12 @@ export class ChatComponent implements OnInit {
   }
 
   private send() {
-    if(this.text != "") {
-      this.messageService.publish(this.currentRoom.roomName, this.text);
+    if(/\S/.test(this.text) && this.text != null) {
+      this.messageService.publish(this.currentRoom.roomName, this.text.trim());
       this.text = "";
+    }
+    else {
+      shakeInput('#message-input');
     }
   }
 
