@@ -36,7 +36,7 @@ export class AuthService {
         return token && true;
       })
       .catch( (error:any) => {
-        const err = (400 >= error.status && error.status < 500) ?
+        const err = (400 <= error.status && error.status < 500) ?
                     'Username or password is wrong' : 'Server Error'
         return Observable.throw(err)
       });

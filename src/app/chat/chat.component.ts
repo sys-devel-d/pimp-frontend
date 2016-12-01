@@ -68,6 +68,14 @@ export class ChatComponent implements OnInit {
       const users = Array.from(this.selectedGroupChatUsers);
       this.messageService.initChatWith(users, Globals.CHATROOM_TYPE_GROUP, this.groupChatDisplayName);
       $('#chat-modal').modal('hide');
+      this.selectedGroupChatUsers.clear();
+      this.groupChatDisplayName = null;
+    }
+    else {
+      $('#groupDisplayName').addClass('invalid-params');
+      setTimeout( () => {
+        $('#groupDisplayName').removeClass('invalid-params');
+      }, 500);
     }
   }
 
