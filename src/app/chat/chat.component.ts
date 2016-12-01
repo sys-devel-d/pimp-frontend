@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from '../services/message.service';
-import { Message } from '../models/message';
+import { Message, User, Room } from '../models/base';
 import { UserService } from "../services/user.service";
-import { User } from "../models/user";
 import { Globals } from '../commons/globals'
-import Room from '../models/room';
+import { shakeInput } from '../commons/dom-functions'
 declare var $:any;
 
 @Component({
@@ -72,10 +71,7 @@ export class ChatComponent implements OnInit {
       this.groupChatDisplayName = null;
     }
     else {
-      $('#groupDisplayName').addClass('invalid-params');
-      setTimeout( () => {
-        $('#groupDisplayName').removeClass('invalid-params');
-      }, 500);
+      shakeInput('#groupDisplayName');
     }
   }
 

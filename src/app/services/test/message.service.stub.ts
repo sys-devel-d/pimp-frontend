@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MessageService } from '../message.service';
 import { Observable } from "rxjs";
-import { Message } from '../../models/message';
+import { Message, Room } from '../../models/base';
 import { Http } from '@angular/http';
-import Room from '../../models/room';
 import { Globals } from '../../commons/globals'
 
 import { AuthServiceStub } from '../../services/test/auth.service.stub'
