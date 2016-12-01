@@ -12,18 +12,21 @@ declare var $:any;
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
+  // The message being typed
   text: string;
   rooms: Room[];
   currentRoom: Room;
   roomBeingEdited: Room;
   isInChatRoomEditMode: boolean = false;
   error: string;
+  // Users found by search
   users: User[];
+  // Users added to group
   selectedGroupChatUsers: User[] = [];
   // All users available for selection
   groupChatUsers: User[];
-  // Users added to group
   groupChatDisplayName:string;
+  // The search term
   term: string;
   privateChatCallback: Function;
   groupChatCallback: Function;
@@ -112,14 +115,14 @@ export class ChatComponent implements OnInit {
     this.groupChatDisplayName = room.displayNames[Globals.HASH_KEY_DISPLAY_NAME_GROUP];
   }
 
-  editRoom(roomName:string) {
+  editRoom() {
     if(this.groupChatDisplayName) {
       const participants = this.selectedGroupChatUsers;
       for(let p of participants) {
         delete p['authorities']
       }
       const room = {
-        roomName,
+        roomName: this.roomBeingEdited.roomName,
         displayNames: {
           [Globals.HASH_KEY_DISPLAY_NAME_GROUP]: this.groupChatDisplayName
         },
