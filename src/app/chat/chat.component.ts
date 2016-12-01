@@ -17,8 +17,10 @@ export class ChatComponent implements OnInit {
   currentRoom: Room;
   error: string;
   users: User[];
-  selectedGroupChatUsers: Set<User> = new Set<User>();
+  selectedGroupChatUsers: User[] = [];
+  // All users available for selection
   groupChatUsers: User[];
+  // Users added to group
   groupChatDisplayName:string;
   term: string;
   privateChatCallback: Function;
@@ -64,10 +66,13 @@ export class ChatComponent implements OnInit {
 
   startGroupChat() {
     if(this.groupChatDisplayName) {
-      const users = Array.from(this.selectedGroupChatUsers);
-      this.messageService.initChatWith(users, Globals.CHATROOM_TYPE_GROUP, this.groupChatDisplayName);
+      this.messageService.initChatWith(
+        this.selectedGroupChatUsers,
+        Globals.CHATROOM_TYPE_GROUP,
+        this.groupChatDisplayName
+      );
       $('#chat-modal').modal('hide');
-      this.selectedGroupChatUsers.clear();
+      this.selectedGroupChatUsers = [];
       this.groupChatDisplayName = null;
     }
     else {
@@ -75,8 +80,11 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  fetchUsersForGroupChatSelectionAndOpenDialog() {
+  fetchUsersForGroupChatSelectionAndOpenDialog(firstUser?:User) {
     $('#chat-modal').modal('show');
+    if(firstUser) {
+      this.addUserToSelectedGroupUsers(firstUser);
+    }
     this.userService.getAllUsers()
       .subscribe( (users:User[]) => {
         this.groupChatUsers = users;
@@ -90,12 +98,15 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  addUserToSelectedGroupUsers(user) {
-    this.selectedGroupChatUsers.add(user);
+  addUserToSelectedGroupUsers(user: User) {
+    if(!this.selectedGroupChatUsers.find( usr => usr.userName == user.userName)) {
+      this.selectedGroupChatUsers.push(user);
+    }
   }
 
   removeUserFromSelectedGroupUsers(user: User) {
-    this.selectedGroupChatUsers.delete(user);
+    this.selectedGroupChatUsers =
+      this.selectedGroupChatUsers.filter( usr => usr.userName != user.userName);
   }
 
   ngOnInit() {
