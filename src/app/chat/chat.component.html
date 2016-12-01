@@ -6,9 +6,11 @@
       <searchField
         (update)="term = $event"
         (keyup)="searchForUser(term)"
-        [callbackOnSelection]="callbackOnSelection"
+        [privateChatCallback]="privateChatCallback"
+        [groupChatCallback]="groupChatCallback"
         [results]="users">
       </searchField>
+      <button class="btn btn-link" (click)="fetchUsersForGroupChatSelectionAndOpenDialog()">Neuer Grupperchat</button>
       <div *ngIf="error" class="alert alert-danger">{{error}}</div>
     </div>
 
@@ -45,17 +47,24 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" *ngIf="selectedUser">Chat mit {{ selectedUser.firstName }}</h4>
+        <h4 class="modal-title">Gruppenchat</h4>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6 centered-content">
-            <button class="btn btn-primary" (click)="startPrivatChat(selectedUser)">Privatchat</button>
+        
+          <div class="form-group">
+            <label for="groupDisplayName">Name des Chats</label>
+            <input id="groupDisplayName" type="text" [(ngModel)]="groupChatDisplayName" class="form-control"
+              placeholder="Affentheater" [ngModelOptions]="{standalone: true}">
           </div>
-          <div class="col-md-6 centered-content">
-            <button class="btn btn-default" (click)="startGroupChat()">Gruppenchat</button>
+
+          <div *ngFor="let user of groupChatUsers">
+            <input type="checkbox" (change)="addUserToSelectedGroupUsers($event, user)"/>
+            {{ user.firstName }} {{ user.lastName }} ({{ user.userName }})
           </div>
-        </div>
+          
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" (click)="startGroupChat()">OK</button>
       </div>
     </div>
   </div>

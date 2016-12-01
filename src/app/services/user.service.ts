@@ -34,4 +34,13 @@ export class UserService {
       .catch((error:any) => Observable
         .throw(error.json().error || 'Server error while searching for users.'));
   }
+
+  getAllUsers() {
+    return this.http
+      .get(
+        Globals.BACKEND + 'users/',
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map( (res: Response) => res.json() as User[])
+  }
 }

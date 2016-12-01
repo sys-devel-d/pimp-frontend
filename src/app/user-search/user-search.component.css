@@ -1,3 +1,11 @@
+a {
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
 .options {
   position: absolute;
   padding: 0;
@@ -7,17 +15,15 @@
   border-left: 1px solid;
   border-right: 1px solid;
   border-bottom: 1px solid;
-  width: 20rem;
+  width: 90%;
   background: #ffffff;
 }
 
-.element {
-  display: flex;
-  flex-direction: row;
-  padding: .8rem 1.3rem;
-  cursor: pointer;
+.result {
+  height: 30px;
+  padding: 4px;
 }
 
 .input {
-  width: 20rem;
+  width: 100%;
 }

@@ -18,15 +18,18 @@ export class ChatComponent implements OnInit {
   currentRoom: Room;
   error: string;
   users: User[];
+  selectedGroupChatUsers: Set<User> = new Set<User>();
+  groupChatUsers: User[];
+  groupChatDisplayName:string;
   term: string;
-  callbackOnSelection: Function;
-  selectedUser: User
-
+  privateChatCallback: Function;
+  groupChatCallback: Function;
 
   constructor(private messageService: MessageService, private userService: UserService) {
       this.messageService = messageService;
       this.userService = userService;
-      this.callbackOnSelection = this.searchCallback.bind(this);
+      this.privateChatCallback = this.startPrivatChat.bind(this);
+      this.groupChatCallback = this.fetchUsersForGroupChatSelectionAndOpenDialog.bind(this);
       
       /**
        * Need to subscribe to data changes in MessageService. At this time
@@ -58,23 +61,37 @@ export class ChatComponent implements OnInit {
 
   startPrivatChat(user: User) {
     this.messageService.initChatWith([user], Globals.CHATROOM_TYPE_PRIVATE);
-    $('#chat-modal').modal('hide');
   }
 
-  startGroupChat(displayName:string = 'Affenzirkus', users: User[] = []) {
-    this.messageService.initChatWith(users, Globals.CHATROOM_TYPE_GROUP, displayName);
-    $('#chat-modal').modal('hide');
+  startGroupChat() {
+    if(this.groupChatDisplayName) {
+      const users = Array.from(this.selectedGroupChatUsers);
+      this.messageService.initChatWith(users, Globals.CHATROOM_TYPE_GROUP, this.groupChatDisplayName);
+      $('#chat-modal').modal('hide');
+    }
   }
 
-  searchCallback(user: User) {
-    this.selectedUser = user;
+  fetchUsersForGroupChatSelectionAndOpenDialog() {
     $('#chat-modal').modal('show');
+    this.userService.getAllUsers()
+      .subscribe( (users:User[]) => {
+        this.groupChatUsers = users;
+      })
   }
 
   send() {
     if(this.text != "") {
       this.messageService.publish(this.currentRoom.roomName, this.text);
       this.text = "";
+    }
+  }
+
+  addUserToSelectedGroupUsers(event, user) {
+    if(event.target.checked) {
+      this.selectedGroupChatUsers.add(user);
+    }
+    else {
+      this.selectedGroupChatUsers.delete(user);
     }
   }
 
