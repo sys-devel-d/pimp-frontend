@@ -10,14 +10,17 @@
         [groupChatCallback]="groupChatCallback"
         [results]="users">
       </searchField>
-      <button class="btn btn-link" (click)="fetchUsersForGroupChatSelectionAndOpenDialog()">Neuer Grupperchat</button>
+      <button class="btn btn-link" (click)="fetchUsersForGroupChatSelectionAndOpenDialog()">Neuer Gruppenchat</button>
       <div *ngIf="error" class="alert alert-danger">{{error}}</div>
     </div>
 
     <div id="room-container">
       <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
         <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
-          <p>{{ room | roomName }}</p>
+          <div class="inline">{{ room | roomName }}</div>
+          <div class="inline pull-right edit-room-action">
+            <a *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)">&#9998;</a>
+          </div>
           <small>{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</small>
         </div>
       </div>
@@ -43,11 +46,11 @@
 <div id="chat-modal" class="modal fade">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header centered-content">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Gruppenchat</h4>
+        <h2 class="modal-title">Gruppenchat</h2>
       </div>
       <div class="modal-body">
           <div class="form-group">
@@ -69,9 +72,9 @@
                 </div>
 
                 <div class="col-md-6">
-                  <h4>Hinzugefügt: {{ selectedGroupChatUsers.size }}</h4>
+                  <h4>{{ isInChatRoomEditMode ? 'Teilnehmer' : 'Hinzugefügt'}}: {{ selectedGroupChatUsers.length }}</h4>
                   <div *ngFor="let user of selectedGroupChatUsers">
-                    <a class="group-user-selection" (click)="removeUserFromSelectedGroupUsers(user)">&#8722;</a>
+                    <a *ngIf="!isInChatRoomEditMode" class="group-user-selection" (click)="removeUserFromSelectedGroupUsers(user)">&#8722;</a>
                     {{ user.userName }}
                   </div>
                 </div>
@@ -80,7 +83,8 @@
           
       </div>
       <div class="modal-footer">
-        <button class="btn btn-default" (click)="startGroupChat()">OK</button>
+        <button *ngIf="!isInChatRoomEditMode" class="btn btn-default" (click)="startGroupChat()">OK</button>
+        <button *ngIf="isInChatRoomEditMode" class="btn btn-default" (click)="editRoom(roomBeingEdited.roomName)">Bearbeiten</button>
       </div>
     </div>
   </div>

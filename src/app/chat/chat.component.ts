@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { MessageService } from '../services/message.service';
 import { Message, User, Room } from '../models/base';
 import { UserService } from "../services/user.service";
 import { Globals } from '../commons/globals'
-import { shakeInput } from '../commons/dom-functions'
+import { shakeInput, showChatModal, hideChatModal } from '../commons/dom-functions'
 declare var $:any;
 
 @Component({
@@ -15,6 +15,8 @@ export class ChatComponent implements OnInit {
   text: string;
   rooms: Room[];
   currentRoom: Room;
+  roomBeingEdited: Room;
+  isInChatRoomEditMode: boolean = false;
   error: string;
   users: User[];
   selectedGroupChatUsers: User[] = [];
@@ -27,8 +29,6 @@ export class ChatComponent implements OnInit {
   groupChatCallback: Function;
 
   constructor(private messageService: MessageService, private userService: UserService) {
-      this.messageService = messageService;
-      this.userService = userService;
       this.privateChatCallback = this.startPrivatChat.bind(this);
       this.groupChatCallback = this.fetchUsersForGroupChatSelectionAndOpenDialog.bind(this);
       
@@ -71,9 +71,8 @@ export class ChatComponent implements OnInit {
         Globals.CHATROOM_TYPE_GROUP,
         this.groupChatDisplayName
       );
-      $('#chat-modal').modal('hide');
-      this.selectedGroupChatUsers = [];
-      this.groupChatDisplayName = null;
+      hideChatModal();
+      this.resetChatRoomBeingEdited();
     }
     else {
       shakeInput('#groupDisplayName');
@@ -81,7 +80,11 @@ export class ChatComponent implements OnInit {
   }
 
   fetchUsersForGroupChatSelectionAndOpenDialog(firstUser?:User) {
-    $('#chat-modal').modal('show');
+    if(this.isInChatRoomEditMode) {
+      this.resetChatRoomBeingEdited();
+    }
+    showChatModal();
+    this.isInChatRoomEditMode = false;
     if(firstUser) {
       this.addUserToSelectedGroupUsers(firstUser);
     }
@@ -95,6 +98,51 @@ export class ChatComponent implements OnInit {
     if(this.text != "") {
       this.messageService.publish(this.currentRoom.roomName, this.text);
       this.text = "";
+    }
+  }
+
+  prepareEditingRoom(room:Room) {
+    if(!this.isInChatRoomEditMode) {
+      this.resetChatRoomBeingEdited();
+    }
+    this.roomBeingEdited = room;
+    this.fetchUsersForGroupChatSelectionAndOpenDialog();
+    this.isInChatRoomEditMode = true;
+    this.selectedGroupChatUsers = room.participants;
+    this.groupChatDisplayName = room.displayNames[Globals.HASH_KEY_DISPLAY_NAME_GROUP];
+  }
+
+  editRoom(roomName:string) {
+    if(this.groupChatDisplayName) {
+      const participants = this.selectedGroupChatUsers;
+      for(let p of participants) {
+        delete p['authorities']
+      }
+      const room = {
+        roomName,
+        displayNames: {
+          [Globals.HASH_KEY_DISPLAY_NAME_GROUP]: this.groupChatDisplayName
+        },
+        participants: participants,
+        roomType: Globals.CHATROOM_TYPE_GROUP,
+        messages: []
+      }
+      this.messageService.editRoom(room).subscribe(
+        (editedRoom:Room) => {
+          hideChatModal();
+          this.isInChatRoomEditMode = false;
+          const i = this.rooms.findIndex( r => r.roomName == editedRoom.roomName);
+          /* We are not changing the messages. The ones coming back from the server
+             could be older than the ones on the client */
+          editedRoom.messages = this.rooms[i].messages;
+          this.rooms[i] = editedRoom;
+          this.resetChatRoomBeingEdited();
+        },
+        err => console.log(err)
+      );
+    }
+    else {
+      shakeInput('#groupDisplayName');
     }
   }
 
@@ -127,5 +175,11 @@ export class ChatComponent implements OnInit {
   private setError(err:string): void {
     this.error = err;
     setTimeout( () => this.error = '', 3000);
+  }
+
+  private resetChatRoomBeingEdited() {
+    this.selectedGroupChatUsers = [];
+    this.groupChatDisplayName = null;
+    this.roomBeingEdited = null;
   }
 }

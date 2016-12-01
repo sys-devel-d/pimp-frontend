@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
-import { Message } from '../models/message';
+import { Message, User, Room } from '../models/base';
 import { AuthService } from './auth.service';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { Observable, Subject } from 'rxjs';
-import { User } from '../models/user';
-import Room from '../models/room';
 
 @Injectable()
 export class MessageService {
@@ -122,6 +120,22 @@ export class MessageService {
       const existingMsgs = this.rooms.find( r => r.roomName == room.roomName).messages;
       existingMsgs.push(message);
     });
+  }
+
+  editRoom(room:Room) {
+    const { roomName, participants, displayNames } = room;
+    return this.http.patch(
+      Globals.BACKEND + "rooms/edit/",
+      {
+        roomName,
+        participants,
+        displayNames
+      },
+      { headers: this.authService.getTokenHeader() }
+    )
+    .map( (res: Response) => {
+      return res.json()
+    })
   }
 
   getCurrentRoom(): Room {
