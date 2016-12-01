@@ -13,23 +13,23 @@ declare var $:any;
 })
 export class ChatComponent implements OnInit {
   // The message being typed
-  text: string;
-  rooms: Room[];
-  currentRoom: Room;
-  roomBeingEdited: Room;
-  isInChatRoomEditMode: boolean = false;
-  error: string;
+  private text: string;
+  private rooms: Room[];
+  private currentRoom: Room;
+  private roomBeingEdited: Room;
+  private isInChatRoomEditMode: boolean = false;
+  private error: string;
   // Users found by search
-  users: User[];
+  private users: User[];
   // Users added to group
-  selectedGroupChatUsers: User[] = [];
+  private selectedGroupChatUsers: User[] = [];
   // All users available for selection
-  groupChatUsers: User[];
-  groupChatDisplayName:string;
+  private groupChatUsers: User[];
+  private groupChatDisplayName:string;
   // The search term
-  term: string;
-  privateChatCallback: Function;
-  groupChatCallback: Function;
+  private term: string;
+  private privateChatCallback: Function;
+  private groupChatCallback: Function;
 
   constructor(private messageService: MessageService, private userService: UserService) {
       this.privateChatCallback = this.startPrivatChat.bind(this);
@@ -53,7 +53,7 @@ export class ChatComponent implements OnInit {
       });
   }
 
-  searchForUser() {
+  private searchForUser() {
     if (this.term.length >= 3) {
       this.userService.search(this.term)
         .subscribe(
@@ -63,11 +63,11 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  startPrivatChat(user: User) {
+  private startPrivatChat(user: User) {
     this.messageService.initChatWith([user], Globals.CHATROOM_TYPE_PRIVATE);
   }
 
-  startGroupChat() {
+  private startGroupChat() {
     if(this.groupChatDisplayName) {
       this.messageService.initChatWith(
         this.selectedGroupChatUsers,
@@ -82,7 +82,7 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  fetchUsersForGroupChatSelectionAndOpenDialog(firstUser?:User) {
+  private fetchUsersForGroupChatSelectionAndOpenDialog(firstUser?:User) {
     if(this.isInChatRoomEditMode) {
       this.resetChatRoomBeingEdited();
     }
@@ -97,14 +97,14 @@ export class ChatComponent implements OnInit {
       })
   }
 
-  send() {
+  private send() {
     if(this.text != "") {
       this.messageService.publish(this.currentRoom.roomName, this.text);
       this.text = "";
     }
   }
 
-  prepareEditingRoom(room:Room) {
+  private prepareEditingRoom(room:Room) {
     if(!this.isInChatRoomEditMode) {
       this.resetChatRoomBeingEdited();
     }
@@ -115,7 +115,7 @@ export class ChatComponent implements OnInit {
     this.groupChatDisplayName = room.displayNames[Globals.HASH_KEY_DISPLAY_NAME_GROUP];
   }
 
-  editRoom() {
+  private editRoom() {
     if(this.groupChatDisplayName) {
       const participants = this.selectedGroupChatUsers;
       for(let p of participants) {
@@ -149,13 +149,13 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  addUserToSelectedGroupUsers(user: User) {
+  private addUserToSelectedGroupUsers(user: User) {
     if(!this.selectedGroupChatUsers.find( usr => usr.userName == user.userName)) {
       this.selectedGroupChatUsers.push(user);
     }
   }
 
-  removeUserFromSelectedGroupUsers(user: User) {
+  private removeUserFromSelectedGroupUsers(user: User) {
     this.selectedGroupChatUsers =
       this.selectedGroupChatUsers.filter( usr => usr.userName != user.userName);
   }
@@ -165,7 +165,7 @@ export class ChatComponent implements OnInit {
     this.rooms = this.messageService.getRooms();
   }
 
-  setCurrentRoom(room:Room) {
+  private setCurrentRoom(room:Room) {
     this.messageService.setCurrentRoom(room);
     this.currentRoom = room;
   }
