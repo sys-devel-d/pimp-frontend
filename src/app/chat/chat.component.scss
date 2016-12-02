@@ -1,0 +1,56 @@
+#chat-message-container {
+    height: 300px;
+    overflow: auto;
+    margin: 10px 5px;
+
+    .chat-message {
+        word-wrap: break-word;
+        width: calc(100%);
+    }
+}
+
+.chat-col {
+    padding: 10px;
+}
+
+.room-container {
+
+    .roomname {
+        font-weight: 600;
+    }
+
+    .room-content {
+        cursor: pointer;
+        height: 100%;
+        padding: 8px;
+    }
+
+    background-color: darkgray;
+    margin-bottom: 1px;
+    height: 50px;
+    width: calc(100%);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    p {
+        margin: 0;
+    }
+
+    &.selected {
+        background-color: lightgray;
+    }
+
+    .edit-room-actions {
+        padding: 8px;
+        text-align: right;
+        height: 100%;
+    }
+
+    .most-recent-message {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 11px;
+    }
+}

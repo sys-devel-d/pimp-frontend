@@ -1,51 +1,47 @@
-<div>
-  <label>User</label>
-  <searchField
-    (update)="term = $event"
-    (keyup)="searchForUser(term)"
-    [callbackOnSelection]="callbackOnSelection"
-    [results]="users">
-  </searchField>
-  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
-</div>
-<div id="chat-message-container">
-  <div class="chat-message" *ngFor='let message of currentMessages'>
-    [{{message.date.toLocaleString()}}] => {{message.userName}}: {{ message.message }}
-  </div>
-</div>
-<form (ngSubmit)="send()" style="margin: 10px 0">
-  <input type="text" [(ngModel)]="text" class="form-control"
-    placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
-</form>
-<div>
-  <span>Change room: </span>
-  <div id="change-room-btn-container">
-    <button *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
-      {{room}}
-    </button>
-  </div>
-</div>
+<div class="row">
 
-<!-- Modal that is shown when you click on a user in search results -->
-<div id="chat-modal" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" *ngIf="selectedUser">Chat mit {{ selectedUser.firstName }}</h4>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6 centered-content">
-            <button class="btn btn-primary" (click)="startPrivatChat(selectedUser)">Privatchat</button>
+  <div class="col-md-4 chat-col">
+
+    <div id="user-search-container">
+      <searchField
+        (update)="term = $event"
+        (keyup)="searchForUser(term)"
+        [privateChatCallback]="privateChatCallback"
+        [groupChatCallback]="groupChatCallback"
+        [results]="users">
+      </searchField>
+      <button class="btn btn-link" (click)="fetchUsersForSelectionAndOpenDialog()">Neuer Gruppenchat</button>
+      <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+    </div>
+
+    <div id="room-container">
+      <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
+        <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
+          <div class="col-md-8 room-content">
+            <div class="roomname">{{ room | roomName }}</div>
+            <div class="most-recent-message">{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</div>
           </div>
-          <div class="col-md-6 centered-content">
-            <button class="btn btn-default">Gruppenchat</button>
+          <div class="col-md-4 edit-room-actions">
+            <div class="unicode-action" *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)">&#9998;</div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
+
+  <div class="col-md-8 pull-right chat-col">
+    <form (ngSubmit)="send()">
+      <input id="message-input" type="text" [(ngModel)]="text" class="form-control"
+        placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
+    </form>
+    <div *ngIf="currentRoom" id="chat-message-container">
+      <div class="chat-message" *ngFor='let message of currentRoom.messages'>
+        [{{ message.creationDate | jdate }}] => {{message.userName}}: {{ message.message }}
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<group-chat-editor [updateRoom]="updateRoomCallback"></group-chat-editor>

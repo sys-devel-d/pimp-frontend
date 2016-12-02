@@ -7,6 +7,7 @@ import { CalendarModule } from 'angular-calendar'
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { ChatComponent } from './chat/chat.component';
+import GroupChatEditorComponent from './chat/editor/group-chat-editor.component';
 import { LoginComponent } from './login/login.component';
 import { RouterModule } from "@angular/router";
 import { ProfileComponent } from './profile/profile.component';
@@ -18,18 +19,23 @@ import { UserService } from "./services/user.service";
 import { MessageService } from "./services/message.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
+import { JDatePipe } from './pipes/jdate.pipe'
+import { RoomNamePipe } from './pipes/room-name.pipe'
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarComponent,
     ChatComponent,
+    GroupChatEditorComponent,
     LoginComponent,
     ProfileComponent,
     PageNotFoundComponent,
     RegisterComponent,
     UserSearchComponent,
-    HighlightDirective
+    HighlightDirective,
+    JDatePipe,
+    RoomNamePipe
   ],
   imports: [
     BrowserModule,

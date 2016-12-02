@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
-import { User } from "../models/user";
+import { User } from "../models/base";
 import { Router } from "@angular/router";
 
 
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.authService.login(this.user.username, this.user.password)
+    this.authService.login(this.user.userName, this.user.password)
       .subscribe(
         result => {
           if (result === true) {

@@ -1,49 +1,50 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MessageService } from '../services/message.service';
-import { Message, MessageCollection } from '../models/message';
+import { Message, User, Room } from '../models/base';
 import { UserService } from "../services/user.service";
-import { User } from "../models/user";
+import { Globals } from '../commons/globals'
+import { shakeInput } from '../commons/dom-functions'
+import GroupChatEditorComponent from './editor/group-chat-editor.component'
 declare var $:any;
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-  currentRoom: string;
-  text: string;
-  messages: MessageCollection;
-  currentMessages: Message[];
-  rooms: string[];
-  error: string;
-  users: User[];
-  term: string;
-  callbackOnSelection: Function;
-  selectedUser: User
 
+  @ViewChild(GroupChatEditorComponent) groupChatEditor: GroupChatEditorComponent;
+
+  // The message being typed
+  private text: string;
+  private rooms: Room[];
+  private currentRoom: Room;
+  private error: string;
+  // Users found by search
+  private users: User[];
+  // The search term
+  private term: string;
+  private privateChatCallback: Function;
+  private groupChatCallback: Function;
+  private updateRoomCallback: Function;
 
   constructor(private messageService: MessageService, private userService: UserService) {
-      this.messageService = messageService;
-      this.userService = userService;
-      this.callbackOnSelection = this.searchCallback.bind(this);
+      this.privateChatCallback = this.startPrivatChat.bind(this);
+      this.groupChatCallback = this.fetchUsersForSelectionAndOpenDialog.bind(this);
+      this.updateRoomCallback = this.updateRoom.bind(this);
       
       /**
        * Need to subscribe to data changes in MessageService. At this time
        * the init() method of MessageService might not be finished with its
        * request.
        */
-      this.messageService.currentRoomChange.subscribe( currentRoom => {
+      this.messageService.currentRoomChange.subscribe( (currentRoom:Room) => {
         this.currentRoom = currentRoom;
-        this.currentMessages = this.messages[currentRoom];
       });
 
-      this.messageService.roomsChange.subscribe ( rooms => {
+      this.messageService.roomsChange.subscribe ( (rooms:Room[]) => {
         this.rooms = rooms;
-      });
-
-      this.messageService.messagesChange.subscribe( messages => {
-        this.messages = messages;
       });
 
       this.messageService.chatErrorMessageChange.subscribe( err => {
@@ -51,47 +52,55 @@ export class ChatComponent implements OnInit {
       });
   }
 
-  searchForUser() {
+  private updateRoom(editedRoom: Room) {
+    const i = this.rooms.findIndex( r => r.roomName == editedRoom.roomName );
+    /* We are not changing the messages. The ones coming back from the server
+        could be older than the ones on the client */
+    editedRoom.messages = this.rooms[i].messages;
+    this.rooms[i] = editedRoom;
+  }
+
+  private fetchUsersForSelectionAndOpenDialog() {
+    this.groupChatEditor.fetchUsersForSelectionAndOpenDialog();
+  }
+
+  private prepareEditingRoom(room: Room) {
+    this.groupChatEditor.prepareEditingRoom(room);
+  }
+
+  private searchForUser() {
     if (this.term.length >= 3) {
       this.userService.search(this.term)
         .subscribe(
-          res => {
-            //filter for users with no room open and filter myself out
-            this.users = res;
-          },
+          (users: User[]) => this.users = users,
           err => this.setError(err)
         );
     }
   }
 
-  startPrivatChat(user: User) {
-    this.messageService.initPrivateChat(user);
-    $('#chat-modal').modal('hide');
+  private startPrivatChat(user: User) {
+    this.messageService.initChatWith([user], Globals.CHATROOM_TYPE_PRIVATE);
   }
 
-  searchCallback(user: User) {
-    this.selectedUser = user;
-    $('#chat-modal').modal('show');
-  }
 
-  send() {
-    if(this.text != "") {
-      this.messageService.publish(this.currentRoom, this.text);
+  private send() {
+    if(/\S/.test(this.text) && this.text != null) {
+      this.messageService.publish(this.currentRoom.roomName, this.text.trim());
       this.text = "";
+    }
+    else {
+      shakeInput('#message-input');
     }
   }
 
   ngOnInit() {
     this.currentRoom = this.messageService.getCurrentRoom();
     this.rooms = this.messageService.getRooms();
-    this.messages = this.messageService.getMessages();
-    this.currentMessages = this.messages[this.currentRoom];
   }
 
-  setCurrentRoom(room) {
+  private setCurrentRoom(room:Room) {
     this.messageService.setCurrentRoom(room);
     this.currentRoom = room;
-    this.currentMessages = this.messages[room];
   }
 
   ngOnDestroy() {

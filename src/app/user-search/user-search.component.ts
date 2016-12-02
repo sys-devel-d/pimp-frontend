@@ -8,7 +8,8 @@ import {Component, Output, EventEmitter, OnInit, Input} from '@angular/core';
 export class UserSearchComponent implements OnInit {
   @Output() update = new EventEmitter();
   @Input() results: Object[];
-  @Input() callbackOnSelection: Function;
+  @Input() privateChatCallback: Function;
+  @Input() groupChatCallback: Function;
   term: string;
 
   ngOnInit() {
@@ -21,8 +22,15 @@ export class UserSearchComponent implements OnInit {
     this.update.emit('');
   }
 
-  select(item) {
-    this.callbackOnSelection(item);
+  privateChat(item) {
+    this.privateChatCallback(item);
     this.results = [];
+    this.term = '';
+  }
+
+  groupChat(item) {
+    this.groupChatCallback(item);
+    this.results = [];
+    this.term = '';
   }
 }

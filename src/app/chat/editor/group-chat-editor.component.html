@@ -1,0 +1,46 @@
+<div id="chat-modal" class="modal fade">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header centered-content">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h2 class="modal-title">Gruppenchat</h2>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="groupDisplayName">Name des Chats</label>
+            <input id="groupDisplayName" type="text" [(ngModel)]="displayName" class="form-control"
+              placeholder="Weihnachtsfeier im Artemis" required>
+          </div>
+
+          <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                  <h4>Füge Teilnehmer hinzu</h4>
+                  <div *ngFor="let user of fetchedUsers">
+                    <div>
+                      <a class="unicode-action" (click)="addToSelectedUsers(user)">&#43;</a>
+                      {{ user.firstName }} {{ user.lastName }} ({{ user.userName }})
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <h4>{{ isInEditMode ? 'Teilnehmer' : 'Hinzugefügt'}}: {{ selectedUsers ? selectedUsers.length : 0 }}</h4>
+                  <div *ngFor="let user of selectedUsers">
+                    <a *ngIf="!isInEditMode" class="unicode-action" (click)="removeFromSelectedUsers(user)">&#8722;</a>
+                    {{ user.userName }}
+                  </div>
+                </div>
+              </div>
+          </div>
+          
+      </div>
+      <div class="modal-footer">
+        <button *ngIf="!isInEditMode" class="btn btn-primary" (click)="startGroupChat()">OK</button>
+        <button *ngIf="isInEditMode" class="btn btn-primary" (click)="editRoom()">Bearbeiten</button>
+      </div>
+    </div>
+  </div>
+</div>

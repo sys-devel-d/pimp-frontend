@@ -10,7 +10,7 @@ export class AuthServiceStub extends AuthService {
 
     }
 
-    login(username, password) {
+    login(userName, password) {
         return Observable.of(true);
     }
 

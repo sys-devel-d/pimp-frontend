@@ -1,16 +1,23 @@
-<div>
-  <h1>{{title}}</h1>
-</div>
-<div>
-<div>
-  <nav>
-    <a routerLink="/profile" routerLinkActive="active">Profile</a>
-    <a routerLink="/chat" routerLinkActive="active">Chat</a>
-    <a routerLink="/calendar" routerLinkActive="active">Calendar</a>
-    <a routerLink="/login" routerLinkActive="active" (click)="logout()">Logout</a>
-  </nav>
-</div>
-  <div>
-    <router-outlet></router-outlet>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2">
+      <h1>{{title}}</h1>
+
+      <div>
+        <nav>
+          <ul>
+            <li> <a routerLink="/profile" routerLinkActive="active">Profile</a>                 </li>
+            <li> <a routerLink="/chat" routerLinkActive="active">Chat</a>                       </li>
+            <li> <a routerLink="/calendar" routerLinkActive="active">Calendar</a>               </li>
+            <li> <a routerLink="/login" routerLinkActive="active" (click)="logout()">Logout</a> </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="col-md-10">
+      <router-outlet></router-outlet>
+    </div>
+
   </div>
 </div>
