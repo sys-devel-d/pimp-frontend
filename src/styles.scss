@@ -23,18 +23,7 @@ div.inline {
     -moz-animation: shake .5s linear;
 }
 
-.unicode-action {
-    color: #337ab7;
-    font-size: 17px;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    &:hover {
-        text-decoration: none;
-    }
-}
-
- @-webkit-keyframes shake {
+@-webkit-keyframes shake {
     8%, 41% {
         -webkit-transform: translateX(-10px);
     }

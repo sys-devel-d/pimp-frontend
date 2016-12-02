@@ -17,10 +17,10 @@
           <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
-                  <h4>Füge Teilnehmer hinzu</h4>
+                  <h4>Füge Teilnehmer hinzu:</h4>
                   <div *ngFor="let user of fetchedUsers">
                     <div>
-                      <a class="unicode-action" (click)="addToSelectedUsers(user)">&#43;</a>
+                      <i (click)="addToSelectedUsers(user)" class="fa fa-plus select-action" aria-hidden="true"></i>
                       {{ user.firstName }} {{ user.lastName }} ({{ user.userName }})
                     </div>
                   </div>
@@ -29,7 +29,7 @@
                 <div class="col-md-6">
                   <h4>{{ isInEditMode ? 'Teilnehmer' : 'Hinzugefügt'}}: {{ selectedUsers ? selectedUsers.length : 0 }}</h4>
                   <div *ngFor="let user of selectedUsers">
-                    <a *ngIf="!isInEditMode" class="unicode-action" (click)="removeFromSelectedUsers(user)">&#8722;</a>
+                    <i class="fa fa-minus select-action" aria-hidden="true" *ngIf="!isInEditMode" (click)="removeFromSelectedUsers(user)"></i>
                     {{ user.userName }}
                   </div>
                 </div>

@@ -7,14 +7,15 @@ import { shakeInput, showChatModal, hideChatModal } from '../../commons/dom-func
 
 @Component({
   selector: 'group-chat-editor',
-  templateUrl: './group-chat-editor.component.html'
+  templateUrl: './group-chat-editor.component.html',
+  styleUrls: ['./group-chat-editor.component.scss']
 })
 export default class GroupChatEditorComponent {
     @Input() updateRoom: Function;
 
     displayName: string;
     fetchedUsers: User[];
-    selectedUsers: User[];
+    selectedUsers: User[] = [];
     isInEditMode: boolean = false;
     roomBeingEdited: Room;
 

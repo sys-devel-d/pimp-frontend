@@ -93,6 +93,10 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  exitRoom(room: Room): void {
+    this.messageService.exitRoom(room);
+  }
+
   ngOnInit() {
     this.currentRoom = this.messageService.getCurrentRoom();
     this.rooms = this.messageService.getRooms();

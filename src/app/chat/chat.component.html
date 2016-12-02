@@ -22,7 +22,8 @@
             <div class="most-recent-message">{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</div>
           </div>
           <div class="col-md-4 edit-room-actions">
-            <div class="unicode-action" *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)">&#9998;</div>
+            <i title="Bearbeiten" class="fa fa-pencil-square-o" aria-hidden="true" *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)"></i>
+            <i title="Verlassen" class="fa fa-sign-out" aria-hidden="true" *ngIf="room.roomType == 'GROUP'" (click)="exitRoom(room)"></i>
           </div>
         </div>
       </div>

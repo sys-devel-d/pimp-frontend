@@ -12,6 +12,7 @@ export class MessageService {
 
   private socket: any;
   private stompClient: any;
+  private stompSubscriptions: Object = {};
   connected = false;
   private currentRoom: Room;
   currentRoomChange: Subject<Room> = new Subject<Room>();
@@ -114,12 +115,36 @@ export class MessageService {
     }, err => console.log('err', err) );
   }
 
+  private handleIncomingMessage(roomName: string, { body }) {
+    let message: Message = JSON.parse(body);
+    const existingMsgs = this.rooms.find( r => r.roomName == roomName).messages;
+    existingMsgs.push(message);
+  }
+
   private subscribeToRoom(room: Room): void {
-    this.stompClient.subscribe('/rooms/message/' + room.roomName, ( { body } ) => {
-      let message: Message = JSON.parse(body);
-      const existingMsgs = this.rooms.find( r => r.roomName == room.roomName).messages;
-      existingMsgs.push(message);
-    });
+    const subscription = this.stompClient.subscribe(
+      '/rooms/message/' + room.roomName,
+      this.handleIncomingMessage.bind(this, room.roomName)
+    );
+    this.stompSubscriptions[room.roomName] = subscription;
+  }
+
+  exitRoom(room: Room) {
+    for(let user of room.participants) {
+      delete user['authorities']
+    }
+    return this.http.patch(
+      Globals.BACKEND + 'rooms/exit/' + room.roomName,
+      room,
+      { headers: this.authService.getTokenHeader() }
+    ).subscribe(
+      response => {
+        this.stompSubscriptions[room.roomName].unsubscribe();
+        this.rooms = this.rooms.filter( r => r.roomName != room.roomName );
+        this.roomsChange.next(this.rooms);
+      },
+      err => console.log(err)
+    )
   }
 
   editRoom(room:Room) {
