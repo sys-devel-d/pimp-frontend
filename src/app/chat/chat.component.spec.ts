@@ -9,6 +9,7 @@ import { MessageServiceStub } from '../services/test/message.service.stub';
 import { UserServiceStub } from '../services/test/user.service.stub';
 
 import { UserSearchComponent } from "../user-search/user-search.component";
+import GroupChatEditorComponent from '../chat/editor/group-chat-editor.component' 
 import { FormsModule } from '@angular/forms';
 import { HighlightDirective } from '../directives/highlight.directive';
 import { JDatePipe } from '../pipes/jdate.pipe'
@@ -26,7 +27,14 @@ describe('ChatComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule ],
-      declarations: [ ChatComponent, UserSearchComponent, HighlightDirective, JDatePipe, RoomNamePipe ],
+      declarations: [ 
+        ChatComponent,
+        UserSearchComponent,
+        HighlightDirective,
+        JDatePipe,
+        RoomNamePipe,
+        GroupChatEditorComponent
+      ],
       providers: [
         {
           provide: MessageService, useClass: MessageServiceStub

@@ -7,6 +7,7 @@ import { CalendarModule } from 'angular-calendar'
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { ChatComponent } from './chat/chat.component';
+import GroupChatEditorComponent from './chat/editor/group-chat-editor.component';
 import { LoginComponent } from './login/login.component';
 import { RouterModule } from "@angular/router";
 import { ProfileComponent } from './profile/profile.component';
@@ -26,6 +27,7 @@ import { RoomNamePipe } from './pipes/room-name.pipe'
     AppComponent,
     CalendarComponent,
     ChatComponent,
+    GroupChatEditorComponent,
     LoginComponent,
     ProfileComponent,
     PageNotFoundComponent,

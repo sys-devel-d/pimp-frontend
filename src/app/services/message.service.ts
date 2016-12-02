@@ -123,13 +123,14 @@ export class MessageService {
   }
 
   editRoom(room:Room) {
-    const { roomName, participants, displayNames } = room;
+    const { roomName, participants, displayNames, roomType } = room;
     return this.http.patch(
       Globals.BACKEND + "rooms/edit/",
       {
         roomName,
         participants,
-        displayNames
+        displayNames,
+        roomType
       },
       { headers: this.authService.getTokenHeader() }
     )
