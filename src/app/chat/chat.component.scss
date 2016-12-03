@@ -46,6 +46,9 @@
         padding: 8px;
         text-align: right;
         height: 100%;
+        i {
+            cursor: pointer;
+        }
     }
 
     .most-recent-message {
