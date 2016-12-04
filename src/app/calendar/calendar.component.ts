@@ -35,7 +35,16 @@ export class CalendarComponent {
 
   activeDayIsOpen: boolean = true;
 
-  actions: CalendarEventAction[] = [];
+  actions: CalendarEventAction[] = [{
+    label: '<i class="fa fa-fw fa-pencil"></i>',
+    onClick: ({event}: {event: CalendarEvent}): void => {
+    }
+  }, {
+    label: '<i class="fa fa-fw fa-times"></i>',
+    onClick: ({event}: {event: CalendarEvent}): void => {
+      this.events = this.events.filter(e => e !== event);
+    }
+  }];
 
   refresh: Subject<any> = new Subject();
 
@@ -43,12 +52,14 @@ export class CalendarComponent {
     start: new Date(2016, 10, 29, 12, 15),
     end: new Date(2016, 10, 29, 13, 0),
     title: 'Spring Präsentation',
-    color: colors.red
+    color: colors.red,
+    actions: this.actions
   }, {
     start: new Date(2016, 10, 15),
     end: new Date(2016, 10, 29),
     title: 'Zweiter Sprint',
-    color: colors.yellow
+    color: colors.yellow,
+    actions: this.actions
   }];
 
   increment(): void {
