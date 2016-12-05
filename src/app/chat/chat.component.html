@@ -1,6 +1,6 @@
 <div class="row">
 
-  <div class="col-md-3">
+  <div class="col-md-3 chat-overview">
 
     <div id="user-search-container">
       <searchField
@@ -11,7 +11,7 @@
         [results]="users">
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
       </searchField>
-      <button class="btn btn-default" (click)="fetchUsersForSelectionAndOpenDialog()">
+      <button class="btn btn-default btn-add-group" (click)="fetchUsersForSelectionAndOpenDialog()">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         Neuer Gruppenchat</button>
       <div *ngIf="error" class="alert alert-danger">{{error}}</div>
@@ -37,7 +37,7 @@
   <div class="col-md-9 pull-right chat-col">
     <div *ngIf="currentRoom" id="chat-message-container">
       <div class="panel panel-default chat-message" *ngFor='let message of currentRoom.messages'>
-        <div class="panel-body">
+        <div class="panel-body chat-message-body">
           <span class="date">{{ message.creationDate | jdate }}</span>
           <div>
            <span class="name">{{ message.userName }}: </span>

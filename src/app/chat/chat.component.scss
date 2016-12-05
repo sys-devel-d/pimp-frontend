@@ -5,40 +5,37 @@
     .chat-message {
         word-wrap: break-word;
         width: calc(100%);
+        margin-bottom: 5px;
+    }
+
+    .chat-message-body {
+        padding: 8px;
+    }
+
+    .date {
+        font-size : 80%;
+    }
+
+    .name {
+        font-weight: bold;
     }
 }
 
-.col-md-3 {
+.chat-overview {
     box-shadow: 1px 0 0 #ccc;
     height: 75vh;
-}
 
-.btn-default {
-    margin: 5px 0;
+  .btn-add-group {
+      margin: 5px 0;
+  }
 }
 
 .chat-col {
-    padding: 10px;
+    padding: 0 10px;
 
     .message-input {
       margin-top: 10px;
     }
-}
-
-.panel {
-    margin-bottom: 5px;
-}
-
-.panel-body {
-    padding: 8px;
-}
-
-.date {
-    font-size : 80%;
-}
-
-.name {
-    font-weight: bold;
 }
 
 .room-container {

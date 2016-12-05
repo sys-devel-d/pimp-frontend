@@ -3,13 +3,13 @@
     <h1>{{title}}</h1>
   </div>
   <div class="row">
-    <div class="col-md-1">
+    <div class="col-md-1 pimp-navbar">
 
       <ul class="nav nav-pills nav-stacked">
-        <li> <a routerLink="/chat" routerLinkActive="active">Chat</a>                       </li>
-        <li> <a routerLink="/calendar" routerLinkActive="active">Kalender</a>               </li>
-        <li> <a routerLink="/profile" routerLinkActive="active">Profil</a>                 </li>
-        <li> <a routerLink="/login" routerLinkActive="active" (click)="logout()">Logout</a> </li>
+        <li> <a routerLink="/chat" routerLinkActive="active" class="link">Chat</a> </li>
+        <li> <a routerLink="/calendar" routerLinkActive="active" class="link">Kalender</a> </li>
+        <li> <a routerLink="/profile" routerLinkActive="active" class="link">Profil</a>  </li>
+        <li> <a routerLink="/login" routerLinkActive="active" (click)="logout()" class="link">Logout</a> </li>
       </ul>
     </div>
 
