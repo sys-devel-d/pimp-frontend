@@ -1,6 +1,6 @@
 <div class="row">
 
-  <div class="col-md-4 chat-col">
+  <div class="col-md-3">
 
     <div id="user-search-container">
       <searchField
@@ -9,8 +9,11 @@
         [privateChatCallback]="privateChatCallback"
         [groupChatCallback]="groupChatCallback"
         [results]="users">
+        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
       </searchField>
-      <button class="btn btn-link" (click)="fetchUsersForSelectionAndOpenDialog()">Neuer Gruppenchat</button>
+      <button class="btn btn-default" (click)="fetchUsersForSelectionAndOpenDialog()">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        Neuer Gruppenchat</button>
       <div *ngIf="error" class="alert alert-danger">{{error}}</div>
     </div>
 
@@ -31,16 +34,22 @@
 
   </div>
 
-  <div class="col-md-8 pull-right chat-col">
-    <form (ngSubmit)="send()">
-      <input id="message-input" type="text" [(ngModel)]="text" class="form-control"
-        placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
-    </form>
+  <div class="col-md-9 pull-right chat-col">
     <div *ngIf="currentRoom" id="chat-message-container">
-      <div class="chat-message" *ngFor='let message of currentRoom.messages'>
-        [{{ message.creationDate | jdate }}] => {{message.userName}}: {{ message.message }}
+      <div class="panel panel-default chat-message" *ngFor='let message of currentRoom.messages'>
+        <div class="panel-body">
+          <span class="date">{{ message.creationDate | jdate }}</span>
+          <div>
+           <span class="name">{{ message.userName }}: </span>
+           <span class="message">{{ message.message }}</span>
+          </div>
+        </div>
       </div>
     </div>
+    <form (ngSubmit)="send()">
+      <input id="message-input" type="text" [(ngModel)]="text" class="form-control message-input"
+             placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
+    </form>
   </div>
 
 </div>

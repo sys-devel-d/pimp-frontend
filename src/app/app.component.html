@@ -1,18 +1,16 @@
 <div class="container-fluid">
+  <div class="page-header">
+    <h1>{{title}}</h1>
+  </div>
   <div class="row">
-    <div class="col-md-2">
-      <h1>{{title}}</h1>
+    <div class="col-md-1">
 
-      <div>
-        <nav>
-          <ul>
-            <li> <a routerLink="/profile" routerLinkActive="active">Profile</a>                 </li>
-            <li> <a routerLink="/chat" routerLinkActive="active">Chat</a>                       </li>
-            <li> <a routerLink="/calendar" routerLinkActive="active">Calendar</a>               </li>
-            <li> <a routerLink="/login" routerLinkActive="active" (click)="logout()">Logout</a> </li>
-          </ul>
-        </nav>
-      </div>
+      <ul class="nav nav-pills nav-stacked">
+        <li> <a routerLink="/chat" routerLinkActive="active">Chat</a>                       </li>
+        <li> <a routerLink="/calendar" routerLinkActive="active">Kalender</a>               </li>
+        <li> <a routerLink="/profile" routerLinkActive="active">Profil</a>                 </li>
+        <li> <a routerLink="/login" routerLinkActive="active" (click)="logout()">Logout</a> </li>
+      </ul>
     </div>
 
     <div class="col-md-10">

@@ -1,0 +1,13 @@
+.a {
+  color: #000;
+  background-color: #eee;
+
+  &.selected {
+          background-color: #ddd;
+      }
+}
+
+.col-md-1 {
+  box-shadow: 1px 0 0 #ccc;
+  height: 75vh;
+}

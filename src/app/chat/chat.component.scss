@@ -1,7 +1,6 @@
 #chat-message-container {
-    height: 300px;
+    height: 65vh;
     overflow: auto;
-    margin: 10px 5px;
 
     .chat-message {
         word-wrap: break-word;
@@ -9,8 +8,37 @@
     }
 }
 
+.col-md-3 {
+    box-shadow: 1px 0 0 #ccc;
+    height: 75vh;
+}
+
+.btn-default {
+    margin: 5px 0;
+}
+
 .chat-col {
     padding: 10px;
+
+    .message-input {
+      margin-top: 10px;
+    }
+}
+
+.panel {
+    margin-bottom: 5px;
+}
+
+.panel-body {
+    padding: 8px;
+}
+
+.date {
+    font-size : 80%;
+}
+
+.name {
+    font-weight: bold;
 }
 
 .room-container {
@@ -25,7 +53,6 @@
         padding: 8px;
     }
 
-    background-color: darkgray;
     margin-bottom: 1px;
     height: 50px;
     width: calc(100%);
@@ -33,13 +60,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    border-width: 2px;
+    border-color: #000;
+    background-color: #eee
 
     p {
         margin: 0;
     }
 
     &.selected {
-        background-color: lightgray;
+        background-color: #eee;
     }
 
     .edit-room-actions {
