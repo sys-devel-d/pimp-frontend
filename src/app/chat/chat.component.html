@@ -38,7 +38,7 @@
     <div *ngIf="currentRoom" id="chat-message-container">
       <div class="panel panel-default chat-message" *ngFor='let message of currentRoom.messages'>
         <div class="panel-body chat-message-body">
-          <span class="date">{{ message.creationDate | jdate }}</span>
+          <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
           <div>
            <span class="name">{{ message.userName }}: </span>
            <span class="message">{{ message.message }}</span>

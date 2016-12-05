@@ -93,7 +93,7 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  exitRoom(room: Room): void {
+  private exitRoom(room: Room): void {
     this.messageService.exitRoom(room);
   }
 
