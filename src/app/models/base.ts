@@ -1,5 +1,5 @@
 export class Message {
-  date: Date
+  creationDate: Date
   userName: string
   message: string
 }

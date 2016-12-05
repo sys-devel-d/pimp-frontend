@@ -11,12 +11,12 @@ const generalMessages = [
   {
       message: "Hi",
       userName: "test1",
-      date: new Date(1479842165 * 1000)
+      creationDate: new Date(1479842165 * 1000)
   },
   {
       message: "Hu",
       userName: "test2",
-      date: new Date(1479842175 * 1000)
+      creationDate: new Date(1479842175 * 1000)
   },
 ];
 
@@ -24,7 +24,7 @@ const watercoolerMessages = [
   {
     message: "Bitte ein Bit!",
     userName: "Napoleon",
-    date: new Date(1479842165 * 1000)
+    creationDate: new Date(1479842165 * 1000)
   }
 ];
 

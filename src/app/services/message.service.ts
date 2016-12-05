@@ -67,9 +67,6 @@ export class MessageService {
   }
 
   initChatWith(users: User[], roomType:string, displayName?:string) {
-    for(let user of users) {
-      delete user['authorities']
-    }
     let url = Globals.BACKEND + 'rooms/';
     let payload:any = users;
     if(roomType == 'PRIVATE' && users.length == 1) {
@@ -130,9 +127,6 @@ export class MessageService {
   }
 
   exitRoom(room: Room) {
-    for(let user of room.participants) {
-      delete user['authorities']
-    }
     return this.http.patch(
       Globals.BACKEND + 'rooms/exit/' + room.roomName,
       room,

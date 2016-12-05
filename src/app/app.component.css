@@ -1,0 +1,12 @@
+.link {
+  color: #000;
+
+  &.selected {
+          background-color: #eee;
+      }
+}
+
+.pimp-navbar {
+  box-shadow: 1px 0 0 #ccc;
+  height: 75vh;
+}

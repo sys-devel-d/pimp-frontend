@@ -12,7 +12,6 @@ import { UserSearchComponent } from "../user-search/user-search.component";
 import GroupChatEditorComponent from '../chat/editor/group-chat-editor.component' 
 import { FormsModule } from '@angular/forms';
 import { HighlightDirective } from '../directives/highlight.directive';
-import { JDatePipe } from '../pipes/jdate.pipe'
 import { RoomNamePipe } from '../pipes/room-name.pipe'
 
 import { BaseRequestOptions, Response, ResponseOptions } from '@angular/http';
@@ -22,7 +21,8 @@ import { Http, ConnectionBackend } from '@angular/http';
 describe('ChatComponent', () => {
   let component: ChatComponent;
   let fixture: ComponentFixture<ChatComponent>;
-  let messageContainer: DebugElement
+  let messageContainer: DebugElement;
+  let date:string;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -31,7 +31,6 @@ describe('ChatComponent', () => {
         ChatComponent,
         UserSearchComponent,
         HighlightDirective,
-        JDatePipe,
         RoomNamePipe,
         GroupChatEditorComponent
       ],
@@ -52,32 +51,47 @@ describe('ChatComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     messageContainer = fixture.debugElement.query(By.css('#chat-message-container'));
-    
+
   });
 
   it('should show messages', () => {
     const messages = messageContainer.children;
     expect(messages.length).toBe(2);
     const [msg1, msg2] = messages;
-    expect(msg1.nativeElement.textContent.trim())
-        .toContain('=> test1: Hi')
-    expect(msg2.nativeElement.textContent.trim())
-        .toContain('=> test2: Hu')
+    expect(msg1.query(By.css('span.message')).nativeElement.textContent.trim())
+        .toBe('Hi');
+    expect(msg1.query(By.css('span.name')).nativeElement.textContent.trim())
+        .toBe('test1:');
+    date = msg1.query(By.css('span.date')).nativeElement.textContent.trim()
+    expect(date).not.toBe('Invalid Date');
+    expect(date).toBeTruthy();
+    expect(msg2.query(By.css('span.message')).nativeElement.textContent.trim())
+        .toBe('Hu');
+    expect(msg2.query(By.css('span.name')).nativeElement.textContent.trim())
+        .toBe('test2:');
+    date = msg2.query(By.css('span.date')).nativeElement.textContent.trim();
+    expect(date).not.toBe('Invalid Date');
+    expect(date).toBeTruthy();
   });
 
   it('should switch between when clicking on room', () => {
     const roomContainers = fixture.debugElement.query(By.css('#room-container'));
     const [btn1, btn2] = roomContainers.children;
-    expect(btn1.query(By.css('.roomname')).nativeNode.textContent.trim())
+    expect(btn1.query(By.css('.roomname')).nativeElement.textContent.trim())
         .toEqual("general");
-    expect(btn2.query(By.css('.roomname')).nativeNode.textContent.trim())
+    expect(btn2.query(By.css('.roomname')).nativeElement.textContent.trim())
         .toEqual("watercooler");
     btn2.nativeElement.click();
     fixture.detectChanges();
     expect(messageContainer.children.length).toBe(1);
     const [msg] = messageContainer.children;
-    expect(msg.nativeElement.textContent.trim())
-        .toContain('=> Napoleon: Bitte ein Bit!');
+    expect(msg.query(By.css('span.message')).nativeElement.textContent.trim())
+        .toContain('Bitte ein Bit!');
+    expect(msg.query(By.css('span.name')).nativeElement.textContent.trim())
+        .toContain('Napoleon:');
+    date = msg.query(By.css('span.date')).nativeElement.textContent.trim();
+    expect(date).not.toBe('Invalid Date');
+    expect(date).toBeTruthy();
 
   });
 });

@@ -5,6 +5,8 @@ import { MessageService } from '../../services/message.service'
 import { Globals } from '../../commons/globals'
 import { shakeInput, showChatModal, hideChatModal } from '../../commons/dom-functions'
 
+const DOM_ID_GROUP_DISPLAY_NAME = '#groupDisplayName';
+
 @Component({
   selector: 'group-chat-editor',
   templateUrl: './group-chat-editor.component.html',
@@ -65,7 +67,7 @@ export default class GroupChatEditorComponent {
             this.resetChatRoomBeingEdited();
         }
         else {
-            shakeInput('#groupDisplayName');
+            shakeInput(DOM_ID_GROUP_DISPLAY_NAME);
         }
     }
 
@@ -83,9 +85,6 @@ export default class GroupChatEditorComponent {
     private editRoom() {
         if(this.displayName) {
             const participants = this.selectedUsers;
-            for(let p of participants) {
-                delete p['authorities']
-            }
             const room = {
                 roomName: this.roomBeingEdited.roomName,
                 displayNames: {
@@ -106,7 +105,7 @@ export default class GroupChatEditorComponent {
             );
         }
         else {
-            shakeInput('#groupDisplayName');
+            shakeInput(DOM_ID_GROUP_DISPLAY_NAME);
         }
     }
 }
