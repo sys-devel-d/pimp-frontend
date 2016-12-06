@@ -45,6 +45,7 @@ import { RoomNamePipe } from './pipes/room-name.pipe'
       { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+      { path: 'profile/:userName', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'register', component: RegisterComponent },
       { path: '', component: LoginComponent },
       { path: '**', component: PageNotFoundComponent }
