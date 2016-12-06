@@ -58,7 +58,7 @@ export default class CalendarService {
             // Produce one array of events by concatenating all of the calendar's events
             this.events = this.calendars
                                       .map( cal => cal.events )
-                                      .reduce( (a, b) => a.concat(b) );
+                                      .reduce( (a, b) => a.concat(b), [] );
             /* Inform subscribers (CalendarComponent)
             that events have changed, so the UI updates. */
             this.eventsChange.next(this.events);
