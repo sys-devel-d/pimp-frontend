@@ -53,7 +53,6 @@ export default class CalendarService {
             return res.json() as Calendar[]
         }).subscribe( (calendars: Calendar[]) => {
             this.isInitialized = true;
-            this.calendars = calendars;
             // Bring calendars and their events in the correct format
             this.calendars = calendars.map( cal => this.mapCalendarEvents(cal) );
             // Produce one array of events by concatenating all of the calendar's events
