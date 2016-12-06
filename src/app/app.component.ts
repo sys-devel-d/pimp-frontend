@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { AuthService } from "./services/auth.service";
 import { MessageService } from "./services/message.service";
+import CalendarService from './services/calendar.service';
 
 @Component({
   selector: 'app-root',
@@ -14,11 +15,13 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private messageService: MessageService) {}
+    private messageService: MessageService,
+    private calendarService: CalendarService) {}
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
       this.messageService.init();
+      this.calendarService.init();
     }
   }
 

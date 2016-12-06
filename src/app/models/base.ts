@@ -27,11 +27,12 @@ export class Calendar {
   title: string
   isPrivate: boolean
   subscribers: User[]
-  events: Event[]
+  events: CalEvent[]
 }
 
 export class CalEvent implements CalendarEvent {
-  key?: string
+  key: string
+  calendarKey: string
   start: Date
   end: Date
   title: string

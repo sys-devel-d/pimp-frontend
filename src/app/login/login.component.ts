@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
+import CalendarService from '../services/calendar.service';
 import { User } from "../models/base";
 import { Router } from "@angular/router";
 
@@ -11,16 +12,12 @@ import { Router } from "@angular/router";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  private router: Router;
-  private authService: AuthService;
-  private messageService: MessageService;
   user: User = new User();
   error: String;
-  constructor(authService: AuthService, router: Router, messageService: MessageService) {
-    this.authService = authService;
-    this.messageService = messageService;
-    this.router = router;
-  }
+  constructor(private authService: AuthService,
+              private router: Router,
+              private messageService: MessageService,
+              private calendarService: CalendarService) {}
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
@@ -35,6 +32,7 @@ export class LoginComponent implements OnInit {
           if (result === true) {
             this.router.navigate(['profile']);
             this.messageService.init();
+            this.calendarService.init();
           } else {
             this.error = 'We are sorry. We could not log you in. Please try again.';
           }

@@ -31,7 +31,11 @@ export class CalendarComponent implements OnInit {
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
 
-  constructor(private calendarService: CalendarService) {}
+  constructor(private calendarService: CalendarService) {
+    this.calendarService.eventsChange.subscribe( (events:CalEvent[]) => {
+      this.events = events;
+    });
+  }
 
   ngOnInit() {
     this.events = this.calendarService.getEvents();

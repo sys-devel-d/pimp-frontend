@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
-import { CalendarEvent } from 'angular-calendar';
 import { AuthService } from './auth.service';
-import { CalEvent } from '../models/base';
+import { CalEvent, Calendar } from '../models/base';
+import { Subject } from 'rxjs';
 
 const colors: any = {
   red:    { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -14,33 +14,55 @@ const colors: any = {
 @Injectable()
 export default class CalendarService {
 
-    viewDate: Date = new Date();
-    view: string = 'month';
-    activeDayIsOpen: boolean = true;
-    events: CalEvent[] = [{
-        start: new Date(2016, 10, 29, 12, 15),
-        end: new Date(2016, 10, 29, 13, 0),
-        title: 'Spring Präsentation',
-        color: colors.red,
-        participants: []
-    }, {
-        start: new Date(2016, 10, 15),
-        end: new Date(2016, 10, 29),
-        title: 'Zweiter Sprint',
-        color: colors.yellow,
-        participants: []
-    }];
+    private isInitialized = false;
+    private viewDate: Date = new Date();
+    private view: string = 'month';
+    private activeDayIsOpen: boolean = true;
+    private events: CalEvent[] = [];
+    private calendars: Calendar[];
+    eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
 
     constructor(private authService: AuthService, private http: Http) {}
 
-    fetchUsersCalendars() {
+    init() {
+        if(!this.isInitialized) {
+            this.fetchUsersCalendars();
+        }
+    }
+
+    /*
+    Function maps a calendar's events coming from server
+    so they are in the right format
+    */
+    private mapCalendarEvents(calendar: Calendar): Calendar {
+        const mappedEvents = calendar.events.map( evt => {
+            evt.start = new Date(evt.start);
+            evt.end = new Date(evt.end);
+            evt.color = calendar.isPrivate ? colors.red : colors.blue;
+            return evt;
+        });
+        calendar.events = mappedEvents;
+        return calendar;
+    }
+
+    private fetchUsersCalendars() {
         return this.http.get(
             Globals.BACKEND + 'calendar',
             { headers: this.authService.getTokenHeader() }
         ).map( (res:Response) => {
-            return res.json() 
-        }).subscribe( (res: Response) => {
-
+            return res.json() as Calendar[]
+        }).subscribe( (calendars: Calendar[]) => {
+            this.isInitialized = true;
+            this.calendars = calendars;
+            // Bring calendars and their events in the correct format
+            this.calendars = calendars.map( cal => this.mapCalendarEvents(cal) );
+            // Produce one array of events by concatenating all of the calendar's events
+            this.events = this.calendars
+                                      .map( cal => cal.events )
+                                      .reduce( (a, b) => a.concat(b) );
+            /* Inform subscribers (CalendarComponent)
+            that events have changed, so the UI updates. */
+            this.eventsChange.next(this.events);
         })
     }
 
