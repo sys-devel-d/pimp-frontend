@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import 'rxjs/add/operator/map';
 
 import { User } from '../models/base';
@@ -9,9 +9,13 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class UserService {
+
+  currentUser: User;
+  userChange: Subject<User> = new Subject<User>();
+
   constructor(private http: Http, private authService: AuthService) {}
 
-  getProfileInformation(): Observable<User> {
+  getProfileInformation(){
     return this.http
       .get(
         Globals.BACKEND + 'users/' + this.authService.getCurrentUserName(),
@@ -19,7 +23,11 @@ export class UserService {
       )
       .map((res: Response) => res.json() as User)
       .catch((error:any) => Observable
-        .throw(error.json().error || 'Server error while fetching user.'));
+        .throw(error.json().error || 'Server error while fetching user.'))
+      .subscribe( (user:User) => {
+        this.currentUser = user;
+        this.userChange.next(user);
+      });
   }
 
   search(term: string) {
@@ -42,5 +50,9 @@ export class UserService {
         { headers: this.authService.getTokenHeader() }
       )
       .map( (res: Response) => res.json() as User[])
+  }
+
+  getCurrentUser() {
+    return this.currentUser;
   }
 }
