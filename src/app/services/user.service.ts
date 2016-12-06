@@ -15,10 +15,10 @@ export class UserService {
 
   constructor(private http: Http, private authService: AuthService) {}
 
-  getProfileInformation(){
+  getProfileInformation(userName = this.authService.getCurrentUserName()){
     return this.http
       .get(
-        Globals.BACKEND + 'users/' + this.authService.getCurrentUserName(),
+        Globals.BACKEND + 'users/' + userName,
         { headers: this.authService.getTokenHeader() }
       )
       .map((res: Response) => res.json() as User)
