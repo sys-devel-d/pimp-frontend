@@ -15,10 +15,10 @@ export class UserService {
 
   constructor(private http: Http, private authService: AuthService) {}
 
-  getProfileInformation(userName = this.authService.getCurrentUserName()){
+  getProfileInformation() {
     return this.http
       .get(
-        Globals.BACKEND + 'users/' + userName,
+        Globals.BACKEND + 'users/' + this.authService.getCurrentUserName(),
         { headers: this.authService.getTokenHeader() }
       )
       .map((res: Response) => res.json() as User)
@@ -28,6 +28,14 @@ export class UserService {
         this.currentUser = user;
         this.userChange.next(user);
       });
+  }
+
+  getUserByUsername(userName) {
+    return this.http
+      .get(
+        Globals.BACKEND + 'users/' + userName,
+        { headers: this.authService.getTokenHeader() }
+      ).map((res: Response) => res.json() as User);
   }
 
   search(term: string) {
