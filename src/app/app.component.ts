@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
       this.messageService.init();
-      this.userService.getProfileInformation();
+      this.userService.init();
     }
   }
 

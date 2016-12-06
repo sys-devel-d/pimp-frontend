@@ -4,15 +4,21 @@ import { UserService } from "../services/user.service";
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   user: User;
+  userService: UserService;
   subscription: Subscription;
+  isPrivate = true;
 
-  constructor(private userService: UserService) {
+  constructor(userService: UserService) {
+    this.userService = userService;
+    this.subscribe();
+  }
+
+  subscribe() {
     this.subscription = this.userService.userChange.subscribe( (user:User) => {
       this.user = user;
     });

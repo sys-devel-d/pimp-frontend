@@ -11,31 +11,44 @@ import { AuthService } from './auth.service';
 export class UserService {
 
   currentUser: User;
+  otherUser: User;
   userChange: Subject<User> = new Subject<User>();
+  otherUserChange: Subject<User> = new Subject<User>();
 
   constructor(private http: Http, private authService: AuthService) {}
 
-  getProfileInformation() {
-    return this.http
-      .get(
-        Globals.BACKEND + 'users/' + this.authService.getCurrentUserName(),
-        { headers: this.authService.getTokenHeader() }
-      )
-      .map((res: Response) => res.json() as User)
-      .catch((error:any) => Observable
-        .throw(error.json().error || 'Server error while fetching user.'))
-      .subscribe( (user:User) => {
-        this.currentUser = user;
-        this.userChange.next(user);
-      });
+  init() {
+    this.fetchUser();
   }
 
-  getUserByUsername(userName) {
+  fetchUser() {
+    const subscribeFunc = (user:User) => {
+      this.currentUser = user;
+      this.userChange.next(user);
+    };
+    this.userRequest(this.authService.getCurrentUserName(), subscribeFunc)
+  }
+
+  fetchOtherUser(userName) {
+    const subscribeFunc = (user:User) => {
+      this.otherUser = user;
+      this.otherUserChange.next(user);
+    };
+    this.userRequest(userName, subscribeFunc)
+  }
+
+  private userRequest(userName: string, subscribeFunc) {
     return this.http
       .get(
         Globals.BACKEND + 'users/' + userName,
         { headers: this.authService.getTokenHeader() }
-      ).map((res: Response) => res.json() as User);
+      )
+      .map((res: Response) => res.json() as User)
+      .catch( (error:any) => {
+        return Observable.throw(
+          error.json().error || 'Server error while fetching user.'
+        );
+      }).subscribe(subscribeFunc)
   }
 
   search(term: string) {
