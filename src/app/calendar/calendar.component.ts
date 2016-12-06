@@ -66,7 +66,7 @@ export class CalendarComponent implements OnInit {
     this.viewDate = new Date();
   }
 
-  dayClicked({date, events}: {date: Date, events: Event[]}): void {
+  dayClicked({date, events}: {date: Date, events: CalEvent[]}): void {
     if (isSameMonth(date, this.viewDate)) {
       if (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true || events.length === 0) {
         this.activeDayIsOpen = false;
