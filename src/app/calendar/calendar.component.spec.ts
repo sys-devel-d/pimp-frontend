@@ -12,8 +12,6 @@ import CalendarServiceStub from '../services/test/calendar.service.stub';
 describe('ChatComponent', () => {
   let component: CalendarComponent;
   let fixture: ComponentFixture<CalendarComponent>;
-  let messageContainer: DebugElement;
-  let date:string;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -37,6 +35,10 @@ describe('ChatComponent', () => {
   });
 
   it('should show events', () => {
-    expect(component).toBeTruthy();
+    const openEventContainer = fixture.debugElement.query(By.css('.cal-open-day-events'));
+    expect(openEventContainer.children.length).toBe(2);
+    const [evt1, evt2] = openEventContainer.children;
+    expect(evt1.query(By.css('.cal-event-title')).nativeElement.textContent.trim()).toBe('Dev Meeting');
+    expect(evt2.query(By.css('.cal-event-title')).nativeElement.textContent.trim()).toBe('Stakeholder Meeting');
   });
 });

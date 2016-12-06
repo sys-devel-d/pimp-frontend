@@ -16,12 +16,16 @@ export default class CalendarServiceStub extends CalendarService {
 
     getEvents(): CalEvent[] {
         return [{
+            key: '212442',
+            calendarKey: '573ioeiog',
             start: new Date(),
             end: new Date(),
             title: 'Dev Meeting',
             color: colors.red,
             participants: []
         }, {
+            key: '2135356',
+            calendarKey: '573ioeiog',
             start: new Date(),
             end: new Date(),
             title: 'Stakeholder Meeting',
@@ -35,7 +39,7 @@ export default class CalendarServiceStub extends CalendarService {
     }
 
     getView(): string {
-        return 'day';
+        return 'month';
     }
 
     getActiveDayIsOpen(): boolean {
