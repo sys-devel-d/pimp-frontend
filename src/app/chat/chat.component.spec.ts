@@ -14,10 +14,6 @@ import { FormsModule } from '@angular/forms';
 import { HighlightDirective } from '../directives/highlight.directive';
 import { RoomNamePipe } from '../pipes/room-name.pipe'
 
-import { BaseRequestOptions, Response, ResponseOptions } from '@angular/http';
-import { MockBackend, MockConnection } from '@angular/http/testing';
-import { Http, ConnectionBackend } from '@angular/http';
-
 describe('ChatComponent', () => {
   let component: ChatComponent;
   let fixture: ComponentFixture<ChatComponent>;
