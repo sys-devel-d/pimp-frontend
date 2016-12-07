@@ -14,3 +14,11 @@ export function showChatModal() {
 export function hideChatModal() {
     $('#chat-modal').modal('hide');
 }
+
+export function showCalendarEventEditorModal() {
+    $('#calendar-event-editor-modal').modal('show');
+}
+
+export function hideCalendarEventEditorModal() {
+  $('#calendar-event-editor-modal').modal('show');
+}

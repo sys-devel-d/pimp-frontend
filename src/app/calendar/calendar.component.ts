@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {
   subDays,
   addDays,
@@ -15,6 +15,7 @@ import {
   CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
+import CalendarEventEditorComponent from "./event-editor/calendar-event-editor.component";
 
 const colors: any = {
   red:    { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -29,6 +30,10 @@ const colors: any = {
 })
 export class CalendarComponent {
 
+  @ViewChild(CalendarEventEditorComponent) calendarEventEditor: CalendarEventEditorComponent;
+
+  private calendarEventEditorCallback: Function;
+
   view: string = 'month';
 
   viewDate: Date = new Date();
@@ -38,6 +43,7 @@ export class CalendarComponent {
   actions: CalendarEventAction[] = [{
     label: '<i class="fa fa-fw fa-pencil"></i>',
     onClick: ({event}: {event: CalendarEvent}): void => {
+      this.openCalendarEventEditor();
     }
   }, {
     label: '<i class="fa fa-fw fa-times"></i>',
@@ -61,6 +67,10 @@ export class CalendarComponent {
     color: colors.yellow,
     actions: this.actions
   }];
+
+  constructor() {
+    this.calendarEventEditorCallback = this.openCalendarEventEditor.bind(this);
+  }
 
   increment(): void {
     const addFn: any = {
@@ -99,5 +109,9 @@ export class CalendarComponent {
     event.start = newStart;
     event.end = newEnd;
     this.refresh.next();
+  }
+
+  private openCalendarEventEditor() {
+    this.calendarEventEditor.showDialog();
   }
 }

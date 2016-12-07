@@ -6,6 +6,7 @@ import { CalendarModule } from 'angular-calendar'
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
+import CalendarEventEditorComponent from './calendar/event-editor/calendar-event-editor.component';
 import { ChatComponent } from './chat/chat.component';
 import GroupChatEditorComponent from './chat/editor/group-chat-editor.component';
 import { LoginComponent } from './login/login.component';
@@ -26,6 +27,7 @@ import { RoomNamePipe } from './pipes/room-name.pipe'
   declarations: [
     AppComponent,
     CalendarComponent,
+    CalendarEventEditorComponent,
     ChatComponent,
     GroupChatEditorComponent,
     LoginComponent,
