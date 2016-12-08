@@ -32,11 +32,12 @@
     "stompjs": "^2.3.3",
     "ts-helpers": "^1.1.1",
     "angular-cli": "1.0.0-beta.19-3",
+    "typescript": "~2.0.3",
+    "@types/node": "^6.0.46",
     "zone.js": "^0.6.23"
   },
   "devDependencies": {
     "@types/jasmine": "^2.2.30",
-    "@types/node": "^6.0.46",
     "codelyzer": "1.0.0-beta.1",
     "jasmine-core": "2.4.1",
     "jasmine-spec-reporter": "2.5.0",
@@ -48,7 +49,6 @@
     "protractor": "4.0.9",
     "ts-node": "1.2.1",
     "tslint": "3.13.0",
-    "typescript": "~2.0.3",
     "webdriver-manager": "10.2.5"
   }
 }
