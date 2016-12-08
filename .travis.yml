@@ -3,12 +3,18 @@ sudo: required
 language: node_js
 cache:
   directories:
-    - node_modules
+  - node_modules
 node_js:
-  - 6
+- 6
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 5 # give xvfb some time to start
-
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- sleep 5
 script: npm run test-ci
+deploy:
+  provider: heroku
+  api_key:
+    secure: tEADqi8BPGhULYzOLPum/G2oYPEEp0JdzjSmbZzYIlicj0KgMpx3oOeRz9dkgHIDKJ4ffjayu7zlxTGuSwoMU5IQHGgXAEBl/H6oPKj+VXABcXZtWrCaZEfXKtW/BPQX3aii31vunEUjQRI5MeYoA7hljIu2UPVbFtoOisJoVgyQFbhrTZneyZHXpAjqREVfAcbQOG4JMXHQIneygk9Ii+7QlKPiHWLJGs1qAw+srbl1C8z+4qGWAdussH6tCGDgqirCRdO+G2vZ9qn1awnGSP+xdHZH/dsFft0RKO2dQOCgc8+Hq5HEyEd2RJch69hpZHBDuHirybL+TPbclyDOJI8TWnv0vk84LFyvEeOBEzeJoMxA0JtorhOA33V0YmE0/V0z2Pn9WFxm5+SNFs2dA7RqzwRoJOU6eKQwCNxYO4HQCyIrN2cr/G6G0liHIArV8ibFfzYmvgupLt3WMleRJ/bgOulAgFOCozr6hDAelQEu+5/FmYpjSvj9YkifWIbfUKDrpfJ8rvy+D4KjFjFtVs74483yKqWh3vC39ehYqvaVqVcojzFk+8XwloXCYyQcHANX0NjcfC2+mmDpxHa9kNm2mR41R4aqkUshCrykIeG5a5zdYW0X9CWFfeZAZ68LxaNBdLJwv1uRHJJ1HPp7+Axg6gjaR6V4IgIZL7aA/3E=
+  app: pim-suite
+  on:
+    repo: sys-devel-d/pimp-frontend
