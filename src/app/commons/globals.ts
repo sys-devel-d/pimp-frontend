@@ -1,5 +1,7 @@
+import { environment } from '../../environments/environment'
+
 export const Globals = Object.freeze({
-  BACKEND: 'http://localhost:8080/',
+  BACKEND: environment.BACKEND,
 
   CHATROOM_TYPE_PRIVATE: 'PRIVATE',
   CHATROOM_TYPE_GROUP: 'GROUP',
