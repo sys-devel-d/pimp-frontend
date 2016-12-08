@@ -15,23 +15,24 @@ export class OtherProfileComponent extends ProfileComponent implements OnInit, O
   constructor(userService: UserService, private route: ActivatedRoute) {
     super(userService);
     this.isPrivate = false;
-
   }
 
-  subscribe() {
+  subscribeToUserChange() {
     this.subscription = this.userService.otherUserChange.subscribe( (user:User) => {
       this.user = user;
     });
   }
 
   ngOnInit() {
+    // Every time the route param changes, let the userService make the request
     this.routeSubscription = this.route.params.subscribe( params => {
        this.userService.fetchOtherUser(params['userName']);
     });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
-    this.routeSubscription.unsubscribe();
+    for(let sub of [this.subscription, this.errorSubscription, this.routeSubscription]) {
+      sub.unsubscribe();
+    }
   }
 }

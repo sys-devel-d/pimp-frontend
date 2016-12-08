@@ -11,17 +11,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
   user: User;
   userService: UserService;
   subscription: Subscription;
+  errorSubscription: Subscription;
   isPrivate = true;
+  error: string;
 
   constructor(userService: UserService) {
     this.userService = userService;
-    this.subscribe();
+    this.errorSubscription = userService.errorChange
+      .subscribe( err => this.error = err );
+    this.subscribeToUserChange();
   }
 
-  subscribe() {
-    this.subscription = this.userService.userChange.subscribe( (user:User) => {
-      this.user = user;
-    });
+  subscribeToUserChange() {
+    this.subscription = this.userService.userChange
+      .subscribe( (user:User) => this.user = user );
   }
 
   ngOnInit() {
@@ -30,5 +33,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.errorSubscription.unsubscribe();
   }
 }
