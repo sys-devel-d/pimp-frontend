@@ -5,8 +5,6 @@ import { Message, Room } from '../../models/base';
 import { Http } from '@angular/http';
 import { Globals } from '../../commons/globals'
 
-import { AuthServiceStub } from '../../services/test/auth.service.stub'
-
 const generalMessages = [
   {
       message: "Hi",

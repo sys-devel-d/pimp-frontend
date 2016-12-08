@@ -3,11 +3,12 @@ import { Router } from "@angular/router";
 import { AuthService } from "./services/auth.service";
 import { MessageService } from "./services/message.service";
 import { UserService } from './services/user.service';
+import CalendarService from './services/calendar.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   title = 'PIMP';
@@ -16,12 +17,14 @@ export class AppComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-    private messageService: MessageService) {}
+    private messageService: MessageService,
+    private calendarService: CalendarService) {}
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
       this.messageService.init();
       this.userService.init();
+      this.calendarService.init();
     }
   }
 
