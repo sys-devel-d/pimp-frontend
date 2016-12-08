@@ -87,19 +87,21 @@ export class ChatComponent implements OnInit {
     if(/\S/.test(this.text) && this.text != null) {
       this.messageService.publish(this.currentRoom.roomName, this.text.trim());
       this.text = "";
+      this.scrollDownChatMessageContainer();
     }
     else {
       shakeInput('#message-input');
     }
   }
 
-  exitRoom(room: Room): void {
+  private exitRoom(room: Room): void {
     this.messageService.exitRoom(room);
   }
 
   ngOnInit() {
     this.currentRoom = this.messageService.getCurrentRoom();
     this.rooms = this.messageService.getRooms();
+    this.scrollDownChatMessageContainer();
   }
 
   private setCurrentRoom(room:Room) {
@@ -115,5 +117,11 @@ export class ChatComponent implements OnInit {
   private setError(err:string): void {
     this.error = err;
     setTimeout( () => this.error = '', 3000);
+  }
+
+  private scrollDownChatMessageContainer() {
+    setTimeout( () => {
+      $("#chat-message-container").scrollTop($("#chat-message-container")[0].scrollHeight);
+    }, 100);
   }
 }

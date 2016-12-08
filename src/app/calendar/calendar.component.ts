@@ -1,3 +1,4 @@
+import { Component, OnInit } from '@angular/core';
 import {Component, ViewChild} from '@angular/core';
 import {
   subDays,
@@ -11,7 +12,6 @@ import {
 } from 'date-fns';
 import { Subject } from 'rxjs/Subject';
 import {
-  CalendarEvent,
   CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
@@ -22,22 +22,40 @@ const colors: any = {
   blue:   { primary: '#1e90ff', secondary: '#D1E8FF' },
   yellow: { primary: '#e3bc08', secondary: '#FDF1BA' }
 };
+import CalendarService from '../services/calendar.service';
+import { CalEvent } from '../models/base';
 
 @Component({
   selector: 'angular-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
 
   @ViewChild(CalendarEventEditorComponent) calendarEventEditor: CalendarEventEditorComponent;
 
   private calendarEventEditorCallback: Function;
 
   view: string = 'month';
+  view: string;
+  viewDate: Date;
+  activeDayIsOpen: boolean;
+  actions: CalendarEventAction[] = []; // What's this???
+  refresh: Subject<any> = new Subject(); // Why? How?
+  events: CalEvent[] = [];
 
-  viewDate: Date = new Date();
+  constructor(private calendarService: CalendarService) {
+    this.calendarService.eventsChange.subscribe( (events:CalEvent[]) => {
+      this.events = events;
+    });
+  }
 
+  ngOnInit() {
+    this.events = this.calendarService.getEvents();
+    this.viewDate = this.calendarService.getViewDate();
+    this.view = this.calendarService.getView();
+    this.activeDayIsOpen = this.calendarService.getActiveDayIsOpen();
+  }
   activeDayIsOpen: boolean = true;
 
   actions: CalendarEventAction[] = [{
@@ -94,7 +112,7 @@ export class CalendarComponent {
     this.viewDate = new Date();
   }
 
-  dayClicked({date, events}: {date: Date, events: CalendarEvent[]}): void {
+  dayClicked({date, events}: {date: Date, events: CalEvent[]}): void {
     if (isSameMonth(date, this.viewDate)) {
       if (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true || events.length === 0) {
         this.activeDayIsOpen = false;
@@ -103,6 +121,11 @@ export class CalendarComponent {
         this.viewDate = date;
       }
     }
+  }
+
+  eventClicked(event: CalEvent) {
+    // Open some form that allows editing of the event.
+    console.log(event);
   }
 
   eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {

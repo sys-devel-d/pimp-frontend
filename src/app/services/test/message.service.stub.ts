@@ -5,18 +5,16 @@ import { Message, Room } from '../../models/base';
 import { Http } from '@angular/http';
 import { Globals } from '../../commons/globals'
 
-import { AuthServiceStub } from '../../services/test/auth.service.stub'
-
 const generalMessages = [
   {
       message: "Hi",
       userName: "test1",
-      date: new Date(1479842165 * 1000)
+      creationDate: new Date(1479842165 * 1000)
   },
   {
       message: "Hu",
       userName: "test2",
-      date: new Date(1479842175 * 1000)
+      creationDate: new Date(1479842175 * 1000)
   },
 ];
 
@@ -24,7 +22,7 @@ const watercoolerMessages = [
   {
     message: "Bitte ein Bit!",
     userName: "Napoleon",
-    date: new Date(1479842165 * 1000)
+    creationDate: new Date(1479842165 * 1000)
   }
 ];
 
