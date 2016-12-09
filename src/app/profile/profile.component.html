@@ -1,20 +1,30 @@
-<div class="col-md-6 col-md-offset-3">
-  <h2>Profil</h2>
+<h1 *ngIf="error">{{ error }}</h1>
+
+<div *ngIf="user" class="col-md-8 col-md-offset-2">
+  <h2>{{ user.userName }}</h2>
   <div class="row">
-    <div class="col-md-4"><img src="https://placekitten.com/g/200/200" alt="Selfhtml"></div>
-    <div class="col-md-2">Username: </div>
-    <div class="col-md-6" id="userName">{{ user.userName }} </div>
-    <div class="col-md-2">Name: </div>
-    <div class="col-md-6" id="name">{{ user.firstName }} {{ user.lastName }} </div>
-    <div class="col-md-2">Telefon: </div>
-    <div class="col-md-6" id="phonenumber">0123456789</div>
-    <div class="col-md-2">E-Mail: </div>
-    <div class="col-md-6" id="email">{{ user.email }}</div>
-    <div class="col-md-2">Status: </div>
-    <div class="col-md-6" id="state">Abwesend</div>
-    <div class="col-md-2">Team: </div>
-    <div class="col-md-6" id="teams">Arbeitsgruppe 1</div>
-    <div class="col-md-2">Projekt: </div>
-    <div class="col-md-6" id="project">Spring</div>
+    <div class="col-md-4"><img src="https://placekitten.com/g/200/200" alt="Profile image of {{ user.firstName }}"></div>
+    <div class="col-md-8">
+      <table class="table">
+        <tr>
+          <td><strong>Name</strong></td>
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+        </tr>
+        <tr>
+          <td><strong>Email</strong></td>
+          <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>Abwesend</td>
+        </tr>
+      </table>
+    </div>
   </div>
+
+  <h2>Teams</h2>
+
+  <h2>Projekte</h2>
+
+  <p *ngIf="isPrivate">This is private stuff and can only be seen by me!</p>
 </div>
