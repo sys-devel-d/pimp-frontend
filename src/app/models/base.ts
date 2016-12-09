@@ -20,6 +20,7 @@ export class User {
   firstName: string
   lastName: string
   email: string
+  status: string
 }
 
 export class Calendar {
