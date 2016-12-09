@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
+
 import 'rxjs/add/operator/map';
 
 import { User } from '../models/base';
@@ -42,5 +43,16 @@ export class UserService {
         { headers: this.authService.getTokenHeader() }
       )
       .map( (res: Response) => res.json() as User[])
+  }
+
+  getUserPhoto(userName: string, photoKey: string) {
+    return this.http
+      .get(
+        Globals.BACKEND + `users/${userName}/photo/${photoKey}`,
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => res.text())
+      .catch((error:any) => Observable
+        .throw(error.json().error || 'Server error while searching for users.'));
   }
 }
