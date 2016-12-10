@@ -12,7 +12,7 @@ export class ProfileComponent implements OnInit {
   userService: UserService;
   error: string;
   photo: any;
-  photoFile: string;
+  photoFile: File;
 
   constructor(userService: UserService) {
     this.userService = userService;
@@ -20,6 +20,31 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.setCurrentUser();
+  }
+
+  uploadPhoto() {
+    this.getImageData((e) => {
+      let imageData = e.target.result;
+      this.userService
+        .postUserPhoto(this.user.userName, imageData)
+        .subscribe(
+          photo => {
+            let data = JSON.parse(photo);
+            this.photo = data.files;
+          },
+          error => this.error = <any>error
+        );
+    });
+  }
+
+  fileChangeEvent(fileInput: any){
+    this.photoFile = fileInput.target.files[0];
+  }
+
+  getImageData(onLoadCallback) {
+    let fr = new FileReader();
+    fr.onload = onLoadCallback;
+    fr.readAsDataURL(this.photoFile);
   }
 
   private setCurrentUser() {
@@ -32,7 +57,10 @@ export class ProfileComponent implements OnInit {
             this.userService
               .getUserPhoto(this.user.userName, this.user.photo)
               .subscribe(
-                photo => this.photo = photo,
+                photo => {
+                  let data = JSON.parse(photo);
+                  this.photo = data.files;
+                },
                 error => this.error = <any>error
               );
           }
