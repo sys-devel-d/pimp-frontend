@@ -55,4 +55,16 @@ export class UserService {
       .catch((error:any) => Observable
         .throw(error.json().error || 'Server error while searching for users.'));
   }
+
+  postUserPhoto(userName: string, files: Blob) {
+    return this.http
+      .post(
+        Globals.BACKEND + `users/${userName}/photo`,
+        { files },
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => res.text())
+      .catch((error:any) => Observable
+        .throw(error.json().error || 'Server error while searching for users.'));
+  }
 }
