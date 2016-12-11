@@ -2,7 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { CalendarModule } from 'angular-calendar'
+import { CalendarModule } from 'angular-calendar';
+import {Ng2DatetimePickerModule } from 'ng2-datetime-picker';
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
@@ -42,6 +43,7 @@ import { RoomNamePipe } from './pipes/room-name.pipe'
     BrowserModule,
     FormsModule,
     HttpModule,
+    Ng2DatetimePickerModule,
     CalendarModule.forRoot(),
     RouterModule.forRoot([
       { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },

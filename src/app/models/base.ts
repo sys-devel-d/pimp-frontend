@@ -1,4 +1,4 @@
-import { CalendarEvent } from 'angular-calendar';
+import { CalendarEvent, CalendarEventAction } from 'angular-calendar';
 
 export class Message {
   creationDate: Date
@@ -38,4 +38,5 @@ export class CalEvent implements CalendarEvent {
   title: string
   color: any
   participants: string[]
+  actions?: CalendarEventAction[];
 }

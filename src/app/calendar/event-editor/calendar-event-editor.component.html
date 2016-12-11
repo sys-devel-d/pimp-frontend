@@ -1,9 +1,34 @@
 <div id="calendar-event-editor-modal" class="modal fade">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <p>
-        calendar-event-editor works!
-      </p>
+
+      <div class="modal-header centered-content">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h2 class="modal-title">Termin bearbeiten</h2>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="eventTitle">Termin</label>
+          <input id="eventTitle" type="text" class="form-control" [(ngModel)]="event.title" required>
+        </div>
+        <div class="form-group">
+          <label for="eventStart">Beginn</label>
+          <!-- readonly because date should be edited via datetime-picker only -->
+          <input id="eventStart" type="date" class="form-control" [(ngModel)]="eventStart" ng2-datetime-picker date-format="DD.MM.YYYY hh:mm" close-on-select="false" placeholder={{start}} readonly/>
+        </div>
+        <div class="form-group">
+          <label for="eventEnd">Ende</label>
+          <!-- readonly because date should be edited via datetime-picker only -->
+          <input id="eventEnd" type="text" class="form-control" [(ngModel)]="eventEnd" ng2-datetime-picker date-format="DD.MM.YYYY hh:mm" close-on-select="false" placeholder={{end}} readonly/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="deleteEvent()">Löschen</button>
+        <button class="btn btn-primary" (click)="saveEvent()">Speichern</button>
+      </div>
     </div>
   </div>
 </div>
