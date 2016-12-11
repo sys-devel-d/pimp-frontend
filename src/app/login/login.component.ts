@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
+import { UserService } from '../services/user.service';
 import CalendarService from '../services/calendar.service';
 import { User } from "../models/base";
 import { Router } from "@angular/router";
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService,
               private router: Router,
               private messageService: MessageService,
+              private userService: UserService,
               private calendarService: CalendarService) {}
 
   ngOnInit() {
@@ -33,6 +35,7 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['profile']);
             this.messageService.init();
             this.calendarService.init();
+            this.userService.init();
           } else {
             this.error = 'We are sorry. We could not log you in. Please try again.';
           }
