@@ -22,16 +22,18 @@
     <div class="col-md-8">
       <table class="table">
         <tr>
-          <td><strong>Name</strong></td>
-          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td class="col-md-4"><strong>Name</strong></td>
+          <td class="col-md-8">{{ user.firstName }} {{ user.lastName }}</td>
         </tr>
         <tr>
-          <td><strong>Email</strong></td>
-          <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+          <td class="col-md-4"><strong>Email</strong></td>
+          <td class="col-md-8"><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
         </tr>
         <tr>
-          <td><strong>Status</strong></td>
-          <td>Abwesend</td>
+          <td class="col-md-4"><strong>Status</strong></td>
+          <td class="col-md-8">
+            <inline-edit [isEditable]="isPrivate" [text]="user.status" (edit)="onEditStatus($event, i)"></inline-edit>
+          </td>
         </tr>
       </table>
     </div>

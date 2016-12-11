@@ -21,7 +21,8 @@ import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
-import { RoomNamePipe } from './pipes/room-name.pipe'
+import { RoomNamePipe } from './pipes/room-name.pipe';
+import InlineEdit from './inline-edit/inline-edit.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { RoomNamePipe } from './pipes/room-name.pipe'
     RegisterComponent,
     UserSearchComponent,
     HighlightDirective,
-    RoomNamePipe
+    RoomNamePipe,
+    InlineEdit
   ],
   imports: [
     BrowserModule,

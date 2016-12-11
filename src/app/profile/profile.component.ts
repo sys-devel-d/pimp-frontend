@@ -23,6 +23,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.subscribeToUserChange();
   }
 
+  private onEditStatus(status) {
+    status = status.trim();
+    if(status != this.user.status && this.isPrivate) {
+      this.userService.editStatus(status)
+      .subscribe(
+        res => {
+          this.user.status = status;
+        },
+        error => {
+          this.error = `Fehler: ${error}`;
+        }
+      );
+    }
+  }
+
   subscribeToUserChange() {
     this.subscription = this.userService.userChange
       .subscribe( (user:User) => this.user = user );
