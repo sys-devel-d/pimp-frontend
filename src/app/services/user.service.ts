@@ -24,7 +24,8 @@ export class UserService {
   }
 
   fetchUser() {
-    const successFunc = (user:User) => {
+    const successFunc = (user: User) => {
+      this.fetchPhoto(user)
       this.currentUser = user;
       this.userChange.next(user);
     };
@@ -32,11 +33,25 @@ export class UserService {
   }
 
   fetchOtherUser(userName) {
-    const successFunc = (user:User) => {
+    const successFunc = (user: User) => {
+      this.fetchPhoto(user)
       this.otherUser = user;
       this.otherUserChange.next(user);
     };
     this.userRequest(userName, successFunc);
+  }
+
+  fetchPhoto(user: User) {
+    if (user.photo) {
+      this.getUserPhoto(user.userName, user.photo)
+        .subscribe(
+          photo => {
+            let data = JSON.parse(photo);
+            user.photoData = data.files;
+          },
+          error => this.errorChange.next(error)
+        );
+    }
   }
 
   private userRequest(userName: string, successFunc) {
@@ -92,7 +107,7 @@ export class UserService {
       )
       .map((res: Response) => res.text())
       .catch((error: any) => Observable
-        .throw(error.json().error || 'Server error while searching for users.'));
+        .throw(error.json().error || 'Server error while searching for users.'))
   }
 
   postUserPhoto(userName: string, files: Blob) {
@@ -104,10 +119,23 @@ export class UserService {
       )
       .map((res: Response) => res.text())
       .catch((error: any) => Observable
-        .throw(error.json().error || 'Server error while searching for users.'));
+        .throw(error.json().error || 'Server error while searching for users.'))
+      .subscribe(
+        photo => {
+          let data = JSON.parse(photo);
+          this.currentUser.photoData = data.files;
+          this.userChange.next(this.currentUser);
+        },
+        error => this.errorChange.next(error)
+      );
   }
 
   getCurrentUser() {
     return this.currentUser;
+  }
+
+  tearDown() {
+    this.currentUser = null;
+    this.otherUser = null;
   }
 }

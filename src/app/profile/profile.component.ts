@@ -14,7 +14,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   errorSubscription: Subscription;
   isPrivate = true;
   error: string;
-  photo: any;
   photoFile: File;
 
   constructor(userService: UserService) {
@@ -37,14 +36,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.getImageData((e) => {
       let imageData = e.target.result;
       this.userService
-        .postUserPhoto(this.user.userName, imageData)
-        .subscribe(
-          photo => {
-            let data = JSON.parse(photo);
-            this.photo = data.files;
-          },
-          error => this.error = <any>error
-        );
+        .postUserPhoto(this.user.userName, imageData);
     });
   }
 

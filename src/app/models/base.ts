@@ -21,6 +21,7 @@ export class User {
   lastName: string;
   email: string;
   photo: string | null;
+  photoData: any;
 }
 
 export class Calendar {
