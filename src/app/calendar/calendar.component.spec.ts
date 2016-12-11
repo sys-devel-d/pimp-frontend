@@ -6,6 +6,7 @@ import { CalendarModule } from 'angular-calendar';
 import { CalendarComponent } from './calendar.component';
 import CalendarService from '../services/calendar.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
+import CalendarEventEditorComponent from "./event-editor/calendar-event-editor.component";
 
 //import { FormsModule } from '@angular/forms';
 
@@ -16,8 +17,9 @@ describe('ChatComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [CalendarModule.forRoot()],
-      declarations: [ 
-        CalendarComponent
+      declarations: [
+        CalendarComponent,
+        CalendarEventEditorComponent
       ],
       providers: [
         {

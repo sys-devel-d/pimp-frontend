@@ -29,7 +29,7 @@ export default class CalendarEventEditorComponent {
     this.eventStart = null;
     this.eventEnd = null;
     if(calendarEvent) {
-      this.event = this.clone(calendarEvent); // avoid UI changes if not saved
+      this.event = Object.assign({}, calendarEvent); // avoid UI changes if not saved
       this.start = DateFormatter.format(this.event.start, 'de', 'dd.MM.yyyy hh:mm');
       this.end = DateFormatter.format(this.event.end, 'de', 'dd.MM.yyyy hh:mm');
     }
@@ -52,14 +52,5 @@ export default class CalendarEventEditorComponent {
   public deleteEvent() {
     this.calendarService.deleteEvent(this.event);
     hideCalendarEventEditorModal();
-  }
-
-  private clone(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    let copy = obj.constructor();
-    for (let attr in obj) {
-      if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
   }
 }
