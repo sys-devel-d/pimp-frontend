@@ -13,6 +13,7 @@ import GroupChatEditorComponent from './chat/editor/group-chat-editor.component'
 import { LoginComponent } from './login/login.component';
 import { RouterModule } from "@angular/router";
 import { ProfileComponent } from './profile/profile.component';
+import { OtherProfileComponent } from './profile/other-profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from "./commons/auth.guard";
@@ -33,6 +34,7 @@ import { RoomNamePipe } from './pipes/room-name.pipe'
     GroupChatEditorComponent,
     LoginComponent,
     ProfileComponent,
+    OtherProfileComponent,
     PageNotFoundComponent,
     RegisterComponent,
     UserSearchComponent,
@@ -50,6 +52,7 @@ import { RoomNamePipe } from './pipes/room-name.pipe'
       { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+      { path: 'profile/:userName', component: OtherProfileComponent, canActivate: [AuthGuard] },
       { path: 'register', component: RegisterComponent },
       { path: '', component: LoginComponent },
       { path: '**', component: PageNotFoundComponent }
