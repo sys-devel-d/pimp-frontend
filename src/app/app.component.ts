@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { AuthService } from "./services/auth.service";
 import { MessageService } from "./services/message.service";
+import { UserService } from './services/user.service';
 import CalendarService from './services/calendar.service';
 
 @Component({
@@ -15,12 +16,14 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private userService: UserService,
     private messageService: MessageService,
     private calendarService: CalendarService) {}
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
       this.messageService.init();
+      this.userService.init();
       this.calendarService.init();
     }
   }
