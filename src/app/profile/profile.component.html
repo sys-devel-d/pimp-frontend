@@ -11,7 +11,7 @@
           *ngIf="photoFile" (click)="uploadPhoto()">
         </i>
       </div>
-      <div *ngIf="user && !user.photo">
+      <div *ngIf="user && !user.photoData">
         <img src="https://placekitten.com/g/200/200"  alt="Profile image of {{ user.firstName }}">
         <input class="fileUploadBtn" name="photoFile" *ngIf="isPrivate" (change)="fileChangeEvent($event)" type="file"/>
         <i title="Hochladen" class="fa fa-cloud-upload" aria-hidden="true" 
