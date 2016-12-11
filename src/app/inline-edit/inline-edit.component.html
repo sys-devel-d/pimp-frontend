@@ -1,0 +1,13 @@
+<div class="inline-edit">
+  <span [hidden]="!isDisplay">
+    {{ text }}
+    <span [hidden]="!isEditable">
+      <i class="fa fa-pencil-square-o" aria-hidden="true" title="Bearbeiten" (click)="beginEdit(editText)"></i>
+    </span>
+  </span>
+  <div [hidden]="isDisplay">
+    <input class="form-control" #editText
+          type="text" [value]="text"
+          (keyup.enter)="editDone(editText.value)" (blur)="isDisplay = true">
+  </div>
+</div>

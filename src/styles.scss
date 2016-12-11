@@ -7,21 +7,25 @@
 }
 
 .ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948; /* green */
+    border-left: 5px solid #42A948; /* green */
 }
 
 .ng-invalid:not(form)  {
-  border-left: 5px solid #a94442; /* red */
+    border-left: 5px solid #a94442; /* red */
 }
 
 div.inline {
-  display: inline-block;
+    display: inline-block;
 }
 
 .form-control.invalid-params {
     animation: shake .5s linear;
     -webkit-animation: shake .5s linear;
     -moz-animation: shake .5s linear;
+}
+
+i.fa {
+    cursor: pointer;
 }
 
 @-webkit-keyframes shake {

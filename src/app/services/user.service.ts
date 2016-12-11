@@ -84,6 +84,18 @@ export class UserService {
       .map( (res: Response) => res.json() as User[])
   }
 
+  editStatus(status) {
+    return this.http
+      .put(
+        Globals.BACKEND + 'users/status/',
+        { updatedStatus: status },
+        { headers: this.authService.getTokenHeader() }
+      )
+      .catch( (err) => {
+        return Observable.throw(err.json() ? err.json().error : 'Der Status konnte nicht aktualisiert werden.')
+      })
+  }
+
   getCurrentUser() {
     return this.currentUser;
   }

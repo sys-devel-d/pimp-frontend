@@ -4,12 +4,15 @@
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
-    "start": "ng serve",
+    "dev": "ng serve",
+    "build": "ng build -prod",
+    "start": "node prod-server.js",
     "lint": "tslint \"src/**/*.ts\"",
-    "test": "node_modules/angular-cli/bin/ng test",
+    "test": "ng test",
     "test-ci": "node_modules/.bin/karma start --browsers Firefox --single-run",
     "pree2e": "webdriver-manager update",
-    "e2e": "protractor"
+    "e2e": "protractor",
+    "heroku-postbuild": "npm run build"
   },
   "private": true,
   "dependencies": {
@@ -23,6 +26,7 @@
     "@angular/router": "~3.1.0",
     "angular-calendar": "~0.4.0",
     "core-js": "^2.4.1",
+    "express": "^4.14.0",
     "font-awesome": "^4.7.0",
     "moment": "^2.17.1",
     "ng2-datetime-picker": "^0.11.4",
@@ -30,12 +34,13 @@
     "sockjs-client": "^1.1.1",
     "stompjs": "^2.3.3",
     "ts-helpers": "^1.1.1",
+    "angular-cli": "1.0.0-beta.19-3",
+    "typescript": "~2.0.3",
+    "@types/node": "^6.0.46",
     "zone.js": "^0.6.23"
   },
   "devDependencies": {
     "@types/jasmine": "^2.2.30",
-    "@types/node": "^6.0.46",
-    "angular-cli": "1.0.0-beta.19-3",
     "codelyzer": "1.0.0-beta.1",
     "jasmine-core": "2.4.1",
     "jasmine-spec-reporter": "2.5.0",
@@ -47,7 +52,6 @@
     "protractor": "4.0.9",
     "ts-node": "1.2.1",
     "tslint": "3.13.0",
-    "typescript": "~2.0.3",
     "webdriver-manager": "10.2.5"
   }
 }
