@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { User } from "../models/base";
-import { UserService } from "../services/user.service";
+import { User } from '../models/base';
+import { UserService } from '../services/user.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -14,6 +14,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   errorSubscription: Subscription;
   isPrivate = true;
   error: string;
+  photoFile: File;
 
   constructor(userService: UserService) {
     this.userService = userService;
@@ -44,6 +45,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.user = this.userService.getCurrentUser();
+  }
+
+  uploadPhoto() {
+    this.getImageData((e) => {
+      let imageData = e.target.result;
+      this.userService
+        .postUserPhoto(this.user.userName, imageData);
+    });
+  }
+
+  fileChangeEvent(fileInput: any){
+    this.photoFile = fileInput.target.files[0];
+  }
+
+  getImageData(onLoadCallback) {
+    let fr = new FileReader();
+    fr.onload = onLoadCallback;
+    fr.readAsDataURL(this.photoFile);
   }
 
   ngOnDestroy() {

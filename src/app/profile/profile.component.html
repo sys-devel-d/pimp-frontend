@@ -3,7 +3,22 @@
 <div *ngIf="user" class="col-md-8 col-md-offset-2">
   <h2>{{ user.userName }}</h2>
   <div class="row">
-    <div class="col-md-4"><img src="https://placekitten.com/g/200/200" alt="Profile image of {{ user.firstName }}"></div>
+    <div class="col-md-4">
+      <div *ngIf="user.photoData">
+        <img [src]="user.photoData" width=200 height=200  alt="Profile image of {{ user.firstName }}">
+        <input class="fileUploadBtn" *ngIf="isPrivate" name="photoFile" (change)="fileChangeEvent($event)" type="file"/>
+        <i title="Hochladen" class="fa fa-cloud-upload" aria-hidden="true" 
+          *ngIf="photoFile" (click)="uploadPhoto()">
+        </i>
+      </div>
+      <div *ngIf="user && !user.photoData">
+        <img src="https://placekitten.com/g/200/200"  alt="Profile image of {{ user.firstName }}">
+        <input class="fileUploadBtn" name="photoFile" *ngIf="isPrivate" (change)="fileChangeEvent($event)" type="file"/>
+        <i title="Hochladen" class="fa fa-cloud-upload" aria-hidden="true" 
+          *ngIf="photoFile" (click)="uploadPhoto()">
+        </i>
+      </div>
+    </div>
     <div class="col-md-8">
       <table class="table">
         <tr>

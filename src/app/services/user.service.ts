@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable, Subject } from 'rxjs';
+
 import 'rxjs/add/operator/map';
 
 import { User } from '../models/base';
-import { Globals } from "../commons/globals";
+import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
 
 @Injectable()
@@ -23,7 +24,8 @@ export class UserService {
   }
 
   fetchUser() {
-    const successFunc = (user:User) => {
+    const successFunc = (user: User) => {
+      this.fetchPhoto(user)
       this.currentUser = user;
       this.userChange.next(user);
     };
@@ -31,11 +33,25 @@ export class UserService {
   }
 
   fetchOtherUser(userName) {
-    const successFunc = (user:User) => {
+    const successFunc = (user: User) => {
+      this.fetchPhoto(user)
       this.otherUser = user;
       this.otherUserChange.next(user);
     };
     this.userRequest(userName, successFunc);
+  }
+
+  fetchPhoto(user: User) {
+    if (user.photo) {
+      this.getUserPhoto(user.userName, user.photo)
+        .subscribe(
+          photo => {
+            let data = JSON.parse(photo);
+            user.photoData = data.files;
+          },
+          error => this.errorChange.next(error)
+        );
+    }
   }
 
   private userRequest(userName: string, successFunc) {
@@ -48,10 +64,9 @@ export class UserService {
       .map((res: Response) => res.json() as User)
       .catch((error:any) => {
         let err;
-        if(error.status === 404) {
+        if (error.status === 404) {
           err = 'This user does not exist.';
-        }
-        else {
+        } else {
           err = error.json() ? error.json().error : 'Server error while fetching user.';
         }
         return Observable.throw(err);
@@ -71,7 +86,7 @@ export class UserService {
       .map((res: Response) => {
         return res.json()
       })
-      .catch((error:any) => Observable
+      .catch((error: any) => Observable
         .throw(error.json() ? error.json().error : 'Server error while searching for users.'));
   }
 
@@ -84,6 +99,37 @@ export class UserService {
       .map( (res: Response) => res.json() as User[])
   }
 
+  getUserPhoto(userName: string, photoKey: string) {
+    return this.http
+      .get(
+        Globals.BACKEND + `users/${userName}/photo/${photoKey}`,
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => res.text())
+      .catch((error: any) => Observable
+        .throw(error.json().error || 'Server error while searching for users.'))
+  }
+
+  postUserPhoto(userName: string, files: Blob) {
+    return this.http
+      .post(
+        Globals.BACKEND + `users/${userName}/photo`,
+        { files },
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => res.text())
+      .catch((error: any) => Observable
+        .throw(error.json().error || 'Server error while searching for users.'))
+      .subscribe(
+        photo => {
+          let data = JSON.parse(photo);
+          this.currentUser.photoData = data.files;
+          this.userChange.next(this.currentUser);
+        },
+        error => this.errorChange.next(error)
+      );
+  }
+
   editStatus(status) {
     return this.http
       .put(
@@ -92,11 +138,16 @@ export class UserService {
         { headers: this.authService.getTokenHeader() }
       )
       .catch( (err) => {
-        return Observable.throw(err.json() ? err.json().error : 'Der Status konnte nicht aktualisiert werden.')
-      })
+        return Observable.throw(err.json() ? err.json().error : 'Der Status konnte nicht aktualisiert werden.');
+      });
   }
 
   getCurrentUser() {
     return this.currentUser;
+  }
+
+  tearDown() {
+    this.currentUser = null;
+    this.otherUser = null;
   }
 }
