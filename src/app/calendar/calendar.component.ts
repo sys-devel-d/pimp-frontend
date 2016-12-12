@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   subDays,
   addDays,
@@ -14,6 +14,7 @@ import {
   CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
+import CalendarEventEditorComponent from "./event-editor/calendar-event-editor.component";
 import CalendarService from '../services/calendar.service';
 import { CalEvent } from '../models/base';
 
@@ -24,21 +25,34 @@ import { CalEvent } from '../models/base';
 })
 export class CalendarComponent implements OnInit {
 
-  view: string;
+  @ViewChild(CalendarEventEditorComponent) calendarEventEditor: CalendarEventEditorComponent;
+
+  view: string = 'month';
   viewDate: Date;
   activeDayIsOpen: boolean;
-  actions: CalendarEventAction[] = []; // What's this???
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
+  actions: CalendarEventAction[] = [{
+    label: '<i class="fa fa-fw fa-pencil"></i>',
+    onClick: ({event}: {event: CalEvent}): void => {
+      this.eventClicked(event);
+    }
+  }, {
+    label: '<i class="fa fa-fw fa-times"></i>',
+    onClick: ({event}: {event: CalEvent}): void => {
+      this.calendarService.deleteEvent(event);
+    }
+  }];
 
   constructor(private calendarService: CalendarService) {
     this.calendarService.eventsChange.subscribe( (events:CalEvent[]) => {
-      this.events = events;
+      this.events = events.map(event => {event.actions = this.actions; return event;});
     });
   }
 
   ngOnInit() {
     this.events = this.calendarService.getEvents();
+    this.events = this.events.map(event => {event.actions = this.actions; return event;});
     this.viewDate = this.calendarService.getViewDate();
     this.view = this.calendarService.getView();
     this.activeDayIsOpen = this.calendarService.getActiveDayIsOpen();
@@ -78,8 +92,7 @@ export class CalendarComponent implements OnInit {
   }
 
   eventClicked(event: CalEvent) {
-    // Open some form that allows editing of the event.
-    console.log(event);
+    this.calendarEventEditor.showDialog(event);
   }
 
   eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {

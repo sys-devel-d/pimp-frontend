@@ -4,6 +4,7 @@ import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
 import { CalEvent, Calendar } from '../models/base';
 import { Subject } from 'rxjs';
+import {DateFormatter} from "@angular/common/src/facade/intl";
 
 const colors: any = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -36,6 +37,7 @@ export default class CalendarService {
   */
   private mapCalendarEvents(calendar: Calendar): Calendar {
     const mappedEvents = calendar.events.map(evt => {
+      evt.calendarKey = calendar.key;
       evt.start = new Date(evt.start);
       evt.end = new Date(evt.end);
       evt.color = calendar.isPrivate ? colors.red : colors.blue;
@@ -79,5 +81,49 @@ export default class CalendarService {
 
   getActiveDayIsOpen(): boolean {
     return this.activeDayIsOpen;
+  }
+
+  editEvent(event: CalEvent) {
+    this.http.put(
+      Globals.BACKEND + 'calendar/event/' + event.key,
+      this.mapCalendarEvent(event),
+      {
+        headers: this.authService.getTokenHeader()
+      }
+    ).subscribe(
+      response => {
+        this.events = this.events.map(evt => evt.key === event.key ? event : evt);
+        this.eventsChange.next(this.events);
+      },
+      err => console.log(err)
+    )
+  }
+
+  deleteEvent(event: CalEvent) {
+    this.http.delete(
+      Globals.BACKEND + 'calendar/event/' + event.key,
+      {
+        headers: this.authService.getTokenHeader(),
+        body: this.mapCalendarEvent(event)
+      }
+    ).subscribe(
+      response => {
+        this.events = this.events.filter(evt => evt.key !== event.key);
+        this.eventsChange.next(this.events);
+      },
+      err => console.log(err)
+    )
+  }
+
+  private mapCalendarEvent(event: CalEvent): any {
+    return {
+      key: event.key,
+      calendarKey: event.calendarKey,
+      // expected format by the backend
+      start: DateFormatter.format(event.start, 'de', 'yyyy-MM-dd hh:mm'),
+      end: DateFormatter.format(event.end, 'de', 'yyyy-MM-dd hh:mm'),
+      title: event.title,
+      participants: event.participants
+    }
   }
 }
