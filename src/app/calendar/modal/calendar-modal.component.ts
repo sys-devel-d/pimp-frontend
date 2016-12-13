@@ -1,10 +1,9 @@
 import {Component} from '@angular/core';
-import {showCalendarModal, hideCalendarModal} from '../../commons/dom-functions';
+import {showCalendarModal, hideCalendarModal, shakeInput} from '../../commons/dom-functions';
 import {CalEvent, Calendar} from '../../models/base';
 import CalendarService from '../../services/calendar.service';
 import {UserService} from '../../services/user.service';
 import {DateFormatter} from '@angular/common/src/facade/intl';
-import {shakeInput} from '../../commons/dom-functions';
 
 @Component({
   selector: 'calendar-modal',
@@ -24,7 +23,8 @@ export default class CalendarModalComponent {
   private start: string;
   private end: string;
 
-  private isEvent: Boolean;
+  private isEvent: boolean;
+  private isEditMode: boolean;
 
   constructor(
     private calendarService: CalendarService,
@@ -33,7 +33,7 @@ export default class CalendarModalComponent {
 
   }
 
-  showDialog(isEvent: Boolean, calendarEvent?: CalEvent) {
+  showDialog(isEvent: boolean, calendarEvent?: CalEvent) {
     this.isEvent = isEvent;
     if (isEvent) {
       this.eventStart = null;
