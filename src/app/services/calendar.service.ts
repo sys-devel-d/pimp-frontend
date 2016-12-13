@@ -126,4 +126,10 @@ export default class CalendarService {
       participants: event.participants
     }
   }
+
+  tearDown() {
+    this.isInitialized = false;
+    this.events = [];
+    this.calendars = [];
+  }
 }
