@@ -14,7 +14,7 @@ import {
   CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
-import CalendarEventEditorComponent from "./event-editor/calendar-event-editor.component";
+import CalendarModalComponent from './modal/calendar-modal.component';
 import CalendarService from '../services/calendar.service';
 import { CalEvent } from '../models/base';
 
@@ -25,7 +25,7 @@ import { CalEvent } from '../models/base';
 })
 export class CalendarComponent implements OnInit {
 
-  @ViewChild(CalendarEventEditorComponent) calendarEventEditor: CalendarEventEditorComponent;
+  @ViewChild(CalendarModalComponent) calendarModalComponent: CalendarModalComponent;
 
   view: string = 'month';
   viewDate: Date;
@@ -92,7 +92,11 @@ export class CalendarComponent implements OnInit {
   }
 
   eventClicked(event: CalEvent) {
-    this.calendarEventEditor.showDialog(event);
+    this.calendarModalComponent.showDialog(true, event);
+  }
+
+  createCalendarClicked() {
+    this.calendarModalComponent.showDialog(false);
   }
 
   eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {

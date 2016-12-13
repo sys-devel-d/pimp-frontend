@@ -7,7 +7,7 @@ import {Ng2DatetimePickerModule } from 'ng2-datetime-picker';
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
-import CalendarEventEditorComponent from './calendar/event-editor/calendar-event-editor.component';
+import CalendarModalComponent from './calendar/modal/calendar-modal.component';
 import { ChatComponent } from './chat/chat.component';
 import GroupChatEditorComponent from './chat/editor/group-chat-editor.component';
 import { LoginComponent } from './login/login.component';
@@ -30,7 +30,7 @@ import InlineEdit from './inline-edit/inline-edit.component';
   declarations: [
     AppComponent,
     CalendarComponent,
-    CalendarEventEditorComponent,
+    CalendarModalComponent,
     ChatComponent,
     GroupChatEditorComponent,
     LoginComponent,
