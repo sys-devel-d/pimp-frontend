@@ -21,7 +21,16 @@
       <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
         <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
           <div class="col-md-8 room-content">
-            <div class="roomname">{{ room | roomName }}</div>
+            <div class="roomname">
+              <div *ngIf="room.roomType === 'PRIVATE'">
+                <a (click)="linkToPrivateChatPartner(room.participants)">
+                  {{ room | roomName }}
+                </a>
+              </div>
+              <div *ngIf="room.roomType !== 'PRIVATE'">
+                {{ room | roomName }}
+              </div>
+            </div>
             <div class="most-recent-message">{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</div>
           </div>
           <div class="col-md-4 edit-room-actions">

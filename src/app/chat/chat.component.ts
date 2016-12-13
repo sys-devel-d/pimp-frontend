@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { MessageService } from '../services/message.service';
 import { Message, User, Room } from '../models/base';
-import { UserService } from "../services/user.service";
-import { Globals } from '../commons/globals'
-import { shakeInput } from '../commons/dom-functions'
+import { UserService } from '../services/user.service';
+import { Globals } from '../commons/globals';
+import { shakeInput } from '../commons/dom-functions';
+import _ from 'lodash';
 import GroupChatEditorComponent from './editor/group-chat-editor.component'
 declare var $:any;
 
@@ -29,11 +31,15 @@ export class ChatComponent implements OnInit {
   private groupChatCallback: Function;
   private updateRoomCallback: Function;
 
-  constructor(private messageService: MessageService, private userService: UserService) {
+  constructor(
+    private router: Router,
+    private messageService: MessageService,
+    private userService: UserService) {
+      this.router = router;
       this.privateChatCallback = this.startPrivatChat.bind(this);
       this.groupChatCallback = this.fetchUsersForSelectionAndOpenDialog.bind(this);
       this.updateRoomCallback = this.updateRoom.bind(this);
-      
+
       /**
        * Need to subscribe to data changes in MessageService. At this time
        * the init() method of MessageService might not be finished with its
@@ -76,6 +82,14 @@ export class ChatComponent implements OnInit {
           err => this.setError(err)
         );
     }
+  }
+
+  private linkToPrivateChatPartner(users: Array<User>) {
+    let ownUserName = this.userService.currentUser.userName;
+    let otherUserList: Array<User> = users.filter(
+      user => user.userName !== ownUserName);
+    let privateChatPartner = otherUserList[0];
+    this.router.navigate(['/profile', privateChatPartner.userName]);
   }
 
   private startPrivatChat(user: User) {
