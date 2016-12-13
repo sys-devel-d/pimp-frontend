@@ -32,5 +32,6 @@ export class AppComponent implements OnInit {
     this.authService.logout();
     this.messageService.tearDown();
     this.userService.tearDown();
+    this.calendarService.tearDown();
   }
 }
