@@ -45,7 +45,6 @@
     }
 
     .room-content {
-        cursor: pointer;
         height: 100%;
         padding: 8px;
     }
@@ -77,7 +76,9 @@
             cursor: pointer;
         }
     }
-
+    a {
+        cursor: pointer;
+    }
     .most-recent-message {
         overflow: hidden;
         text-overflow: ellipsis;
