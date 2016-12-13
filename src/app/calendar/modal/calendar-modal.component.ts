@@ -4,6 +4,7 @@ import {CalEvent, Calendar} from '../../models/base';
 import CalendarService from '../../services/calendar.service';
 import {UserService} from '../../services/user.service';
 import {DateFormatter} from '@angular/common/src/facade/intl';
+import {shakeInput} from '../../commons/dom-functions';
 
 @Component({
   selector: 'calendar-modal',
@@ -65,9 +66,15 @@ export default class CalendarModalComponent {
   }
 
   public createCalendar() {
-    this.calendar.owner = this.userService.currentUser.userName;
-    this.calendarService.createNewCalendar(this.calendar);
-    // reinitialize to clear forms
-    this.calendar = new Calendar();
+    if (this.calendar.title && /\S/.test(this.calendar.title)) {
+      this.calendar.owner = this.userService.currentUser.userName;
+      this.calendarService.createNewCalendar(this.calendar);
+      // reinitialize to clear forms
+      this.calendar = new Calendar();
+      hideCalendarModal();
+    }
+    else {
+      shakeInput('#calendarTitle');
+    }
   }
 }

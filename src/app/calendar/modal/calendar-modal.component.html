@@ -43,7 +43,7 @@
       <div class="modal-body">
         <div class="form-group">
           <label for="calendarTitle">Name</label>
-          <input id="calendarTitle" type="text" class="form-control" [(ngModel)]="calendar.title" required>
+          <input id="calendarTitle" placeholder="Designabteilung" type="text" class="form-control" [(ngModel)]="calendar.title" required>
         </div>
         <div class="form-group">
           <label for="isPrivate">Handelt es sich um einen privaten Kalender?</label>
@@ -55,7 +55,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" (click)="createCalendar()">Erstellen</button>
+        <button class="btn btn-primary" (click)="createCalendar()">Erstellen</button>
       </div>
 
     </div>
