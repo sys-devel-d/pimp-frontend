@@ -64,7 +64,17 @@ export default class CalendarService {
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
-    })
+    });
+  }
+
+  createNewCalendar(calendar: Calendar) {
+    return this.http.post(
+      Globals.BACKEND + 'calendar',
+      calendar,
+      { headers: this.authService.getTokenHeader() }
+    ).subscribe(() => {
+      this.calendars.push(calendar);
+    });
   }
 
   getEvents(): CalEvent[] {

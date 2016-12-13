@@ -15,10 +15,10 @@ export function hideChatModal() {
     $('#chat-modal').modal('hide');
 }
 
-export function showCalendarEventEditorModal() {
+export function showCalendarModal() {
     $('#calendar-event-editor-modal').modal('show');
 }
 
-export function hideCalendarEventEditorModal() {
+export function hideCalendarModal() {
   $('#calendar-event-editor-modal').modal('hide');
 }

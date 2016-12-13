@@ -1,5 +1,10 @@
 <div class="container">
   <div class="row text-center">
+      <div class="col-md-4 col-md-offset-4">
+        <div class="btn btn-primary" (click)="createCalendarClicked()">Neuer Kalender</div>
+      </div>
+  </div>
+  <div class="row text-center">
     <div class="col-md-4">
       <div class="btn-group">
         <div class="btn btn-primary" (click)="decrement()">Zurück</div>
@@ -48,4 +53,4 @@
   </div>
 </div>
 
-<calendar-event-editor></calendar-event-editor>
+<calendar-modal></calendar-modal>

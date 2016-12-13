@@ -29,6 +29,7 @@ export class Calendar {
   key: string;
   title: string;
   isPrivate: boolean;
+  owner: string;
   subscribers: User[];
   events: CalEvent[];
 }

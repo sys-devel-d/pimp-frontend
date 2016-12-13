@@ -5,8 +5,10 @@ import { CalendarModule } from 'angular-calendar';
 
 import { CalendarComponent } from './calendar.component';
 import CalendarService from '../services/calendar.service';
+import {UserService} from '../services/user.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
-import CalendarEventEditorComponent from "./event-editor/calendar-event-editor.component";
+import {UserServiceStub} from '../services/test/user.service.stub';
+import CalendarModalComponent from './modal/calendar-modal.component';
 
 import { FormsModule } from '@angular/forms';
 
@@ -22,11 +24,14 @@ describe('ChatComponent', () => {
       ],
       declarations: [
         CalendarComponent,
-        CalendarEventEditorComponent
+        CalendarModalComponent
       ],
       providers: [
         {
           provide: CalendarService, useClass: CalendarServiceStub
+        },
+        {
+          provide: UserService, useClass: UserServiceStub
         }
       ]
     })
