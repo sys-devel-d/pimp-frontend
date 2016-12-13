@@ -54,9 +54,14 @@ export default class CalendarModalComponent {
     if (this.eventEnd != null) {
       this.event.end = this.eventEnd;
     }
-    if (this.event.start <= this.event.end) {
-      this.calendarService.editEvent(this.event);
-      hideCalendarModal();
+    if (this.event.title && /\S/.test(this.event.title)) {
+      if (this.event.start <= this.event.end) {
+        this.calendarService.editEvent(this.event);
+        hideCalendarModal();
+      }
+    }
+    else {
+      shakeInput('#eventTitle');
     }
   }
 
