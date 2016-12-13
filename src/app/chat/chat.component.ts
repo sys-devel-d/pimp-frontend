@@ -86,7 +86,7 @@ export class ChatComponent implements OnInit {
 
   private linkToPrivateChatPartner(users: Array<User>) {
     let ownUserName = this.userService.currentUser.userName;
-    let otherUserList: Array<User>  = _.filter(users,
+    let otherUserList: Array<User> = users.filter(
       user => user.userName !== ownUserName);
     let privateChatPartner = otherUserList[0];
     this.router.navigate(['/profile', privateChatPartner.userName]);
