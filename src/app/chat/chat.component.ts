@@ -5,7 +5,6 @@ import { Message, User, Room } from '../models/base';
 import { UserService } from '../services/user.service';
 import { Globals } from '../commons/globals';
 import { shakeInput } from '../commons/dom-functions';
-import _ from 'lodash';
 import GroupChatEditorComponent from './editor/group-chat-editor.component'
 declare var $:any;
 
