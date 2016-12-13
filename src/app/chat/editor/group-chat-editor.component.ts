@@ -1,9 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { User, Room } from '../../models/base';
-import { UserService } from '../../services/user.service'
-import { MessageService } from '../../services/message.service'
-import { Globals } from '../../commons/globals'
-import { shakeInput, showChatModal, hideChatModal } from '../../commons/dom-functions'
+import { UserService } from '../../services/user.service';
+import { MessageService } from '../../services/message.service';
+import { Globals } from '../../commons/globals';
+import { shakeInput, showChatModal, hideChatModal } from '../../commons/dom-functions';
 
 const DOM_ID_GROUP_DISPLAY_NAME = '#groupDisplayName';
 
