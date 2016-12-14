@@ -3,7 +3,7 @@ import { User, Room } from '../../models/base';
 import { UserService } from '../../services/user.service';
 import { MessageService } from '../../services/message.service';
 import { Globals } from '../../commons/globals';
-import { shakeInput, showChatModal, hideChatModal } from '../../commons/dom-functions';
+import { shakeInput, showAppModal, hideAppModal } from '../../commons/dom-functions';
 
 const DOM_ID_GROUP_DISPLAY_NAME = '#groupDisplayName';
 
@@ -27,7 +27,7 @@ export default class GroupChatEditorComponent {
     if (this.isInEditMode) {
       this.resetChatRoomBeingEdited();
     }
-    showChatModal();
+    showAppModal();
     this.isInEditMode = false;
     if (firstUser) {
       this.addToSelectedUsers(firstUser);
@@ -63,7 +63,7 @@ export default class GroupChatEditorComponent {
         this.displayName
       );
 
-      hideChatModal();
+      hideAppModal();
       this.resetChatRoomBeingEdited();
     }
     else {
@@ -96,7 +96,7 @@ export default class GroupChatEditorComponent {
       };
       this.messageService.editRoom(room).subscribe(
         (editedRoom: Room) => {
-          hideChatModal();
+          hideAppModal();
           this.isInEditMode = false;
           this.updateRoom(editedRoom);
           this.resetChatRoomBeingEdited();

@@ -9,11 +9,12 @@ import { MessageServiceStub } from '../services/test/message.service.stub';
 import { UserServiceStub } from '../services/test/user.service.stub';
 
 import { UserSearchComponent } from "../user-search/user-search.component";
-import GroupChatEditorComponent from '../chat/editor/group-chat-editor.component' 
+import GroupChatEditorComponent from '../chat/editor/group-chat-editor.component';
+import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HighlightDirective } from '../directives/highlight.directive';
-import { RoomNamePipe } from '../pipes/room-name.pipe'
+import { RoomNamePipe } from '../pipes/room-name.pipe';
 
 describe('ChatComponent', () => {
   let component: ChatComponent;
@@ -29,7 +30,8 @@ describe('ChatComponent', () => {
         UserSearchComponent,
         HighlightDirective,
         RoomNamePipe,
-        GroupChatEditorComponent
+        GroupChatEditorComponent,
+        ModalDialogComponent
       ],
       providers: [
         {
@@ -91,4 +93,5 @@ describe('ChatComponent', () => {
     expect(date).toBeTruthy();
 
   });
+  
 });
