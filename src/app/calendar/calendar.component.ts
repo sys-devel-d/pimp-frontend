@@ -15,8 +15,11 @@ import {
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import CalendarModalComponent from './modal/calendar-modal.component';
+import EventModalComponent from './modal/event/event-modal.component';
 import CalendarService from '../services/calendar.service';
 import { CalEvent } from '../models/base';
+
+type Editing = "event" | "calendar" | "none";
 
 @Component({
   selector: 'angular-calendar',
@@ -26,23 +29,28 @@ import { CalEvent } from '../models/base';
 export class CalendarComponent implements OnInit {
 
   @ViewChild(CalendarModalComponent) calendarModalComponent: CalendarModalComponent;
+  @ViewChild(EventModalComponent) eventModalComponent: EventModalComponent;
 
+  editing: Editing = 'none';
   view: string = 'month';
   viewDate: Date;
   activeDayIsOpen: boolean;
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
-  actions: CalendarEventAction[] = [{
-    label: '<i class="fa fa-fw fa-pencil"></i>',
-    onClick: ({event}: {event: CalEvent}): void => {
-      this.eventClicked(event);
+  actions: CalendarEventAction[] = [
+    {
+      label: '<i class="fa fa-fw fa-pencil"></i>',
+      onClick: ({event}: {event: CalEvent}): void => {
+        this.eventClicked(event);
+      }
+    }, 
+    {
+      label: '<i class="fa fa-fw fa-times"></i>',
+      onClick: ({event}: {event: CalEvent}): void => {
+        this.calendarService.deleteEvent(event);
+      }
     }
-  }, {
-    label: '<i class="fa fa-fw fa-times"></i>',
-    onClick: ({event}: {event: CalEvent}): void => {
-      this.calendarService.deleteEvent(event);
-    }
-  }];
+  ];
 
   constructor(private calendarService: CalendarService) {
     this.calendarService.eventsChange.subscribe( (events:CalEvent[]) => {
@@ -92,11 +100,17 @@ export class CalendarComponent implements OnInit {
   }
 
   eventClicked(event: CalEvent) {
-    this.calendarModalComponent.showDialog(true, event);
+    this.editing = "event";
+    setTimeout(() => {
+      this.eventModalComponent.showDialog(event);
+    }, 0);
   }
 
   createCalendarClicked() {
-    this.calendarModalComponent.showDialog(false);
+    this.editing = "calendar";
+    setTimeout(() => {
+      this.calendarModalComponent.showDialog();
+    }, 0);
   }
 
   eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {

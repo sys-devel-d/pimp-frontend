@@ -53,4 +53,5 @@
   </div>
 </div>
 
-<calendar-modal></calendar-modal>
+<calendar-modal *ngIf="editing == 'calendar'"></calendar-modal>
+<event-modal *ngIf="editing == 'event'"></event-modal>

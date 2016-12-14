@@ -23,7 +23,7 @@ export default class CalendarService {
   private calendars: Calendar[];
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
 
-  constructor(private authService: AuthService, private http: Http) { }
+  constructor(private authService: AuthService, private http: Http) {}
 
   init() {
     if (!this.isInitialized) {
@@ -64,6 +64,7 @@ export default class CalendarService {
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
+      console.log(this.calendars);
     });
   }
 

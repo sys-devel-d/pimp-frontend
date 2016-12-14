@@ -22,3 +22,11 @@ export function showCalendarModal() {
 export function hideCalendarModal() {
   $('#calendar-event-editor-modal').modal('hide');
 }
+
+export function showAppModal() {
+    $('#app-modal').modal('show');
+}
+
+export function hideAppModal() {
+    $('#app-modal').modal('hide');
+}

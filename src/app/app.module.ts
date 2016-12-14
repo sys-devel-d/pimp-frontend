@@ -7,7 +7,6 @@ import { Ng2DatetimePickerModule } from 'ng2-datetime-picker';
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
-import CalendarModalComponent from './calendar/modal/calendar-modal.component';
 import { ChatComponent } from './chat/chat.component';
 import GroupChatEditorComponent from './chat/editor/group-chat-editor.component';
 import { LoginComponent } from './login/login.component';
@@ -26,6 +25,10 @@ import { HighlightDirective } from './directives/highlight.directive';
 import { RoomNamePipe } from './pipes/room-name.pipe';
 import InlineEdit from './inline-edit/inline-edit.component';
 
+import ModalDialogComponent from './modal-dialog/modal-dialog.component';
+import CalendarModalComponent from './calendar/modal/calendar-modal.component';
+import EventModalComponent from './calendar/modal/event/event-modal.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +44,9 @@ import InlineEdit from './inline-edit/inline-edit.component';
     UserSearchComponent,
     HighlightDirective,
     RoomNamePipe,
-    InlineEdit
+    InlineEdit,
+    ModalDialogComponent,
+    EventModalComponent
   ],
   imports: [
     BrowserModule,
