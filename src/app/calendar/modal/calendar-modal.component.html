@@ -17,12 +17,12 @@
         <div class="form-group">
           <label for="eventStart">Beginn</label>
           <!-- readonly because date should be edited via datetime-picker only -->
-          <input id="eventStart" type="text" class="form-control" [(ngModel)]="eventStart" ng2-datetime-picker date-format="DD.MM.YYYY hh:mm" close-on-select="false" placeholder={{start}} readonly/>
+          <input id="eventStart" type="text" class="form-control" [(ngModel)]="eventStart" ng2-datetime-picker date-format="DD.MM.YYYY HH:mm" close-on-select="false" placeholder={{start}} readonly/>
         </div>
         <div class="form-group">
           <label for="eventEnd">Ende</label>
           <!-- readonly because date should be edited via datetime-picker only -->
-          <input id="eventEnd" type="text" class="form-control" [(ngModel)]="eventEnd" ng2-datetime-picker date-format="DD.MM.YYYY hh:mm" close-on-select="false" placeholder={{end}} readonly/>
+          <input id="eventEnd" type="text" class="form-control" [(ngModel)]="eventEnd" ng2-datetime-picker date-format="DD.MM.YYYY HH:mm" close-on-select="false" placeholder={{end}} readonly/>
         </div>
       </div>
       <div class="modal-footer">

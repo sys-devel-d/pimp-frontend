@@ -130,8 +130,8 @@ export default class CalendarService {
       key: event.key,
       calendarKey: event.calendarKey,
       // expected format by the backend
-      start: DateFormatter.format(event.start, 'de', 'yyyy-MM-dd hh:mm'),
-      end: DateFormatter.format(event.end, 'de', 'yyyy-MM-dd hh:mm'),
+      start: DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm'),
+      end: DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm'),
       title: event.title,
       participants: event.participants
     }
