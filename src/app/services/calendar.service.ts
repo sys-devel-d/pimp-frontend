@@ -64,7 +64,6 @@ export default class CalendarService {
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
-      console.log(this.calendars);
     });
   }
 

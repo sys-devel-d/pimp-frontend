@@ -9,6 +9,8 @@ import {UserService} from '../services/user.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
 import {UserServiceStub} from '../services/test/user.service.stub';
 import CalendarModalComponent from './modal/calendar-modal.component';
+import EventModalComponent from './modal/event/event-modal.component';
+import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 
 import { FormsModule } from '@angular/forms';
 
@@ -24,7 +26,9 @@ describe('ChatComponent', () => {
       ],
       declarations: [
         CalendarComponent,
-        CalendarModalComponent
+        CalendarModalComponent,
+        EventModalComponent,
+        ModalDialogComponent
       ],
       providers: [
         {
@@ -50,5 +54,22 @@ describe('ChatComponent', () => {
     const [evt1, evt2] = openEventContainer.children;
     expect(evt1.query(By.css('.cal-event-title')).nativeElement.textContent.trim()).toBe('Dev Meeting');
     expect(evt2.query(By.css('.cal-event-title')).nativeElement.textContent.trim()).toBe('Stakeholder Meeting');
+  });
+
+  it('opens modal both for event and calendar', () => {
+    const btnOpenCalendarModal = fixture.debugElement.query(By.css('#btnOpenCalendarModal'));
+    btnOpenCalendarModal.nativeElement.click();
+    fixture.detectChanges();
+    let modalTitle = fixture.debugElement.query(By.css('.modal-title'));
+    expect(modalTitle.nativeElement.textContent.trim()).toEqual('Kalender erstellen');
+
+    // close modal
+    fixture.debugElement.query(By.css('button.close')).nativeElement.click();
+
+    fixture.debugElement.query(By.css('.cal-open-day-events .cal-event-title')).nativeElement.click();
+    fixture.detectChanges();
+    // get new modal title
+    modalTitle = fixture.debugElement.query(By.css('.modal-title'));
+    expect(modalTitle.nativeElement.textContent.trim()).toEqual('Termin bearbeiten');
   });
 });
