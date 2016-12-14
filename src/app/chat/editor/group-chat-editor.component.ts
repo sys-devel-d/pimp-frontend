@@ -13,99 +13,99 @@ const DOM_ID_GROUP_DISPLAY_NAME = '#groupDisplayName';
   styleUrls: ['./group-chat-editor.component.scss']
 })
 export default class GroupChatEditorComponent {
-    @Input() updateRoom: Function;
+  @Input() updateRoom: Function;
 
-    displayName: string;
-    fetchedUsers: User[];
-    selectedUsers: User[] = [];
-    isInEditMode: boolean = false;
-    roomBeingEdited: Room;
+  displayName: string;
+  fetchedUsers: User[];
+  selectedUsers: User[] = [];
+  isInEditMode: boolean = false;
+  roomBeingEdited: Room;
 
-    constructor(private userService: UserService, private messageService: MessageService) {}
+  constructor(private userService: UserService, private messageService: MessageService) { }
 
-    fetchUsersForSelectionAndOpenDialog(firstUser?:User) {
-        if(this.isInEditMode) {
-            this.resetChatRoomBeingEdited();
-        }
-        showChatModal();
-        this.isInEditMode = false;
-        if(firstUser) {
-            this.addToSelectedUsers(firstUser);
-        }
-        this.userService.getAllUsers().subscribe( (users:User[]) => {
-                this.fetchedUsers = users;
-            }
-        )
+  fetchUsersForSelectionAndOpenDialog(firstUser?: User) {
+    if (this.isInEditMode) {
+      this.resetChatRoomBeingEdited();
     }
-
-    private resetChatRoomBeingEdited() {
-        this.selectedUsers = [];
-        this.displayName = null;
-        this.roomBeingEdited = null;
+    showChatModal();
+    this.isInEditMode = false;
+    if (firstUser) {
+      this.addToSelectedUsers(firstUser);
     }
-
-    private addToSelectedUsers(user: User) {
-        if(!this.selectedUsers.find( usr => usr.userName == user.userName)) {
-            this.selectedUsers.push(user);
-        }
+    this.userService.getAllUsers().subscribe((users: User[]) => {
+      this.fetchedUsers = users;
     }
+    )
+  }
 
-    private removeFromSelectedUsers(user: User) {
-        this.selectedUsers =
-        this.selectedUsers.filter( usr => usr.userName != user.userName);
+  private resetChatRoomBeingEdited() {
+    this.selectedUsers = [];
+    this.displayName = null;
+    this.roomBeingEdited = null;
+  }
+
+  private addToSelectedUsers(user: User) {
+    if (!this.selectedUsers.find(usr => usr.userName == user.userName)) {
+      this.selectedUsers.push(user);
     }
+  }
 
-    private startGroupChat() {
-        if(this.displayName) {
-            this.messageService.initChatWith(
-                this.selectedUsers,
-                Globals.CHATROOM_TYPE_GROUP,
-                this.displayName
-            );
+  private removeFromSelectedUsers(user: User) {
+    this.selectedUsers =
+      this.selectedUsers.filter(usr => usr.userName != user.userName);
+  }
 
-            hideChatModal();
-            this.resetChatRoomBeingEdited();
-        }
-        else {
-            shakeInput(DOM_ID_GROUP_DISPLAY_NAME);
-        }
+  private startGroupChat() {
+    if (this.displayName) {
+      this.messageService.initChatWith(
+        this.selectedUsers,
+        Globals.CHATROOM_TYPE_GROUP,
+        this.displayName
+      );
+
+      hideChatModal();
+      this.resetChatRoomBeingEdited();
     }
-
-    prepareEditingRoom(room:Room) {
-        if(!this.isInEditMode) {
-            this.resetChatRoomBeingEdited();
-        }
-        this.roomBeingEdited = room;
-        this.fetchUsersForSelectionAndOpenDialog();
-        this.isInEditMode = true;
-        this.selectedUsers = room.participants;
-        this.displayName = room.displayNames[Globals.HASH_KEY_DISPLAY_NAME_GROUP];
+    else {
+      shakeInput(DOM_ID_GROUP_DISPLAY_NAME);
     }
+  }
 
-    private editRoom() {
-        if(this.displayName) {
-            const participants = this.selectedUsers;
-            const room = {
-                roomName: this.roomBeingEdited.roomName,
-                displayNames: {
-                    [Globals.HASH_KEY_DISPLAY_NAME_GROUP]: this.displayName
-                },
-                participants: participants,
-                roomType: Globals.CHATROOM_TYPE_GROUP,
-                messages: []
-            };
-            this.messageService.editRoom(room).subscribe(
-                (editedRoom:Room) => {
-                    hideChatModal();
-                    this.isInEditMode = false;
-                    this.updateRoom(editedRoom);
-                    this.resetChatRoomBeingEdited();
-                },
-                err => console.log(err)
-            );
-        }
-        else {
-            shakeInput(DOM_ID_GROUP_DISPLAY_NAME);
-        }
+  prepareEditingRoom(room: Room) {
+    if (!this.isInEditMode) {
+      this.resetChatRoomBeingEdited();
     }
+    this.roomBeingEdited = room;
+    this.fetchUsersForSelectionAndOpenDialog();
+    this.isInEditMode = true;
+    this.selectedUsers = room.participants;
+    this.displayName = room.displayNames[Globals.HASH_KEY_DISPLAY_NAME_GROUP];
+  }
+
+  private editRoom() {
+    if (this.displayName) {
+      const participants = this.selectedUsers;
+      const room = {
+        roomName: this.roomBeingEdited.roomName,
+        displayNames: {
+          [Globals.HASH_KEY_DISPLAY_NAME_GROUP]: this.displayName
+        },
+        participants: participants,
+        roomType: Globals.CHATROOM_TYPE_GROUP,
+        messages: []
+      };
+      this.messageService.editRoom(room).subscribe(
+        (editedRoom: Room) => {
+          hideChatModal();
+          this.isInEditMode = false;
+          this.updateRoom(editedRoom);
+          this.resetChatRoomBeingEdited();
+        },
+        err => console.log(err)
+      );
+    }
+    else {
+      shakeInput(DOM_ID_GROUP_DISPLAY_NAME);
+    }
+  }
 }
