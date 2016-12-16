@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { hideAppModal, showAppModal } from '../../../commons/dom-functions';
-import { CalEvent, Calendar } from '../../../models/base';
+import { hideAppModal, showAppModal, shakeInput } from '../../../commons/dom-functions';
+import { CalEvent } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
-import { UserService } from '../../../services/user.service';
 import { DateFormatter } from '@angular/common/src/facade/intl';
 
 @Component({
@@ -21,21 +20,22 @@ export default class EventModalComponent {
   private start: string;
   private end: string;
 
-  constructor(
-    private calendarService: CalendarService,
-    private userService: UserService
-  ) {}
+  constructor(private calendarService: CalendarService) {}
 
   showDialog(calendarEvent: CalEvent) {
     this.eventStart = null;
     this.eventEnd = null;
-    this.event = Object.assign({}, calendarEvent); // avoid UI changes if not saved
+    this.event = calendarEvent;
     this.start = DateFormatter.format(this.event.start, 'de', 'dd.MM.yyyy HH:mm');
     this.end = DateFormatter.format(this.event.end, 'de', 'dd.MM.yyyy HH:mm');
     showAppModal();
   }
 
   public saveEvent() {
+    if (!( this.event.title && /\S/.test(this.event.title) )) {
+      shakeInput('#eventTitle');
+      return;
+    }
     if (this.eventStart != null) {
       this.event.start = this.eventStart;
     }
@@ -45,6 +45,9 @@ export default class EventModalComponent {
     if (this.event.start <= this.event.end) {
       this.calendarService.editEvent(this.event);
       hideAppModal();
+    }
+    else {
+      alert('Der Beginn des Termins kann zeitlich nicht vor dem Ende sein.');
     }
   }
 
