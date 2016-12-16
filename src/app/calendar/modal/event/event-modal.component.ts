@@ -30,8 +30,8 @@ export default class EventModalComponent {
     this.eventStart = null;
     this.eventEnd = null;
     this.event = Object.assign({}, calendarEvent); // avoid UI changes if not saved
-    this.start = DateFormatter.format(this.event.start, 'de', 'dd.MM.yyyy hh:mm');
-    this.end = DateFormatter.format(this.event.end, 'de', 'dd.MM.yyyy hh:mm');
+    this.start = DateFormatter.format(this.event.start, 'de', 'dd.MM.yyyy HH:mm');
+    this.end = DateFormatter.format(this.event.end, 'de', 'dd.MM.yyyy HH:mm');
     showAppModal();
   }
 
