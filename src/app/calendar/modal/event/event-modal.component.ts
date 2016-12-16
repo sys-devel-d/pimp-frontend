@@ -36,19 +36,19 @@ export default class EventModalComponent {
       shakeInput('#eventTitle');
       return;
     }
+    if(this.event.start > this.event.end) {
+      alert('Der Beginn des Termins kann zeitlich nicht vor dem Ende sein.');
+      return;
+    }
+
     if (this.eventStart != null) {
       this.event.start = this.eventStart;
     }
     if (this.eventEnd != null) {
       this.event.end = this.eventEnd;
     }
-    if (this.event.start <= this.event.end) {
-      this.calendarService.editEvent(this.event);
-      hideAppModal();
-    }
-    else {
-      alert('Der Beginn des Termins kann zeitlich nicht vor dem Ende sein.');
-    }
+    this.calendarService.editEvent(this.event);
+    hideAppModal();
   }
 
   public deleteEvent() {
