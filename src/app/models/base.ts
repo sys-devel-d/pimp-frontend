@@ -40,6 +40,10 @@ export class CalEvent implements CalendarEvent {
   start: Date;
   end: Date;
   title: string;
+  place: string;
+  description: string;
+  allDay: boolean;
+  isPrivate: boolean;
   color: any;
   creator: string;
   participants: string[];
