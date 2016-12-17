@@ -81,6 +81,20 @@ export default class CalendarService {
     return this.events;
   }
 
+  /**
+   * Returns all calendars that the user can write to.
+   * Basically he shouldn't be able to write in other 
+   * users' private calendars.
+   */
+  getWritableCalendars(): Calendar[] {
+    console.log(this.calendars);
+    return this.calendars.filter( cal => {
+      return !( cal.isPrivate && 
+                cal.owner !== this.authService.getCurrentUserName()
+              ); 
+    });
+  }
+
   getViewDate(): Date {
     return this.viewDate;
   }
@@ -91,6 +105,11 @@ export default class CalendarService {
 
   getActiveDayIsOpen(): boolean {
     return this.activeDayIsOpen;
+  }
+
+  createEvent(event: CalEvent) {
+    event.creator = this.authService.getCurrentUserName();
+    console.log(event);
   }
 
   editEvent(event: CalEvent) {

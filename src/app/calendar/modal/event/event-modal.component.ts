@@ -56,4 +56,8 @@ export default class EventModalComponent {
     hideAppModal();
   }
 
+  public setEvent(event: CalEvent) {
+    this.event = event;
+  }
+
 }

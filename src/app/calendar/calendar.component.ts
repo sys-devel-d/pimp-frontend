@@ -16,10 +16,11 @@ import {
 } from 'angular-calendar';
 import CalendarModalComponent from './modal/calendar-modal.component';
 import EventModalComponent from './modal/event/event-modal.component';
+import CreateEventModalComponent from './modal/event/create/create-event-modal.component';
 import CalendarService from '../services/calendar.service';
 import { CalEvent } from '../models/base';
 
-type Editing = "event" | "calendar" | "none";
+type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar';
 
 @Component({
   selector: 'angular-calendar',
@@ -30,8 +31,9 @@ export class CalendarComponent implements OnInit {
 
   @ViewChild(CalendarModalComponent) calendarModalComponent: CalendarModalComponent;
   @ViewChild(EventModalComponent) eventModalComponent: EventModalComponent;
+  @ViewChild(CreateEventModalComponent) createModalComponent: CreateEventModalComponent;
 
-  editing: Editing = 'none';
+  mode: Mode;
   view: string = 'month';
   viewDate: Date;
   activeDayIsOpen: boolean;
@@ -100,16 +102,23 @@ export class CalendarComponent implements OnInit {
   }
 
   eventClicked(event: CalEvent) {
-    this.editing = "event";
+    this.mode = 'edit-event';
     setTimeout(() => {
       this.eventModalComponent.showDialog(event);
     }, 0);
   }
 
   createCalendarClicked() {
-    this.editing = "calendar";
+    this.mode = 'create-calendar';
     setTimeout(() => {
       this.calendarModalComponent.showDialog();
+    }, 0);
+  }
+
+  createEventClicked() {
+    this.mode = 'create-event';
+    setTimeout(() => {
+      this.createModalComponent.showDialog();
     }, 0);
   }
 

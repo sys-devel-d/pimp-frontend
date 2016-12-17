@@ -1,0 +1,48 @@
+<modal-dialog title="Termin erstellen">
+
+  <div modal-body>
+    <div class="form-group">
+      <label for="eventTitle">Titel des Termins</label>
+      <input id="eventTitle" type="text" class="form-control" [(ngModel)]="event.title" required>
+    </div>
+
+    <div class="form-group">
+      <label for="calendarKey">Zu welchem Kalender soll dieser Termin gehören?</label>
+      <br>
+      <select class="form-control" id="calendarKey" [(ngModel)]="event.calendarKey" required>
+        <option *ngFor="let cal of calendars" value="{{cal.key}}">{{cal.title}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="eventPlace">Ort</label>
+      <input type="text" class="form-control" [(ngModel)]="event.place">
+    </div>
+
+    <div class="form-group">
+      <label for="eventDescription">Beschreibung</label>
+      <textarea class="form-control" [(ngModel)]="event.description"></textarea>
+    </div>
+
+    <div class="checkbox">
+      <label><input type="checkbox" [(ngModel)]="event.isPrivate">Privater Termin?</label>
+    </div>
+
+    <div class="form-group">
+      <label for="eventStart">Beginn</label>
+      <!-- readonly because date should be edited via datetime-picker only -->
+      <input id="eventStart" type="text" class="form-control" [(ngModel)]="event.start" ng2-datetime-picker date-format="DD.MM.YYYY HH:mm" close-on-select="false" placeholder="Beginn des Termins" readonly/>
+    </div>
+
+    <div class="form-group">
+      <label for="eventEnd">Ende</label>
+      <!-- readonly because date should be edited via datetime-picker only -->
+      <input id="eventEnd" type="text" class="form-control" [(ngModel)]="event.end" ng2-datetime-picker date-format="DD.MM.YYYY HH:mm" close-on-select="false" placeholder="Ende des Termins" readonly/>
+    </div>
+  </div>
+
+  <div modal-footer>
+    <button class="btn btn-primary" (click)="saveEvent()">Speichern</button>
+  </div>
+  
+</modal-dialog>
