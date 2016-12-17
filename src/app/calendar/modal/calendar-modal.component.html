@@ -5,14 +5,12 @@
       <label for="calendarTitle">Name</label>
       <input id="calendarTitle" type="text" class="form-control" placeholder="Team DevOps" [(ngModel)]="calendar.title" required>
     </div>
-    <div class="form-group">
-      <label for="isPrivate">Handelt es sich um einen privaten Kalender?</label>
-      <div class="form-check">
-        <label>
-          <input id="isPrivate" type="checkbox" class="form-check-input" [(ngModel)]="calendar.isPrivate" />
-          Privater Kalender
-        </label>
-      </div>
+
+    <div class="checkbox">
+      <label>
+        <input id="isPrivate" type="checkbox" class="form-check-input" [(ngModel)]="calendar.isPrivate" />
+        Privater Kalender?
+      </label>
     </div>
   </div>
 
