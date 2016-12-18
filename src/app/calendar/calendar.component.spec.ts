@@ -9,9 +9,9 @@ import {UserService} from '../services/user.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
 import {UserServiceStub} from '../services/test/user.service.stub';
 import CalendarModalComponent from './modal/calendar-modal.component';
-import EventModalComponent from './modal/event/event-modal.component';
+import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
-import CreateEventModalComponent from './modal/event/create/create-event-modal.component';
+import CreateEventModalComponent from './modal/event/create-event-modal.component';
 
 import { FormsModule } from '@angular/forms';
 
@@ -28,7 +28,7 @@ describe('ChatComponent', () => {
       declarations: [
         CalendarComponent,
         CalendarModalComponent,
-        EventModalComponent,
+        EditEventModalComponent,
         CreateEventModalComponent,
         ModalDialogComponent
       ],
