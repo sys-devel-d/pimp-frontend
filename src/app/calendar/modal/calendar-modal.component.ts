@@ -6,8 +6,7 @@ import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'calendar-modal',
-  templateUrl: 'calendar-modal.component.html',
-  styleUrls: ['calendar-modal.component.css']
+  templateUrl: 'calendar-modal.component.html'
 })
 export default class CalendarModalComponent {
 

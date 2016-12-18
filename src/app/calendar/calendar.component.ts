@@ -15,8 +15,8 @@ import {
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import CalendarModalComponent from './modal/calendar-modal.component';
-import EventModalComponent from './modal/event/event-modal.component';
-import CreateEventModalComponent from './modal/event/create/create-event-modal.component';
+import EditEventModalComponent from './modal/event/edit-event-modal.component';
+import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import CalendarService from '../services/calendar.service';
 import { CalEvent } from '../models/base';
 
@@ -30,11 +30,11 @@ type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar';
 export class CalendarComponent implements OnInit {
 
   @ViewChild(CalendarModalComponent) calendarModalComponent: CalendarModalComponent;
-  @ViewChild(EventModalComponent) eventModalComponent: EventModalComponent;
+  @ViewChild(EditEventModalComponent) editEventModalComponent: EditEventModalComponent;
   @ViewChild(CreateEventModalComponent) createModalComponent: CreateEventModalComponent;
 
   mode: Mode;
-  view: string = 'month';
+  view: string;
   viewDate: Date;
   activeDayIsOpen: boolean;
   refresh: Subject<any> = new Subject(); // Why? How?
@@ -55,6 +55,7 @@ export class CalendarComponent implements OnInit {
   ];
 
   constructor(private calendarService: CalendarService) {
+    // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events:CalEvent[]) => {
       this.events = events.map(event => {event.actions = this.actions; return event;});
     });
@@ -74,7 +75,7 @@ export class CalendarComponent implements OnInit {
       week: addWeeks,
       month: addMonths
     }[this.view];
-    this.viewDate = addFn(this.viewDate, 1);
+    this.setViewDate(addFn(this.viewDate, 1));
   }
 
   decrement(): void {
@@ -83,11 +84,12 @@ export class CalendarComponent implements OnInit {
       week: subWeeks,
       month: subMonths
     }[this.view];
-    this.viewDate = subFn(this.viewDate, 1);
+    this.setViewDate(subFn(this.viewDate, 1));
   }
 
   today(): void {
     this.viewDate = new Date();
+    this.calendarService.setViewDate(this.viewDate);
   }
 
   dayClicked({date, events}: {date: Date, events: CalEvent[]}): void {
@@ -96,7 +98,7 @@ export class CalendarComponent implements OnInit {
         this.activeDayIsOpen = false;
       } else {
         this.activeDayIsOpen = true;
-        this.viewDate = date;
+        this.setViewDate(date);
       }
     }
   }
@@ -104,7 +106,7 @@ export class CalendarComponent implements OnInit {
   eventClicked(event: CalEvent) {
     this.mode = 'edit-event';
     setTimeout(() => {
-      this.eventModalComponent.showDialog(event);
+      this.editEventModalComponent.showDialog(event);
     }, 0);
   }
 
@@ -126,5 +128,10 @@ export class CalendarComponent implements OnInit {
     event.start = newStart;
     event.end = newEnd;
     this.refresh.next();
+  }
+
+  private setViewDate(date: Date) {
+    this.viewDate = date;
+    this.calendarService.setViewDate(date);
   }
 }

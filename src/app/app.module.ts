@@ -27,8 +27,8 @@ import InlineEdit from './inline-edit/inline-edit.component';
 
 import ModalDialogComponent from './modal-dialog/modal-dialog.component';
 import CalendarModalComponent from './calendar/modal/calendar-modal.component';
-import EventModalComponent from './calendar/modal/event/event-modal.component';
-import CreateEventModalComponent from './calendar/modal/event/create/create-event-modal.component';
+import EditEventModalComponent from './calendar/modal/event/edit-event-modal.component';
+import CreateEventModalComponent from './calendar/modal/event/create-event-modal.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +47,7 @@ import CreateEventModalComponent from './calendar/modal/event/create/create-even
     RoomNamePipe,
     InlineEdit,
     ModalDialogComponent,
-    EventModalComponent,
+    EditEventModalComponent,
     CreateEventModalComponent
   ],
   imports: [
