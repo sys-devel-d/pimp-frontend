@@ -12,6 +12,7 @@ import CalendarModalComponent from './modal/calendar-modal.component';
 import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
+import UserSelectionComponent from '../user-selection/user-selection.component';
 
 import { FormsModule } from '@angular/forms';
 
@@ -30,7 +31,8 @@ describe('ChatComponent', () => {
         CalendarModalComponent,
         EditEventModalComponent,
         CreateEventModalComponent,
-        ModalDialogComponent
+        ModalDialogComponent,
+        UserSelectionComponent
       ],
       providers: [
         {
