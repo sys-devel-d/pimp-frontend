@@ -100,6 +100,10 @@ export default class GroupChatEditorComponent {
     }
   }
 
+  private onSelectedUsersUpdate(users: User[]) {
+    this.selectedUsers = users;
+  }
+
   private displayUser(user: User): string {
     return `${user.firstName} ${user.lastName} (${user.userName})`;
   }

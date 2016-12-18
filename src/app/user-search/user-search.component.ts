@@ -29,7 +29,6 @@ export class UserSearchComponent implements OnInit {
   }
 
   groupChat(item) {
-    console.log(item);
     this.groupChatCallback(item);
     this.results = [];
     this.term = '';

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { hideAppModal } from '../../../commons/dom-functions';
-import { CalEvent } from '../../../models/base';
+import { CalEvent, User } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
+import { UserService } from './../../../services/user.service';
 import { DateFormatter } from '@angular/common/src/facade/intl';
 import { EventModalAbstract } from './event-modal.abstract';
 import { Globals } from '../../../commons/globals';
@@ -14,8 +15,8 @@ export default class EditEventModalComponent extends EventModalAbstract {
 
   calendarTitle: string;
 
-  constructor(calendarService: CalendarService) {
-    super(calendarService);
+  constructor(calendarService: CalendarService, userService: UserService) {
+    super(calendarService, userService);
     this.modalTitle = 'Termin bearbeiten';
     this.inEditingMode = true;
   }
@@ -37,6 +38,11 @@ export default class EditEventModalComponent extends EventModalAbstract {
     this.eventEnd = null;
     this.event = Object.assign({}, evt);
     this.calendarTitle = this.calendarService.getCalendarByKey(evt.calendarKey).title;
+    this.selectedUsers = evt.participants.map( part => {
+      const u = new User();
+      u.userName = part;
+      return u;
+    });
     super.showDialog();
   }
 

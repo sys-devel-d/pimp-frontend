@@ -5,7 +5,7 @@
       <div class="col-md-4">
         <div class="form-group">
           <label for="eventTitle">Titel</label>
-          <input id="eventTitle" type="text" class="form-control" [(ngModel)]="event.title" required>
+          <input id="eventTitle" placeholder="Daily Scrum" type="text" class="form-control" [(ngModel)]="event.title" required>
         </div>
       </div>
       <div class="col-md-4">
@@ -21,7 +21,7 @@
       <div class="col-md-4">
         <div class="form-group">
           <label for="eventPlace">Ort</label>
-          <input type="text" class="form-control" value="{{event.place}}" [(ngModel)]="event.place">
+          <input type="text" class="form-control" placeholder="Raum 169" value="{{event.place}}" [(ngModel)]="event.place">
         </div>
       </div>
 
@@ -62,6 +62,17 @@
                  close-on-select="false" placeholder="{{endPlaceHolder()}}"
                  readonly first-day-of-week="1"/>
         </div>
+      </div>
+
+      <div class="col-md-12">
+        <user-selection
+          (update)="onSelectedUsersUpdate($event)"
+          [users]="users"
+          [selectedUsers]="selectedUsers"
+          [displayUser]="displayUser"
+          [displaySelectedUser]="displayUser"
+          [canRemoveUsers]="!inEditingMode">
+        </user-selection>
       </div>
     </div>
   </div>

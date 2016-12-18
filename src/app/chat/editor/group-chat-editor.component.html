@@ -9,7 +9,8 @@
     </div>
 
     <div class="container-fluid">
-      <user-selection 
+      <user-selection
+        (update)="onSelectedUsersUpdate($event)"
         [users]="fetchedUsers"
         [selectedUsers]="selectedUsers"
         [displayUser]="displayUser"
