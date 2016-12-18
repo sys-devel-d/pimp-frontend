@@ -64,8 +64,8 @@ export class ChatComponent implements OnInit {
     this.rooms[i] = editedRoom;
   }
 
-  private fetchUsersForSelectionAndOpenDialog() {
-    this.groupChatEditor.fetchUsersForSelectionAndOpenDialog();
+  private fetchUsersForSelectionAndOpenDialog(firstUser?: User) {
+    this.groupChatEditor.fetchUsersForSelectionAndOpenDialog(firstUser);
   }
 
   private prepareEditingRoom(room: Room) {

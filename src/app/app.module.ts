@@ -29,6 +29,7 @@ import ModalDialogComponent from './modal-dialog/modal-dialog.component';
 import CalendarModalComponent from './calendar/modal/calendar-modal.component';
 import EditEventModalComponent from './calendar/modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './calendar/modal/event/create-event-modal.component';
+import UserSelectionComponent from './user-selection/user-selection.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import CreateEventModalComponent from './calendar/modal/event/create-event-modal
     InlineEdit,
     ModalDialogComponent,
     EditEventModalComponent,
-    CreateEventModalComponent
+    CreateEventModalComponent,
+    UserSelectionComponent
   ],
   imports: [
     BrowserModule,

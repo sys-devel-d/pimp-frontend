@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { User, Room } from '../../models/base';
 import { UserService } from '../../services/user.service';
 import { MessageService } from '../../services/message.service';
@@ -21,21 +21,20 @@ export default class GroupChatEditorComponent {
   isInEditMode: boolean = false;
   roomBeingEdited: Room;
 
-  constructor(private userService: UserService, private messageService: MessageService) { }
+  constructor(private userService: UserService, private messageService: MessageService) {}
 
   fetchUsersForSelectionAndOpenDialog(firstUser?: User) {
     if (this.isInEditMode) {
       this.resetChatRoomBeingEdited();
     }
-    showAppModal();
     this.isInEditMode = false;
+    showAppModal();
     if (firstUser) {
-      this.addToSelectedUsers(firstUser);
+      this.selectedUsers.push(firstUser);
     }
     this.userService.getAllUsers().subscribe((users: User[]) => {
       this.fetchedUsers = users;
-    }
-    )
+    });
   }
 
   private resetChatRoomBeingEdited() {
@@ -44,18 +43,8 @@ export default class GroupChatEditorComponent {
     this.roomBeingEdited = null;
   }
 
-  private addToSelectedUsers(user: User) {
-    if (!this.selectedUsers.find(usr => usr.userName == user.userName)) {
-      this.selectedUsers.push(user);
-    }
-  }
-
-  private removeFromSelectedUsers(user: User) {
-    this.selectedUsers =
-      this.selectedUsers.filter(usr => usr.userName != user.userName);
-  }
-
   private startGroupChat() {
+    console.log(this.selectedUsers);
     if (this.displayName) {
       this.messageService.initChatWith(
         this.selectedUsers,
@@ -78,7 +67,9 @@ export default class GroupChatEditorComponent {
     this.roomBeingEdited = room;
     this.fetchUsersForSelectionAndOpenDialog();
     this.isInEditMode = true;
-    this.selectedUsers = room.participants;
+    this.selectedUsers = room.participants.filter( user => {
+      return user.userName !== this.userService.currentUser.userName;
+    });
     this.displayName = room.displayNames[Globals.HASH_KEY_DISPLAY_NAME_GROUP];
   }
 
@@ -107,5 +98,13 @@ export default class GroupChatEditorComponent {
     else {
       shakeInput(DOM_ID_GROUP_DISPLAY_NAME);
     }
+  }
+
+  private displayUser(user: User): string {
+    return `${user.firstName} ${user.lastName} (${user.userName})`;
+  }
+
+  private displaySelectedUser(user: User): string {
+    return user.userName;
   }
 }

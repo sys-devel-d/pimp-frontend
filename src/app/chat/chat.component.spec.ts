@@ -8,7 +8,8 @@ import { UserService } from '../services/user.service';
 import { MessageServiceStub } from '../services/test/message.service.stub';
 import { UserServiceStub } from '../services/test/user.service.stub';
 
-import { UserSearchComponent } from "../user-search/user-search.component";
+import { UserSearchComponent } from '../user-search/user-search.component';
+import UserSelectionComponent from '../user-selection/user-selection.component';
 import GroupChatEditorComponent from '../chat/editor/group-chat-editor.component';
 import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +32,8 @@ describe('ChatComponent', () => {
         HighlightDirective,
         RoomNamePipe,
         GroupChatEditorComponent,
-        ModalDialogComponent
+        ModalDialogComponent,
+        UserSelectionComponent
       ],
       providers: [
         {
