@@ -5,5 +5,9 @@ export const Globals = Object.freeze({
 
   CHATROOM_TYPE_PRIVATE: 'PRIVATE',
   CHATROOM_TYPE_GROUP: 'GROUP',
-  HASH_KEY_DISPLAY_NAME_GROUP: '_GROUP_DISPLAY_NAME_'
+  HASH_KEY_DISPLAY_NAME_GROUP: '_GROUP_DISPLAY_NAME_',
+
+  messages: {
+    DELETE_EVENT_CONFIRMATION: 'Soll der Termin wirklich gelöscht werden?'
+  }
 });

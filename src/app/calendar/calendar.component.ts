@@ -19,6 +19,7 @@ import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import CalendarService from '../services/calendar.service';
 import { CalEvent } from '../models/base';
+import { Globals } from '../commons/globals';
 
 type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar';
 
@@ -49,7 +50,9 @@ export class CalendarComponent implements OnInit {
     {
       label: '<i class="fa fa-fw fa-times"></i>',
       onClick: ({event}: {event: CalEvent}): void => {
-        this.calendarService.deleteEvent(event);
+        if(confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
+          this.calendarService.deleteEvent(event);
+        }
       }
     }
   ];

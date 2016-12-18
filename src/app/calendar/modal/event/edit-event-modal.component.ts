@@ -4,6 +4,7 @@ import { CalEvent } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
 import { DateFormatter } from '@angular/common/src/facade/intl';
 import { EventModalAbstract } from './event-modal.abstract';
+import { Globals } from '../../../commons/globals';
 
 @Component({
   selector: 'event-modal',
@@ -40,8 +41,10 @@ export default class EditEventModalComponent extends EventModalAbstract {
   }
 
   private deleteEvent() {
-    this.calendarService.deleteEvent(this.event);
-    hideAppModal();
+    if(confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
+      this.calendarService.deleteEvent(this.event);
+      hideAppModal();
+    }
   }
 
 }
