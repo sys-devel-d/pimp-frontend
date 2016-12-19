@@ -12,7 +12,11 @@ module.exports = function (config) {
       require('angular-cli/plugins/karma')
     ],
     files: [
-      { pattern: './src/test.ts', watched: false }
+      { pattern: './src/test.ts', watched: false },
+      "./node_modules/jquery/dist/jquery.js",
+      "./node_modules/bootstrap/dist/js/bootstrap.min.js",
+      "./node_modules/ng2-datetime/src/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js",
+      "./node_modules/ng2-datetime/src/vendor/bootstrap-timepicker/bootstrap-timepicker.min.js"
     ],
     preprocessors: {
       './src/test.ts': ['angular-cli']

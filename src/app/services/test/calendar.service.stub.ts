@@ -21,6 +21,11 @@ export default class CalendarServiceStub extends CalendarService {
             start: new Date(),
             end: new Date(),
             title: 'Dev Meeting',
+            creator: 'foo',
+            place: 'Room 6',
+            description: 'He who does not appear will be fired',
+            allDay: true,
+            isPrivate: false,
             color: colors.red,
             participants: []
         }, {
@@ -29,6 +34,11 @@ export default class CalendarServiceStub extends CalendarService {
             start: new Date(),
             end: new Date(),
             title: 'Stakeholder Meeting',
+            creator: 'foo',
+            allDay: false,
+            isPrivate: false,
+            place: 'Room 5',
+            description: 'Be punctual!',
             color: colors.yellow,
             participants: []
         }];

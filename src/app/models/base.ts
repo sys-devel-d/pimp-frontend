@@ -7,11 +7,11 @@ export class Message {
 }
 
 export class Room {
-    roomName: string;
-    roomType: string;
-    messages: Message[];
-    participants: User[];
-    displayNames: {};
+  roomName: string;
+  roomType: string;
+  messages: Message[];
+  participants: User[];
+  displayNames: {};
 }
 
 export class User {
@@ -40,7 +40,12 @@ export class CalEvent implements CalendarEvent {
   start: Date;
   end: Date;
   title: string;
+  place: string;
+  description: string;
+  allDay: boolean;
+  isPrivate: boolean;
   color: any;
+  creator: string;
   participants: string[];
   actions?: CalendarEventAction[];
 }

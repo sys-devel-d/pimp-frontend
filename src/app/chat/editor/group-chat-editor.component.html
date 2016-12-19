@@ -1,46 +1,31 @@
-<div id="chat-modal" class="modal fade">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header centered-content">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h2 class="modal-title">Gruppenchat</h2>
-      </div>
-      <div class="modal-body">
-          <div class="form-group">
-            <label for="groupDisplayName">Name des Chats</label>
-            <input id="groupDisplayName" type="text" [(ngModel)]="displayName" class="form-control"
-              placeholder="Weihnachtsfeier im Artemis" required>
-          </div>
+<modal-dialog title="Gruppenchat">
 
-          <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6">
-                  <h4>Füge Teilnehmer hinzu:</h4>
-                  <div *ngFor="let user of fetchedUsers">
-                    <div>
-                      <i (click)="addToSelectedUsers(user)" class="fa fa-plus select-action" aria-hidden="true"></i>
-                      {{ user.firstName }} {{ user.lastName }} ({{ user.userName }})
-                    </div>
-                  </div>
-                </div>
+  <div modal-body>
 
-                <div class="col-md-6">
-                  <h4>{{ isInEditMode ? 'Teilnehmer' : 'Hinzugefügt'}}: {{ selectedUsers ? selectedUsers.length : 0 }}</h4>
-                  <div *ngFor="let user of selectedUsers">
-                    <i class="fa fa-minus select-action" aria-hidden="true" *ngIf="!isInEditMode" (click)="removeFromSelectedUsers(user)"></i>
-                    {{ user.userName }}
-                  </div>
-                </div>
-              </div>
-          </div>
-          
-      </div>
-      <div class="modal-footer">
-        <button *ngIf="!isInEditMode" class="btn btn-primary" (click)="startGroupChat()">OK</button>
-        <button *ngIf="isInEditMode" class="btn btn-primary" (click)="editRoom()">Bearbeiten</button>
-      </div>
+    <div class="form-group">
+      <label for="groupDisplayName">Name des Chats</label>
+      <input id="groupDisplayName" type="text" [(ngModel)]="displayName" class="form-control"
+        placeholder="Weihnachtsfeier im Artemis" required>
     </div>
+
+    <div class="container-fluid">
+      <user-selection
+        (update)="onSelectedUsersUpdate($event)"
+        [users]="fetchedUsers"
+        [selectedUsers]="selectedUsers"
+        [displayUser]="displayUser"
+        [displaySelectedUser]="displaySelectedUser"
+        [canRemoveUsers]="!isInEditMode">
+      </user-selection>
+    </div>
+
   </div>
-</div>
+
+  <div modal-footer>
+    
+    <button *ngIf="!isInEditMode" class="btn btn-primary" (click)="startGroupChat()">OK</button>
+    <button *ngIf="isInEditMode" class="btn btn-primary" (click)="editRoom()">Bearbeiten</button>
+
+  </div>
+  
+</modal-dialog>

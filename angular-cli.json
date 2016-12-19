@@ -18,9 +18,18 @@
       "prefix": "app",
       "mobile": false,
       "styles": [
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+        "../node_modules/font-awesome/css/font-awesome.min.css",
+        "../node_modules/ng2-datetime/src/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css",
+        "../node_modules/ng2-datetime/src/vendor/bootstrap-timepicker/bootstrap-timepicker.min.css",
         "styles.scss"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/jquery/dist/jquery.js",
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js",
+        "../node_modules/ng2-datetime/src/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js",
+        "../node_modules/ng2-datetime/src/vendor/bootstrap-timepicker/bootstrap-timepicker.min.js"
+      ],
       "environments": {
         "source": "environments/environment.ts",
         "dev": "environments/environment.ts",

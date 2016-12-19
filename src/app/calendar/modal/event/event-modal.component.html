@@ -1,0 +1,74 @@
+<modal-dialog title="{{ modalTitle }}">
+
+  <div modal-body>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="eventTitle">Titel</label>
+          <input id="eventTitle" placeholder="Daily Scrum" type="text" class="form-control" [(ngModel)]="event.title" required>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="calendarKey">Kalender</label>
+          <br>
+          <select *ngIf="!inEditingMode" class="form-control" id="calendarKey" [(ngModel)]="event.calendarKey" required>
+            <option *ngFor="let cal of calendars" value="{{cal.key}}">{{cal.title}}</option>
+          </select>
+          <input *ngIf="inEditingMode" class="form-control" id="calendarKey" value="{{calendarTitle}}" disabled>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="eventPlace">Ort</label>
+          <input type="text" class="form-control" placeholder="Raum 169" value="{{event.place}}" [(ngModel)]="event.place">
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="eventDescription">Beschreibung</label>
+          <textarea class="form-control" [(ngModel)]="event.description">{{event.description}}</textarea>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="checkbox">
+          <label><input type="checkbox" [(ngModel)]="event.isPrivate">Privater Termin?</label>
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" [(ngModel)]="event.allDay">Ganztägiger Termin?</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="eventStart">{{event.allDay ? 'Tag' : 'Beginn'}}</label>
+          <datetime id="eventStart" [datepicker]="datepickerOpts" [timepicker]="timepickerOpts" [(ngModel)]="event.start"></datetime>
+        </div>
+      </div>
+
+      <div *ngIf="!event.allDay" class="col-md-6">
+        <label for="eventEnd">Ende</label>
+        <datetime id="eventEnd" [datepicker]="datepickerOpts" [timepicker]="timepickerOpts" [(ngModel)]="event.end"></datetime>
+      </div>
+
+      <div class="col-md-12">
+        <user-selection
+          (update)="onSelectedUsersUpdate($event)"
+          [users]="users"
+          [selectedUsers]="selectedUsers"
+          [displayUser]="displayUser"
+          [displaySelectedUser]="displayUser"
+          [canRemoveUsers]="!inEditingMode">
+        </user-selection>
+      </div>
+    </div>
+  </div>
+
+  <div modal-footer>
+    <button *ngIf="inEditingMode" class="btn btn-primary" (click)="deleteEvent()">Löschen</button>
+    <button class="btn btn-primary" (click)="saveEvent()">Speichern</button>
+  </div>
+  
+</modal-dialog>

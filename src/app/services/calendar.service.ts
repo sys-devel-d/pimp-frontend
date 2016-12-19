@@ -23,7 +23,7 @@ export default class CalendarService {
   private calendars: Calendar[];
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
 
-  constructor(private authService: AuthService, private http: Http) { }
+  constructor(private authService: AuthService, private http: Http) {}
 
   init() {
     if (!this.isInitialized) {
@@ -36,14 +36,7 @@ export default class CalendarService {
   so they are in the right format
   */
   private mapCalendarEvents(calendar: Calendar): Calendar {
-    const mappedEvents = calendar.events.map(evt => {
-      evt.calendarKey = calendar.key;
-      evt.start = new Date(evt.start);
-      evt.end = new Date(evt.end);
-      evt.color = calendar.isPrivate ? colors.red : colors.blue;
-      return evt;
-    });
-    calendar.events = mappedEvents;
+    calendar.events = calendar.events.map(this.mapEventForFrontend);
     return calendar;
   }
 
@@ -81,22 +74,62 @@ export default class CalendarService {
     return this.events;
   }
 
+  /**
+   * Returns all calendars that the user can write to.
+   * Basically he shouldn't be able to write in other 
+   * users' private calendars.
+   */
+  getWritableCalendars(): Calendar[] {
+    return this.calendars.filter( cal => {
+      return !( cal.isPrivate && 
+                cal.owner !== this.authService.getCurrentUserName()
+              ); 
+    });
+  }
+
+  getCalendarByKey(key: string): Calendar {
+    return this.calendars.find(c => c.key === key);
+  }
+
   getViewDate(): Date {
     return this.viewDate;
+  }
+
+  setViewDate(d: Date) {
+    this.viewDate = d;
   }
 
   getView(): string {
     return this.view;
   }
 
+  setView(view: string) {
+    this.view = view;
+  }
+
   getActiveDayIsOpen(): boolean {
     return this.activeDayIsOpen;
+  }
+
+  createEvent(event: CalEvent) {
+    event.creator = this.authService.getCurrentUserName();
+    this.http.post(
+      Globals.BACKEND + 'calendar/' + event.calendarKey,
+      this.mapEventForBackend(event),
+      { headers: this.authService.getTokenHeader() }
+    ).map(response => response.json())
+    .subscribe( (evt: CalEvent) => {
+      evt = this.mapEventForFrontend(evt);
+      this.calendars.find(cal => cal.key === evt.calendarKey).events.push(evt);
+      this.events.push(evt);
+      this.eventsChange.next(this.events);
+    });
   }
 
   editEvent(event: CalEvent) {
     this.http.put(
       Globals.BACKEND + 'calendar/event/' + event.key,
-      this.mapCalendarEvent(event),
+      this.mapEventForBackend(event),
       {
         headers: this.authService.getTokenHeader()
       }
@@ -109,15 +142,15 @@ export default class CalendarService {
     )
   }
 
-  deleteEvent(event: CalEvent) {
+  deleteEvent(event: any) {
     this.http.delete(
       Globals.BACKEND + 'calendar/event/' + event.key,
       {
         headers: this.authService.getTokenHeader(),
-        body: this.mapCalendarEvent(event)
+        body: this.mapEventForBackend(event)
       }
     ).subscribe(
-      response => {
+      () => {
         this.events = this.events.filter(evt => evt.key !== event.key);
         this.eventsChange.next(this.events);
       },
@@ -125,16 +158,20 @@ export default class CalendarService {
     )
   }
 
-  private mapCalendarEvent(event: CalEvent): any {
-    return {
-      key: event.key,
-      calendarKey: event.calendarKey,
-      // expected format by the backend
-      start: DateFormatter.format(event.start, 'de', 'yyyy-MM-dd hh:mm'),
-      end: DateFormatter.format(event.end, 'de', 'yyyy-MM-dd hh:mm'),
-      title: event.title,
-      participants: event.participants
-    }
+  private mapEventForBackend(event: CalEvent): any {
+    const evt: any = Object.assign({}, event)
+    delete evt.color;
+    delete evt.actions;
+    evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
+    evt.end = DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm');
+    return evt;
+  }
+
+  private mapEventForFrontend(evt: any): CalEvent {
+    evt.start = new Date(evt.start);
+    evt.end = new Date(evt.end);
+    evt.color = evt.isPrivate ? colors.red : colors.blue;
+    return evt;
   }
 
   tearDown() {

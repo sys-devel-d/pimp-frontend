@@ -1,7 +1,8 @@
 <div class="container">
   <div class="row text-center">
       <div class="col-md-4 col-md-offset-4">
-        <div class="btn btn-primary" (click)="createCalendarClicked()">Neuer Kalender</div>
+        <div id="btnOpenCalendarModal" class="btn btn-primary" (click)="createCalendarClicked()">Neuer Kalender</div>
+        <div id="btnOpenNewEventModal" class="btn btn-primary" (click)="createEventClicked()">Neuer Termin</div>
       </div>
   </div>
   <div class="row text-center">
@@ -53,4 +54,6 @@
   </div>
 </div>
 
-<calendar-modal></calendar-modal>
+<calendar-modal *ngIf="mode == 'create-calendar'"></calendar-modal>
+<edit-event-modal *ngIf="mode == 'edit-event'"></edit-event-modal>
+<create-event-modal *ngIf="mode == 'create-event'"></create-event-modal>

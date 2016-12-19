@@ -4,9 +4,8 @@ import { MessageService } from '../services/message.service';
 import { Message, User, Room } from '../models/base';
 import { UserService } from '../services/user.service';
 import { Globals } from '../commons/globals';
-import { shakeInput } from '../commons/dom-functions';
+import { shakeInput, scrollDownChatMessageContainer } from '../commons/dom-functions';
 import GroupChatEditorComponent from './editor/group-chat-editor.component'
-declare var $:any;
 
 @Component({
   selector: 'app-chat',
@@ -65,8 +64,8 @@ export class ChatComponent implements OnInit {
     this.rooms[i] = editedRoom;
   }
 
-  private fetchUsersForSelectionAndOpenDialog() {
-    this.groupChatEditor.fetchUsersForSelectionAndOpenDialog();
+  private fetchUsersForSelectionAndOpenDialog(firstUser?: User) {
+    this.groupChatEditor.fetchUsersForSelectionAndOpenDialog(firstUser);
   }
 
   private prepareEditingRoom(room: Room) {
@@ -100,7 +99,7 @@ export class ChatComponent implements OnInit {
     if(/\S/.test(this.text) && this.text != null) {
       this.messageService.publish(this.currentRoom.roomName, this.text.trim());
       this.text = "";
-      this.scrollDownChatMessageContainer();
+      scrollDownChatMessageContainer();
     }
     else {
       shakeInput('#message-input');
@@ -114,7 +113,9 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
     this.currentRoom = this.messageService.getCurrentRoom();
     this.rooms = this.messageService.getRooms();
-    this.scrollDownChatMessageContainer();
+    if (this.rooms.length > 0) {
+      scrollDownChatMessageContainer();
+    }
   }
 
   private setCurrentRoom(room:Room) {
@@ -130,11 +131,5 @@ export class ChatComponent implements OnInit {
   private setError(err:string): void {
     this.error = err;
     setTimeout( () => this.error = '', 3000);
-  }
-
-  private scrollDownChatMessageContainer() {
-    setTimeout( () => {
-      $("#chat-message-container").scrollTop($("#chat-message-container")[0].scrollHeight);
-    }, 100);
   }
 }

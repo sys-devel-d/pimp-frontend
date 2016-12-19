@@ -15,8 +15,13 @@ import {
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import CalendarModalComponent from './modal/calendar-modal.component';
+import EditEventModalComponent from './modal/event/edit-event-modal.component';
+import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import CalendarService from '../services/calendar.service';
 import { CalEvent } from '../models/base';
+import { Globals } from '../commons/globals';
+
+type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar';
 
 @Component({
   selector: 'angular-calendar',
@@ -26,25 +31,34 @@ import { CalEvent } from '../models/base';
 export class CalendarComponent implements OnInit {
 
   @ViewChild(CalendarModalComponent) calendarModalComponent: CalendarModalComponent;
+  @ViewChild(EditEventModalComponent) editEventModalComponent: EditEventModalComponent;
+  @ViewChild(CreateEventModalComponent) createModalComponent: CreateEventModalComponent;
 
-  view: string = 'month';
+  mode: Mode;
+  view: string;
   viewDate: Date;
   activeDayIsOpen: boolean;
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
-  actions: CalendarEventAction[] = [{
-    label: '<i class="fa fa-fw fa-pencil"></i>',
-    onClick: ({event}: {event: CalEvent}): void => {
-      this.eventClicked(event);
+  actions: CalendarEventAction[] = [
+    {
+      label: '<i class="fa fa-fw fa-pencil"></i>',
+      onClick: ({event}: {event: CalEvent}): void => {
+        this.eventClicked(event);
+      }
+    }, 
+    {
+      label: '<i class="fa fa-fw fa-times"></i>',
+      onClick: ({event}: {event: CalEvent}): void => {
+        if(confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
+          this.calendarService.deleteEvent(event);
+        }
+      }
     }
-  }, {
-    label: '<i class="fa fa-fw fa-times"></i>',
-    onClick: ({event}: {event: CalEvent}): void => {
-      this.calendarService.deleteEvent(event);
-    }
-  }];
+  ];
 
   constructor(private calendarService: CalendarService) {
+    // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events:CalEvent[]) => {
       this.events = events.map(event => {event.actions = this.actions; return event;});
     });
@@ -64,7 +78,7 @@ export class CalendarComponent implements OnInit {
       week: addWeeks,
       month: addMonths
     }[this.view];
-    this.viewDate = addFn(this.viewDate, 1);
+    this.setViewDate(addFn(this.viewDate, 1));
   }
 
   decrement(): void {
@@ -73,11 +87,12 @@ export class CalendarComponent implements OnInit {
       week: subWeeks,
       month: subMonths
     }[this.view];
-    this.viewDate = subFn(this.viewDate, 1);
+    this.setViewDate(subFn(this.viewDate, 1));
   }
 
   today(): void {
     this.viewDate = new Date();
+    this.calendarService.setViewDate(this.viewDate);
   }
 
   dayClicked({date, events}: {date: Date, events: CalEvent[]}): void {
@@ -86,22 +101,40 @@ export class CalendarComponent implements OnInit {
         this.activeDayIsOpen = false;
       } else {
         this.activeDayIsOpen = true;
-        this.viewDate = date;
+        this.setViewDate(date);
       }
     }
   }
 
   eventClicked(event: CalEvent) {
-    this.calendarModalComponent.showDialog(true, event);
+    this.mode = 'edit-event';
+    setTimeout(() => {
+      this.editEventModalComponent.showDialog(event);
+    }, 0);
   }
 
   createCalendarClicked() {
-    this.calendarModalComponent.showDialog(false);
+    this.mode = 'create-calendar';
+    setTimeout(() => {
+      this.calendarModalComponent.showDialog();
+    }, 0);
+  }
+
+  createEventClicked() {
+    this.mode = 'create-event';
+    setTimeout(() => {
+      this.createModalComponent.showDialog();
+    }, 0);
   }
 
   eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {
     event.start = newStart;
     event.end = newEnd;
     this.refresh.next();
+  }
+
+  private setViewDate(date: Date) {
+    this.viewDate = date;
+    this.calendarService.setViewDate(date);
   }
 }

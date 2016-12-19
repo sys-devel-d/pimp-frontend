@@ -3,11 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CalendarModule } from 'angular-calendar';
-import { Ng2DatetimePickerModule } from 'ng2-datetime-picker';
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
-import CalendarModalComponent from './calendar/modal/calendar-modal.component';
 import { ChatComponent } from './chat/chat.component';
 import GroupChatEditorComponent from './chat/editor/group-chat-editor.component';
 import { LoginComponent } from './login/login.component';
@@ -26,6 +24,13 @@ import { HighlightDirective } from './directives/highlight.directive';
 import { RoomNamePipe } from './pipes/room-name.pipe';
 import InlineEdit from './inline-edit/inline-edit.component';
 
+import ModalDialogComponent from './modal-dialog/modal-dialog.component';
+import CalendarModalComponent from './calendar/modal/calendar-modal.component';
+import EditEventModalComponent from './calendar/modal/event/edit-event-modal.component';
+import CreateEventModalComponent from './calendar/modal/event/create-event-modal.component';
+import UserSelectionComponent from './user-selection/user-selection.component';
+import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,13 +46,17 @@ import InlineEdit from './inline-edit/inline-edit.component';
     UserSearchComponent,
     HighlightDirective,
     RoomNamePipe,
-    InlineEdit
+    InlineEdit,
+    ModalDialogComponent,
+    EditEventModalComponent,
+    CreateEventModalComponent,
+    UserSelectionComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    Ng2DatetimePickerModule,
+    NKDatetimeModule,
     CalendarModule.forRoot(),
     RouterModule.forRoot([
       { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
