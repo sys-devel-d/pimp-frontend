@@ -13,6 +13,7 @@ import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import UserSelectionComponent from '../user-selection/user-selection.component';
+import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 
 import { FormsModule } from '@angular/forms';
 
@@ -24,7 +25,8 @@ describe('ChatComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
-        CalendarModule.forRoot()
+        CalendarModule.forRoot(),
+        NKDatetimeModule
       ],
       declarations: [
         CalendarComponent,
