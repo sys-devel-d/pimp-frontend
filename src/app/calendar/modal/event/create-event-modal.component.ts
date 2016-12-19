@@ -22,12 +22,4 @@ export default class CreateEventModalComponent extends EventModalAbstract {
     this.calendarService.createEvent(event);
   }
 
-  startPlaceHolder(): string {
-    return (this.event.allDay ? 'Tag' : 'Beginn') + ' des Termins';
-  }
-
-  endPlaceHolder(): string {
-    return 'Ende des Termins';
-  }
-
 }

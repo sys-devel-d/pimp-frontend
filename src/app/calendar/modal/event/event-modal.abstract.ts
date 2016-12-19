@@ -9,10 +9,18 @@ export abstract class EventModalAbstract {
   event: CalEvent = new CalEvent();
   users: User[];
   selectedUsers: User[] = [];
-  
-  // save the date picked by the ng2-datetime-picker
-  eventStart: Date;
-  eventEnd: Date;
+  datepickerOpts = {
+    //startDate: new Date(),
+    autoclose: true,
+    todayBtn: 'linked',
+    todayHighlight: true,
+    format: 'D, dd. MM. yyyy',
+    language: 'de' // TODO: not working
+  }
+  timepickerOpts = {
+    showMeridian: false,
+    defaultTime: 'current'
+  }
 
   calendarService: CalendarService;
   userService: UserService;
@@ -30,8 +38,6 @@ export abstract class EventModalAbstract {
   }
 
   abstract saveAction(event: CalEvent): void;
-  abstract startPlaceHolder(): string;
-  abstract endPlaceHolder(): string;
 
   saveEvent() {
     const e = this.event;
@@ -42,21 +48,15 @@ export abstract class EventModalAbstract {
       return shakeInput('#calendarKey');
     }
 
-    if (this.eventStart > this.eventEnd) {
-      return alert('Der Beginn des Termins kann zeitlich nicht vor dem Ende sein.');
+    if(e.allDay) {
+      e.end = new Date();
+      e.end.setTime(e.start.getTime());
+      e.end.setHours(23);
+      e.end.setMinutes(59);
     }
 
-    if (this.eventStart != null) {
-      if(e.allDay) {
-        this.eventEnd = new Date();
-        this.eventEnd.setTime(this.eventStart.getTime());
-        this.eventEnd.setHours(23);
-        this.eventEnd.setMinutes(59);
-      }
-      this.event.start = this.eventStart;
-    }
-    if (this.eventEnd != null) {
-      this.event.end = this.eventEnd;
+    if (e.start > e.end) {
+      return alert('Der Beginn des Termins kann zeitlich nicht vor dem Ende sein.');
     }
 
     if (e.isPrivate === undefined) {

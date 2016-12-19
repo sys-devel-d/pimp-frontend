@@ -3,7 +3,6 @@ import { hideAppModal } from '../../../commons/dom-functions';
 import { CalEvent, User } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
 import { UserService } from './../../../services/user.service';
-import { DateFormatter } from '@angular/common/src/facade/intl';
 import { EventModalAbstract } from './event-modal.abstract';
 import { Globals } from '../../../commons/globals';
 
@@ -25,17 +24,7 @@ export default class EditEventModalComponent extends EventModalAbstract {
     this.calendarService.editEvent(event);
   }
 
-  startPlaceHolder(): string {
-    return DateFormatter.format(this.event.start, 'de', 'dd.MM.yyyy HH:mm');
-  }
-
-  endPlaceHolder(): string {
-    return DateFormatter.format(this.event.end, 'de', 'dd.MM.yyyy HH:mm');
-  }
-
   showDialog(evt: CalEvent) {
-    this.eventStart = null;
-    this.eventEnd = null;
     this.event = Object.assign({}, evt);
     this.calendarTitle = this.calendarService.getCalendarByKey(evt.calendarKey).title;
     this.selectedUsers = evt.participants.map( part => {
