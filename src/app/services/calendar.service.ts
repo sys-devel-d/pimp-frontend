@@ -65,8 +65,10 @@ export default class CalendarService {
       Globals.BACKEND + 'calendar',
       calendar,
       { headers: this.authService.getTokenHeader() }
-    ).subscribe(() => {
-      this.calendars.push(calendar);
+    )
+    .map( res => res.json() as Calendar )
+    .subscribe( (cal: Calendar) => {
+      this.calendars.push(cal);
     });
   }
 
