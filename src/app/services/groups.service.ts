@@ -9,9 +9,7 @@ import { Observable, Subject } from 'rxjs';
 export default class GroupsService {
 
   teams: Team[];
-  otherTeams: Team[];
   projects: Team[];
-  otherProjects: Team[];
   teamsChange: Subject<Team[]> = new Subject<Team[]>();
   otherTeamsChange: Subject<Team[]> = new Subject<Team[]>();
   projectsChange: Subject<Project[]> = new Subject<Team[]>();
@@ -35,8 +33,6 @@ export default class GroupsService {
 
   fetchOtherGroups(userName: string) {
     const successFunc = ([prjts, tms]) => {
-      this.otherProjects = prjts;
-      this.otherTeams = tms;
       this.othersProjectsChange.next(prjts);
       this.otherTeamsChange.next(tms);
     }
@@ -57,8 +53,6 @@ export default class GroupsService {
   tearDown() {
     this.teams = [];
     this.projects = [];
-    this.otherTeams = [];
-    this.otherProjects = [];
   }
 
   getTeams(): Team[] {
