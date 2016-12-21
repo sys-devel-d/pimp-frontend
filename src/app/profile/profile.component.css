@@ -1,11 +1,8 @@
 .col-md-2 {
-    margin-bottom: 5px;
-    font-weight: 700;
- }
+  margin-bottom: 5px;
+  font-weight: 700;
+}
 
- .col-md-6 {
-     margin-bottom: 5px;
-  }
-i {
-    cursor: pointer;
+.col-md-6 {
+  margin-bottom: 5px;
 }

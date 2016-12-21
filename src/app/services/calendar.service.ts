@@ -15,7 +15,7 @@ const colors: any = {
 @Injectable()
 export default class CalendarService {
 
-  private isInitialized = false;
+  isInitialized = false;
   private viewDate: Date = new Date();
   private view: string = 'month';
   private activeDayIsOpen: boolean = true;
@@ -47,7 +47,6 @@ export default class CalendarService {
     ).map((res: Response) => {
       return res.json() as Calendar[]
     }).subscribe((calendars: Calendar[]) => {
-      this.isInitialized = true;
       // Bring calendars and their events in the correct format
       this.calendars = calendars.map(cal => this.mapCalendarEvents(cal));
       // Produce one array of events by concatenating all of the calendar's events
@@ -57,6 +56,7 @@ export default class CalendarService {
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
+      this.isInitialized = true;
     });
   }
 
@@ -82,11 +82,9 @@ export default class CalendarService {
    * users' private calendars.
    */
   getWritableCalendars(): Calendar[] {
-    return this.calendars.filter( cal => {
-      return !( cal.isPrivate && 
-                cal.owner !== this.authService.getCurrentUserName()
-              ); 
-    });
+    return this.calendars.filter( cal =>
+      cal.owner === this.authService.getCurrentUserName()
+    );
   }
 
   getCalendarByKey(key: string): Calendar {
