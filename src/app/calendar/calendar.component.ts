@@ -10,7 +10,7 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { Subject, Subscription, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   CalendarEventAction,
   CalendarEventTimesChangedEvent

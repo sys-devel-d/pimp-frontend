@@ -22,6 +22,7 @@ export default class CalendarService {
   private events: CalEvent[] = [];
   private calendars: Calendar[];
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
+  initializedChange: Subject<boolean> = new Subject<boolean>();
 
   constructor(private authService: AuthService, private http: Http) {}
 
@@ -46,7 +47,11 @@ export default class CalendarService {
       { headers: this.authService.getTokenHeader() }
     ).map((res: Response) => {
       return res.json() as Calendar[]
-    }).subscribe((calendars: Calendar[]) => {
+    }).finally(() => {
+      // emit true or false in any case
+      this.initializedChange.next(this.isInitialized);
+    })
+    .subscribe((calendars: Calendar[]) => {
       // Bring calendars and their events in the correct format
       this.calendars = calendars.map(cal => this.mapCalendarEvents(cal));
       // Produce one array of events by concatenating all of the calendar's events

@@ -2,9 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CalEvent } from '../../../../models/base';
 import { showAppModal, hideAppModal } from '../../../../commons/dom-functions';
 import { Router, ActivatedRoute } from '@angular/router';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 import CalendarService from '../../../../services/calendar.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'readonly-event-modal',
@@ -12,19 +11,23 @@ import { Observable } from 'rxjs';
 })
 export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
 
+  private eventId: string;
   private event: CalEvent = new CalEvent();
   private calendarTitle: string;
+  private calendarServiceIsInitialized: boolean = false;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private _location: Location,
-    private calendarService: CalendarService) {}
+    private calendarService: CalendarService) {
 
-  showDialog(event: CalEvent, calendarTitle: string) {
-    this.calendarTitle = calendarTitle;
-    this.event = event;
-    showAppModal();
+    this.calendarService.initializedChange.subscribe(isInitialized => {
+      this.calendarServiceIsInitialized = isInitialized;
+      if(isInitialized) {
+        this.findEventAndSet();
+      }
+    });
   }
 
   ngOnInit() {
@@ -33,16 +36,8 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
     });
 
     this.route.params.subscribe(params => {
-      const eventId = params['eventId'];
-      const event = this.calendarService.getEvents().find(evt => evt.key === eventId);
-      if(event) {
-        this.setEvent(event);
-        showAppModal();
-      }
-      else {
-        this.retryDisplayOfReadOnlyEvent(eventId);
-      }
-      
+      this.eventId = params['eventId'];
+      this.findEventAndSet();
     });
   }
 
@@ -52,7 +47,7 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
   }
 
   private navigateToUser(user: string) {
-    this.router.navigate(['/profile', user]);
+    this.router.navigate(['profile', user]);
   }
 
   private setEvent(event: CalEvent) {
@@ -60,22 +55,17 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
     this.calendarTitle = this.calendarService.getCalendarByKey(this.event.calendarKey).title;
   }
 
-  private retryDisplayOfReadOnlyEvent(eventId) {
-    Observable.timer(0, 250) // begin right away and retry every 250ms
-      .take(12) // Try for 12 * 250 ms = 3s maximum
-      .takeWhile(_ => !this.calendarService.isInitialized) // immediately return if calendar is initialized
-      .last() // subscribe only to last result
-      .subscribe(_ => {
-        const event: CalEvent = this.calendarService.getEvents().find(evt => evt.key === eventId);
-        if (event) {
-          this.setEvent(event);
-          showAppModal();
-        }
-        else {
-          alert("Dieser Termin existiert nicht oder Sie abonnieren den entsprechenden Kalender nicht.");
-          this.router.navigate(['calendar']);
-        }
-      });
+  private findEventAndSet() {
+    const event = this.calendarService.getEvents().find(evt => evt.key === this.eventId);
+    if (event) {
+      this.setEvent(event);
+      showAppModal();
+    }
+    else if(this.calendarServiceIsInitialized) {
+      alert("Der Termin existiert nicht oder Sie abonnieren den entsprechenden Kalender nicht.");
+      this.router.navigate(['calendar']);
+    }
+    // else calendarService is not initialized yet. When it is, this function will be called again.
   }
 
 }
