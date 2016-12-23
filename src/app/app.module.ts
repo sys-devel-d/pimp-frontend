@@ -17,6 +17,7 @@ import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from "./commons/auth.guard";
 import { AuthService } from "./services/auth.service";
 import { UserService } from "./services/user.service";
+import GroupsService from './services/groups.service';
 import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
@@ -74,7 +75,8 @@ import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
     AuthService,
     MessageService,
     UserService,
-    CalendarService
+    CalendarService,
+    GroupsService
   ],
   bootstrap: [AppComponent]
 })
