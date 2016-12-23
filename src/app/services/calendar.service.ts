@@ -20,8 +20,9 @@ export default class CalendarService {
   private view: string = 'month';
   private activeDayIsOpen: boolean = true;
   private events: CalEvent[] = [];
-  private calendars: Calendar[];
+  private calendars: Calendar[] = [];
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
+  calendarsChange: Subject<Calendar[]> = new Subject<Calendar[]>();
 
   constructor(private authService: AuthService, private http: Http) {}
 
@@ -54,6 +55,7 @@ export default class CalendarService {
       this.events = this.calendars
         .map(cal => cal.events)
         .reduce((a, b) => a.concat(b), []);
+      this.calendarsChange.next(this.calendars);
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
@@ -67,6 +69,7 @@ export default class CalendarService {
       { headers: this.authService.getTokenHeader() }
     ).subscribe(() => {
       this.calendars.push(calendar);
+      this.calendarsChange.next([calendar]);
     });
   }
 
@@ -83,7 +86,7 @@ export default class CalendarService {
     return this.calendars.filter( cal => {
       return !( cal.isPrivate && 
                 cal.owner !== this.authService.getCurrentUserName()
-              ); 
+              );
     });
   }
 
@@ -117,10 +120,13 @@ export default class CalendarService {
       Globals.BACKEND + 'calendar/' + event.calendarKey,
       this.mapEventForBackend(event),
       { headers: this.authService.getTokenHeader() }
-    ).map(response => response.json())
+    )
+    .map(response => response.json())
     .subscribe( (evt: CalEvent) => {
       evt = this.mapEventForFrontend(evt);
-      this.calendars.find(cal => cal.key === evt.calendarKey).events.push(evt);
+      let calendar: Calendar = this.calendars
+        .find(cal => cal.key === evt.calendarKey);
+      calendar.events.push(evt);
       this.events.push(evt);
       this.eventsChange.next(this.events);
     });
@@ -172,6 +178,10 @@ export default class CalendarService {
     evt.end = new Date(evt.end);
     evt.color = evt.isPrivate ? colors.red : colors.blue;
     return evt;
+  }
+
+  public getCalendars(): Calendar[] {
+    return this.calendars;
   }
 
   tearDown() {

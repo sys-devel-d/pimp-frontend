@@ -54,6 +54,7 @@
   </div>
 </div>
 
+<app-calendar-subscription (subscribeCalendar)="mapSubscribedCalEvents($event)"></app-calendar-subscription>
 <calendar-modal *ngIf="mode == 'create-calendar'"></calendar-modal>
 <edit-event-modal *ngIf="mode == 'edit-event'"></edit-event-modal>
 <create-event-modal *ngIf="mode == 'create-event'"></create-event-modal>

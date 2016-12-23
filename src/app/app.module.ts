@@ -30,12 +30,14 @@ import EditEventModalComponent from './calendar/modal/event/edit-event-modal.com
 import CreateEventModalComponent from './calendar/modal/event/create-event-modal.component';
 import UserSelectionComponent from './user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
+import { CalendarSubscriptionComponent } from './calendar/calendar-subscription/calendar-subscription.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarComponent,
     CalendarModalComponent,
+    CalendarSubscriptionComponent,
     ChatComponent,
     GroupChatEditorComponent,
     LoginComponent,
