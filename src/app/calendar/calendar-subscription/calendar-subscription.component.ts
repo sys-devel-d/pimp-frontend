@@ -8,7 +8,7 @@ import CalendarService from '../../services/calendar.service';
   selector: 'app-calendar-subscription',
   templateUrl: './calendar-subscription.component.html'
 })
-export class CalendarSubscriptionComponent implements OnInit {
+export default class CalendarSubscriptionComponent implements OnInit {
 
   @Output()
   subscribeCalendar: EventEmitter<SubscribedCalendar[]> =
