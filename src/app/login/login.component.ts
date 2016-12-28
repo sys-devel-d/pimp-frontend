@@ -6,6 +6,7 @@ import { MessageService } from '../services/message.service';
 import { UserService } from '../services/user.service';
 import CalendarService from '../services/calendar.service';
 import GroupsService from '../services/groups.service';
+import NotificationService from '../services/notification.service';
 import { User } from '../models/base';
 
 @Component({
@@ -21,7 +22,8 @@ export class LoginComponent implements OnInit {
               private messageService: MessageService,
               private calendarService: CalendarService,
               private userService: UserService,
-              private groupsService: GroupsService) {}
+              private groupsService: GroupsService,
+              private notificationService: NotificationService) {}
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
@@ -39,6 +41,7 @@ export class LoginComponent implements OnInit {
             this.calendarService.init();
             this.userService.init();
             this.groupsService.init();
+            this.notificationService.init();
           } else {
             this.error = 'We are sorry. We could not log you in. Please try again.';
           }

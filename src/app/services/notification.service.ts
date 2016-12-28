@@ -30,6 +30,7 @@ export default class NotificationService {
 
   tearDown() {
     this.notifications = [];
+    this.notificationsChange.next([]);
     // TODO: Close WebSocket conn
   }
 }
