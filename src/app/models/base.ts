@@ -49,3 +49,8 @@ export class CalEvent implements CalendarEvent {
   participants: string[];
   actions?: CalendarEventAction[];
 }
+
+export class Notification {
+  message: string;
+  read: boolean;
+}

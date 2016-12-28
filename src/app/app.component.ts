@@ -5,6 +5,7 @@ import { MessageService } from "./services/message.service";
 import { UserService } from './services/user.service';
 import CalendarService from './services/calendar.service';
 import GroupsService from './services/groups.service';
+import NotificationService from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,8 @@ import GroupsService from './services/groups.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'PIMP';
+
+  unreadNotificationsCount: number = 0;
 
   constructor(
     private router: Router,
@@ -20,7 +22,12 @@ export class AppComponent implements OnInit {
     private userService: UserService,
     private messageService: MessageService,
     private calendarService: CalendarService,
-    private groupsService: GroupsService) {}
+    private groupsService: GroupsService,
+    private notificationService: NotificationService) {
+      this.notificationService.notificationsChange.subscribe(notifications => {
+        this.unreadNotificationsCount = notifications.filter(not => !not.read).length
+      });
+    }
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
@@ -28,6 +35,7 @@ export class AppComponent implements OnInit {
       this.userService.init();
       this.calendarService.init();
       this.groupsService.init();
+      this.notificationService.init();
     }
   }
 
@@ -37,5 +45,6 @@ export class AppComponent implements OnInit {
     this.userService.tearDown();
     this.calendarService.tearDown();
     this.groupsService.tearDown();
+    this.notificationService.tearDown();
   }
 }
