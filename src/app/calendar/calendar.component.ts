@@ -40,7 +40,6 @@ export class CalendarComponent implements OnInit {
   activeDayIsOpen: boolean;
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
-  allEvents: CalEvent[] = [];
 
   actions: CalendarEventAction[] = [
     {
@@ -63,7 +62,7 @@ export class CalendarComponent implements OnInit {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
       this.events = events.map(event => {event.actions = this.actions; return event;});
-      this.allEvents = this.events;
+      this.calendarService.setAllEvents(this.events);
     });
   }
 
@@ -118,7 +117,7 @@ export class CalendarComponent implements OnInit {
 
   mapSubscribedCalEvents(subscribedCalendars: SubscribedCalendar[]) {
     let shownEvents: CalEvent[] = [];
-    this.allEvents.forEach(calEvent => {
+    this.calendarService.getAllEvents().forEach(calEvent => {
       let calendar: SubscribedCalendar = subscribedCalendars
         .find(cal => cal.key === calEvent.calendarKey);
       let subscribed = calendar ? calendar.subscribed : false;

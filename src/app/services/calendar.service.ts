@@ -20,6 +20,7 @@ export default class CalendarService {
   private view: string = 'month';
   private activeDayIsOpen: boolean = true;
   private events: CalEvent[] = [];
+  private allEvents: CalEvent[] = [];
   private calendars: Calendar[] = [];
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
   calendarsChange: Subject<Calendar[]> = new Subject<Calendar[]>();
@@ -185,9 +186,18 @@ export default class CalendarService {
     return this.calendars;
   }
 
+  public getAllEvents(): CalEvent[] {
+    return this.allEvents;
+  }
+
+  public setAllEvents(events: CalEvent[]){
+    this.allEvents = events;
+  }
+
   tearDown() {
     this.isInitialized = false;
     this.events = [];
     this.calendars = [];
+    this.allEvents = [];
   }
 }
