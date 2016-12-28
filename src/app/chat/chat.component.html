@@ -3,14 +3,14 @@
   <div class="col-md-3 chat-overview">
 
     <div id="user-search-container">
-      <searchField
+      <app-user-search-field
         (update)="term = $event"
         (keyup)="searchForUser(term)"
         [privateChatCallback]="privateChatCallback"
         [groupChatCallback]="groupChatCallback"
         [results]="users">
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-      </searchField>
+      </app-user-search-field>
       <button class="btn btn-default btn-add-group" (click)="fetchUsersForSelectionAndOpenDialog()">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         Neuer Gruppenchat</button>

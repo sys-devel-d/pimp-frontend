@@ -18,7 +18,7 @@ import CalendarModalComponent from './modal/calendar-modal.component';
 import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import CalendarService from '../services/calendar.service';
-import { CalEvent, SubscribedCalendar } from '../models/base';
+import { CalEvent, SubscribedCalendar, Calendar } from '../models/base';
 import { Globals } from '../commons/globals';
 
 type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar';
@@ -41,6 +41,9 @@ export class CalendarComponent implements OnInit {
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
   allEvents: CalEvent[] = [];
+  private term: string;
+  calendar: Calendar[] = [];
+  private subscribeCallback: Function;
 
   actions: CalendarEventAction[] = [
     {
@@ -65,6 +68,7 @@ export class CalendarComponent implements OnInit {
       this.events = events.map(event => {event.actions = this.actions; return event;});
       this.allEvents = this.events;
     });
+    this.subscribeCallback = this.subscribeCalendar.bind(this);
   }
 
   ngOnInit() {
@@ -147,6 +151,26 @@ export class CalendarComponent implements OnInit {
     event.start = newStart;
     event.end = newEnd;
     this.refresh.next();
+  }
+
+  searchCalendar(term) {
+   if (this.term.length >= 3) {
+      this.calendarService.search(this.term)
+        .subscribe(
+          (cals: Calendar[]) => this.calendar = cals,
+          err => console.error(err)
+        );
+    }
+  }
+
+  subscribeCalendar(key: string) {
+    this.calendarService.subscribeCal(key)
+      .subscribe(
+        cals => {
+          this.calendarService.calendarsChange.next(cals);
+        },
+        err => console.error(err)
+      );
   }
 
   private setViewDate(date: Date) {

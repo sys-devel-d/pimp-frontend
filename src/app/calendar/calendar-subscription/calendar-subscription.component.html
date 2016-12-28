@@ -4,6 +4,7 @@
       <input type="checkbox" [(ngModel)]="cal.subscribed"
       (click)="clickCalendarCheckbox(cal.key)">
       {{cal.title}}
+      <i class="fa fa-fw fa-times delete-icon" (click)="unsubscribe(cal.key)"></i>
     </label>
   </div>
 </div>

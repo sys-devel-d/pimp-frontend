@@ -1,8 +1,8 @@
 <div>
-  <input type="text" placeholder="Search users" #ctrl [(ngModel)]="term" (input)="update.emit(ctrl.value)" class="form-control input"/>
+  <input type="text" placeholder="Search..." #ctrl [(ngModel)]="term" (input)="update.emit(ctrl.value)" class="form-control input"/>
   <div class="options" *ngIf="term.length > 2 && results.length > 0">
     <div [highlight]="results" *ngFor="let result of results">
-      <div class="result">
+      <div class="result" *ngIf="userSearch">
         <strong>{{result.firstName}} {{result.lastName}}</strong>
         <div class="pull-right" style="display: inline-block;">
           <span>Chat: </span>
@@ -10,6 +10,9 @@
           <span> | </span>
           <a (click)="privateChat(result)">Private</a>
         </div>
+      </div>
+      <div class="result" *ngIf="!userSearch">
+        <a (click)="subscribeCalendar(result)">{{result.title}}</a>
       </div>
     </div>
   </div>

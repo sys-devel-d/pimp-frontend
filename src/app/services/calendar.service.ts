@@ -3,7 +3,7 @@ import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
 import { CalEvent, Calendar } from '../models/base';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
 
 const colors: any = {
@@ -162,7 +162,54 @@ export default class CalendarService {
         this.eventsChange.next(this.events);
       },
       err => console.log(err)
-    )
+    );
+  }
+
+  search(term: string) {
+    return this.http
+      .get(
+        Globals.BACKEND + 'calendar/search/' + term,
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => {
+        return res.json();
+      })
+      .catch((error: any) => Observable
+        .throw(error.json()
+          ? error.json().error
+          : 'Server error while searching for calendar.'));
+  }
+
+  subscribeCal(key: string) {
+    return this.http
+      .patch(
+        Globals.BACKEND + 'calendar/subscribe/' + key,
+        {},
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => {
+        return res.json();
+      })
+      .catch((error: any) => Observable
+        .throw(error.json()
+          ? error.json().error
+          : 'Server error while searching for calendar.'));
+  }
+
+  unsubscribe(key: string) {
+    return this.http
+      .patch(
+        Globals.BACKEND + 'calendar/unsubscribe/' + key,
+        {},
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => {
+        return res.json();
+      })
+      .catch((error: any) => Observable
+        .throw(error.json()
+          ? error.json().error
+          : 'Server error while searching for calendar.'));
   }
 
   private mapEventForBackend(event: CalEvent): any {

@@ -20,6 +20,7 @@ import { UserService } from "./services/user.service";
 import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
+import { CalendarSearchComponent } from "./user-search/calendar-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
 import { RoomNamePipe } from './pipes/room-name.pipe';
 import InlineEdit from './inline-edit/inline-edit.component';
@@ -46,6 +47,7 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
     PageNotFoundComponent,
     RegisterComponent,
     UserSearchComponent,
+    CalendarSearchComponent,
     HighlightDirective,
     RoomNamePipe,
     InlineEdit,

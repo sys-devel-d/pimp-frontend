@@ -6,12 +6,13 @@ import CalendarService from '../../services/calendar.service';
 
 @Component({
   selector: 'app-calendar-subscription',
-  templateUrl: './calendar-subscription.component.html'
+  templateUrl: './calendar-subscription.component.html',
+  styleUrls: ['./calendar-subscription.component.css']
 })
 export default class CalendarSubscriptionComponent implements OnInit {
 
   @Output()
-  subscribeCalendar: EventEmitter<SubscribedCalendar[]> =
+  subscribedCalendar: EventEmitter<SubscribedCalendar[]> =
     new EventEmitter<SubscribedCalendar[]>();
 
   private calendars: Calendar[];
@@ -19,6 +20,8 @@ export default class CalendarSubscriptionComponent implements OnInit {
 
   constructor(private calendarService: CalendarService) {
     this.calendarService.calendarsChange.subscribe((cals) => {
+      this.subscribedCals = [];
+      this.calendars = [];
       this.loadSubscribedCalendar(cals);
       this.calendars = cals;
     });
@@ -41,6 +44,17 @@ export default class CalendarSubscriptionComponent implements OnInit {
         subCal.subscribed = !subCal.subscribed;
       }
     });
-    this.subscribeCalendar.emit(this.subscribedCals);
+    this.subscribedCalendar.emit(this.subscribedCals);
+  }
+
+  unsubscribe(key: string) {
+    this.calendarService.unsubscribe(key)
+      .subscribe(
+        cals => {
+          this.subscribedCals = [];
+          this.loadSubscribedCalendar(cals);
+        },
+        err => console.error(err)
+      );
   }
 }

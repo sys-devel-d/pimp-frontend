@@ -3,7 +3,12 @@
         <div class="col-md-2">
             <div class="row top-buffer">
               <div class="col-md-12">
-                <!--Placeholder for PIMP-92-->
+                <app-calendar-search-field
+                  (update)="term = $event"
+                  (keyup)="searchCalendar(term)"
+                  [subscribeCallback]="subscribeCallback"
+                  [results]="calendar">
+                </app-calendar-search-field>
               </div>
               <div class="col-md-12">
                 <app-calendar-subscription (subscribeCalendar)="mapSubscribedCalEvents($event)"></app-calendar-subscription>
