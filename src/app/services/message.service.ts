@@ -3,6 +3,7 @@ import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { Message, User, Room } from '../models/base';
 import { AuthService } from './auth.service';
+import WebsocketService from './websocket.service';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { Observable, Subject } from 'rxjs';
@@ -10,7 +11,6 @@ import { Observable, Subject } from 'rxjs';
 @Injectable()
 export class MessageService {
 
-  private socket: any;
   private stompClient: any;
   private stompSubscriptions: Object = {};
   connected = false;
@@ -21,15 +21,15 @@ export class MessageService {
 
   chatErrorMessageChange : Subject<string> = new Subject<string>();
 
-  constructor(private authService: AuthService, private http: Http) {}
+  constructor(
+    private authService: AuthService,
+    private http: Http,
+    private websocketService: WebsocketService) {}
 
   init() {
     if(!this.connected) {
       this.getInitialRooms().subscribe( (rooms: Room[]) => {
-        let socket = new SockJS(`${Globals.BACKEND}chat/?access_token=${this.authService.getToken()}`);
-        this.socket = socket;
-        this.stompClient = Stomp.over(socket);
-        this.stompClient.debug = null;
+        this.stompClient = this.websocketService.getStompClient();
 
         if(rooms.length > 0) {
           this.setCurrentRoom(rooms[0]);
@@ -172,8 +172,6 @@ export class MessageService {
   }
 
   tearDown(): void {
-    this.stompClient.disconnect();
-    this.socket.close();
     this.rooms =  [];
     this.connected = false;
   }

@@ -22,6 +22,7 @@ import GroupsService from './services/groups.service';
 import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
 import NotificationService from './services/notification.service';
+import WebsocketService from './services/websocket.service';
 import { UserSearchComponent } from "./user-search/user-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
 import { RoomNamePipe } from './pipes/room-name.pipe';
@@ -81,7 +82,8 @@ import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
     UserService,
     CalendarService,
     GroupsService,
-    NotificationService
+    NotificationService,
+    WebsocketService
   ],
   bootstrap: [AppComponent]
 })

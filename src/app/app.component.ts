@@ -6,6 +6,7 @@ import { UserService } from './services/user.service';
 import CalendarService from './services/calendar.service';
 import GroupsService from './services/groups.service';
 import NotificationService from './services/notification.service';
+import WebsocketService from './services/websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,8 @@ export class AppComponent implements OnInit {
     private messageService: MessageService,
     private calendarService: CalendarService,
     private groupsService: GroupsService,
-    private notificationService: NotificationService) {
+    private notificationService: NotificationService,
+    private websocketService: WebsocketService) {
       this.notificationService.notificationsChange.subscribe(notifications => {
         this.unreadNotificationsCount = notifications.filter(not => !not.read).length
       });
@@ -31,10 +33,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
-      this.messageService.init();
+      this.websocketService.init();
       this.userService.init();
       this.calendarService.init();
       this.groupsService.init();
+      this.messageService.init();
       this.notificationService.init();
     }
   }
@@ -46,5 +49,6 @@ export class AppComponent implements OnInit {
     this.calendarService.tearDown();
     this.groupsService.tearDown();
     this.notificationService.tearDown();
+    this.websocketService.tearDown();
   }
 }
