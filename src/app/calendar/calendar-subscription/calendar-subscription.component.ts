@@ -14,26 +14,18 @@ export default class CalendarSubscriptionComponent implements OnInit {
   subscribeCalendar: EventEmitter<SubscribedCalendar[]> =
     new EventEmitter<SubscribedCalendar[]>();
 
-  private calendars: Calendar[];
   private subscribedCals: SubscribedCalendar[] = [];
 
   constructor(private calendarService: CalendarService) {
     this.calendarService.calendarsChange.subscribe((cals) => {
-      this.loadSubscribedCalendar(cals);
-      this.calendars = cals;
+      this.subscribedCals = this.calendarService.getSubscribedCalendars();
     });
   }
 
   ngOnInit() {
-    this.calendars = this.calendarService.getCalendars();
-    this.loadSubscribedCalendar(this.calendars);
+    this.subscribedCals = this.calendarService.getSubscribedCalendars();
   }
 
-  loadSubscribedCalendar(cals: Calendar[]) {
-    cals.forEach(cal => this.subscribedCals.push(
-      {key: cal.key, title: cal.title, subscribed: true}
-    ));
-  }
 
   clickCalendarCheckbox(key: string) {
     this.subscribedCals.map(subCal => {
@@ -41,6 +33,7 @@ export default class CalendarSubscriptionComponent implements OnInit {
         subCal.subscribed = !subCal.subscribed;
       }
     });
+    this.calendarService.setSubscribedCalendars(this.subscribedCals);
     this.subscribeCalendar.emit(this.subscribedCals);
   }
 }

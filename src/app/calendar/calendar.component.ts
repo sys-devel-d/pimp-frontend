@@ -126,6 +126,7 @@ export class CalendarComponent implements OnInit {
       }
     });
     this.events = shownEvents;
+    this.calendarService.setEvents(shownEvents);
   }
 
   createCalendarClicked() {

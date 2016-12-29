@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
-import { CalEvent, Calendar } from '../models/base';
+import { CalEvent, Calendar, SubscribedCalendar } from '../models/base';
 import { Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
 
@@ -22,6 +22,8 @@ export default class CalendarService {
   private events: CalEvent[] = [];
   private allEvents: CalEvent[] = [];
   private calendars: Calendar[] = [];
+  private subscribedCals: SubscribedCalendar[] = [];
+
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
   calendarsChange: Subject<Calendar[]> = new Subject<Calendar[]>();
 
@@ -56,6 +58,9 @@ export default class CalendarService {
       this.events = this.calendars
         .map(cal => cal.events)
         .reduce((a, b) => a.concat(b), []);
+      this.calendars.forEach(cal => this.subscribedCals.push(
+        {key: cal.key, title: cal.title, subscribed: true}
+      ));
       this.calendarsChange.next(this.calendars);
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
@@ -186,12 +191,24 @@ export default class CalendarService {
     return this.calendars;
   }
 
+  public setEvents(events: CalEvent[]) {
+    this.events = events;
+  }
+
   public getAllEvents(): CalEvent[] {
     return this.allEvents;
   }
 
   public setAllEvents(events: CalEvent[]){
     this.allEvents = events;
+  }
+
+  public getSubscribedCalendars() {
+    return this.subscribedCals;
+  }
+
+  public setSubscribedCalendars(cals: SubscribedCalendar[]){
+    this.subscribedCals = cals;
   }
 
   tearDown() {
