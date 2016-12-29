@@ -1,4 +1,5 @@
 <div>
+	<button (click)="announce()">Klick</button>
 	<div class="well well-sm notification" *ngFor="let notification of notifications">
     {{ notification.message }}
 	</div>
