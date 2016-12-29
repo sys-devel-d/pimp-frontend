@@ -38,12 +38,6 @@ export default class CalendarSubscriptionComponent implements OnInit {
   }
 
   unsubscribe(key: string) {
-    this.calendarService.unsubscribe(key)
-      .subscribe(
-        cals => {
-          this.subscribedCals = [];
-        },
-        err => console.error(err)
-      );
+    this.calendarService.unsubscribe(key);
   }
 }

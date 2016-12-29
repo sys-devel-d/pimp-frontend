@@ -165,13 +165,7 @@ export class CalendarComponent implements OnInit {
   }
 
   subscribeCalendar(key: string) {
-    this.calendarService.subscribeCal(key)
-      .subscribe(
-        cals => {
-          this.calendarService.calendarsChange.next(cals);
-        },
-        err => console.error(err)
-      );
+    this.calendarService.subscribeCal(key);
   }
 
   private setViewDate(date: Date) {

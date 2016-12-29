@@ -196,10 +196,9 @@ export default class CalendarService {
       .map((res: Response) => {
         return res.json();
       })
-      .catch((error: any) => Observable
-        .throw(error.json()
-          ? error.json().error
-          : 'Server error while searching for calendar.'));
+      .subscribe(
+        calendars => this.initCalendars(calendars)
+      );
   }
 
   unsubscribe(key: string) {
@@ -212,10 +211,26 @@ export default class CalendarService {
       .map((res: Response) => {
         return res.json();
       })
-      .catch((error: any) => Observable
-        .throw(error.json()
-          ? error.json().error
-          : 'Server error while searching for calendar.'));
+      .subscribe(
+        calendars => this.initCalendars(calendars)
+      );
+  }
+
+  private initCalendars(calendars: Calendar[]) {
+    // Bring calendars and their events in the correct format
+    this.calendars = calendars.map(cal => this.mapCalendarEvents(cal));
+    // Produce one array of events by concatenating all of the calendar's events
+    this.events = this.calendars
+      .map(cal => cal.events)
+      .reduce((a, b) => a.concat(b), []);
+    this.subscribedCals = [];
+    this.calendars.forEach(cal => this.subscribedCals.push(
+      {key: cal.key, title: cal.title, subscribed: true}
+    ));
+    this.calendarsChange.next(this.calendars);
+    /* Inform subscribers (CalendarComponent)
+    that events have changed, so the UI updates. */
+    this.eventsChange.next(this.events);
   }
 
   private mapEventForBackend(event: CalEvent): any {
