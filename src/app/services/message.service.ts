@@ -7,9 +7,10 @@ import WebsocketService from './websocket.service';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { Observable, Subject } from 'rxjs';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export class MessageService {
+export class MessageService implements IPimpService {
 
   private stompClient: any;
   private stompSubscriptions: Object = {};

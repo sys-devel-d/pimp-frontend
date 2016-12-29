@@ -3,9 +3,10 @@ import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export default class WebSocketService {
+export default class WebSocketService implements IPimpService {
 
   stompClient: any;
   socket: any;

@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { CalEvent, Calendar } from '../models/base';
 import { Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
+import { IPimpService } from './pimp.services';
 
 const colors: any = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -13,7 +14,7 @@ const colors: any = {
 };
 
 @Injectable()
-export default class CalendarService {
+export default class CalendarService implements IPimpService {
 
   private isInitialized = false;
   private viewDate: Date = new Date();

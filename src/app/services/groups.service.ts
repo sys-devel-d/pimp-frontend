@@ -4,9 +4,10 @@ import { Globals } from '../commons/globals';
 import { Team, Project } from '../models/groups';
 import { AuthService } from './auth.service';
 import { Observable, Subject } from 'rxjs';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export default class GroupsService {
+export default class GroupsService implements IPimpService {
 
   teams: Team[];
   projects: Team[];

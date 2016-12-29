@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Notification } from '../models/base';
 import { Subject } from 'rxjs';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export default class NotificationService {
+export default class NotificationService implements IPimpService {
 
   notifications: Notification[];
   notificationsChange: Subject<Notification[]> = new Subject<Notification[]>();
