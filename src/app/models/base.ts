@@ -34,6 +34,12 @@ export class Calendar {
   events: CalEvent[];
 }
 
+export class SubscribedCalendar {
+  key: string;
+  title: string;
+  subscribed: boolean;
+}
+
 export class CalEvent implements CalendarEvent {
   key: string;
   calendarKey: string;

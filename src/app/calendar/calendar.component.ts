@@ -18,7 +18,7 @@ import CalendarModalComponent from './modal/calendar-modal.component';
 import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import CalendarService from '../services/calendar.service';
-import { CalEvent } from '../models/base';
+import { CalEvent, SubscribedCalendar } from '../models/base';
 import { Globals } from '../commons/globals';
 
 type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar';
@@ -40,13 +40,14 @@ export class CalendarComponent implements OnInit {
   activeDayIsOpen: boolean;
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
+
   actions: CalendarEventAction[] = [
     {
       label: '<i class="fa fa-fw fa-pencil"></i>',
       onClick: ({event}: {event: CalEvent}): void => {
         this.eventClicked(event);
       }
-    }, 
+    },
     {
       label: '<i class="fa fa-fw fa-times"></i>',
       onClick: ({event}: {event: CalEvent}): void => {
@@ -59,8 +60,9 @@ export class CalendarComponent implements OnInit {
 
   constructor(private calendarService: CalendarService) {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
-    this.calendarService.eventsChange.subscribe( (events:CalEvent[]) => {
+    this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
       this.events = events.map(event => {event.actions = this.actions; return event;});
+      this.calendarService.setAllEvents(this.events);
     });
   }
 
@@ -111,6 +113,10 @@ export class CalendarComponent implements OnInit {
     setTimeout(() => {
       this.editEventModalComponent.showDialog(event);
     }, 0);
+  }
+
+  filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
+    this.calendarService.filterEventsByCalendars(subscribedCalendars);
   }
 
   createCalendarClicked() {

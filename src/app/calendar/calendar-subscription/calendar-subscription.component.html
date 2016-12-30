@@ -1,0 +1,9 @@
+<div *ngFor='let cal of subscribedCals'>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" [(ngModel)]="cal.subscribed"
+      (click)="clickCalendarCheckbox(cal.key)">
+      {{cal.title}}
+    </label>
+  </div>
+</div>
