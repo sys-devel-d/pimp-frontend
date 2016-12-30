@@ -120,18 +120,8 @@ export class CalendarComponent implements OnInit {
     }, 0);
   }
 
-  mapSubscribedCalEvents(subscribedCalendars: SubscribedCalendar[]) {
-    let shownEvents: CalEvent[] = [];
-    this.calendarService.getAllEvents().forEach(calEvent => {
-      let calendar: SubscribedCalendar = subscribedCalendars
-        .find(cal => cal.key === calEvent.calendarKey);
-      let subscribed = calendar ? calendar.subscribed : false;
-      if (subscribed) {
-        shownEvents.push(calEvent);
-      }
-    });
-    this.events = shownEvents;
-    this.calendarService.setEvents(shownEvents);
+  filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
+    this.calendarService.filterEventsByCalendars(subscribedCalendars);
   }
 
   createCalendarClicked() {

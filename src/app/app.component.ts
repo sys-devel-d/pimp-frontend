@@ -4,6 +4,7 @@ import { AuthService } from "./services/auth.service";
 import { MessageService } from "./services/message.service";
 import { UserService } from './services/user.service';
 import CalendarService from './services/calendar.service';
+import GroupsService from './services/groups.service';
 
 @Component({
   selector: 'app-root',
@@ -18,13 +19,15 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private messageService: MessageService,
-    private calendarService: CalendarService) {}
+    private calendarService: CalendarService,
+    private groupsService: GroupsService) {}
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
       this.messageService.init();
       this.userService.init();
       this.calendarService.init();
+      this.groupsService.init();
     }
   }
 
@@ -33,5 +36,6 @@ export class AppComponent implements OnInit {
     this.messageService.tearDown();
     this.userService.tearDown();
     this.calendarService.tearDown();
+    this.groupsService.tearDown();
   }
 }

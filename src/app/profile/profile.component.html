@@ -41,7 +41,41 @@
 
   <h2>Teams</h2>
 
+  <div class="panel-group" id="accordion">
+    <div *ngFor="let team of teams" class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{team.key}}">{{ team.name }}</a>
+        </h4>
+      </div>
+      <div id="collapse-{{team.key}}" class="panel-collapse collapse">
+        <div class="panel-body">
+          <div *ngFor="let userName of team.userNames">
+            <a routerLink="/{{userName}}">{{userName}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <h2>Projekte</h2>
+
+  <div class="panel-group" id="accordion">
+    <div *ngFor="let project of projects" class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{project.key}}">{{ project.name }}</a>
+        </h4>
+      </div>
+      <div id="collapse-{{project.key}}" class="panel-collapse collapse">
+        <div class="panel-body">
+          <div *ngFor="let userName of project.userNames">
+            <a routerLink="/{{userName}}">{{userName}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <p *ngIf="isPrivate">This is private stuff and can only be seen by me!</p>
 </div>

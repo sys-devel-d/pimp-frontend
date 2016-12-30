@@ -12,7 +12,6 @@ import { AuthService } from './auth.service';
 export class UserService {
 
   currentUser: User;
-  otherUser: User;
   userChange: Subject<User> = new Subject<User>();
   otherUserChange: Subject<User> = new Subject<User>();
   errorChange: Subject<string> = new Subject<string>();
@@ -35,7 +34,6 @@ export class UserService {
   fetchOtherUser(userName) {
     const successFunc = (user: User) => {
       this.fetchPhoto(user)
-      this.otherUser = user;
       this.otherUserChange.next(user);
     };
     this.userRequest(userName, successFunc);
@@ -148,6 +146,5 @@ export class UserService {
 
   tearDown() {
     this.currentUser = null;
-    this.otherUser = null;
   }
 }

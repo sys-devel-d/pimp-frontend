@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User } from '../models/base';
+import { Team, Project } from '../models/groups';
 import { UserService } from '../services/user.service';
+import GroupsService from '../services/groups.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -10,17 +12,24 @@ import { Subscription } from 'rxjs';
 export class ProfileComponent implements OnInit, OnDestroy {
   user: User;
   userService: UserService;
+  groupsService: GroupsService;
   subscription: Subscription;
+  groupsSubscriptions: Subscription[];
   errorSubscription: Subscription;
   isPrivate = true;
   error: string;
   photoFile: File;
 
-  constructor(userService: UserService) {
+  teams: Team[];
+  projects: Project[];
+
+  constructor(userService: UserService, groupsService: GroupsService) {
     this.userService = userService;
+    this.groupsService = groupsService;
     this.errorSubscription = userService.errorChange
       .subscribe( err => this.error = err );
     this.subscribeToUserChange();
+    this.subscribeToGroupsChange();
   }
 
   private onEditStatus(status) {
@@ -43,8 +52,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe( (user:User) => this.user = user );
   }
 
+  subscribeToGroupsChange() {
+    const grpSubscr = this.groupsService.teamsChange
+      .subscribe( teams => this.teams = teams);
+    const prjSubscr = this.groupsService.projectsChange
+      .subscribe( projects => this.projects = projects);
+    this.groupsSubscriptions = [grpSubscr, prjSubscr];
+  }
+
   ngOnInit() {
     this.user = this.userService.getCurrentUser();
+    this.teams = this.groupsService.getTeams();
+    this.projects = this.groupsService.getProjects();
   }
 
   uploadPhoto() {
@@ -66,7 +85,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
-    this.errorSubscription.unsubscribe();
+    const subs = [this.subscription, this.errorSubscription, ...this.groupsSubscriptions];
+    subs.forEach(sub => sub.unsubscribe());
   }
 }
