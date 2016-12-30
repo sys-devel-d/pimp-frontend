@@ -187,6 +187,15 @@ export default class CalendarService {
     return evt;
   }
 
+  filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
+    const calKeys = subscribedCalendars.filter(sc => sc.subscribed).map(sc => sc.key);
+    const activeCalendars = this.calendars.filter(c => calKeys.indexOf(c.key) !== -1);
+    this.events = activeCalendars
+        .map(cal => cal.events)
+        .reduce((a, b) => a.concat(b), []);
+    this.eventsChange.next(this.events);
+  }
+
   public getCalendars(): Calendar[] {
     return this.calendars;
   }
