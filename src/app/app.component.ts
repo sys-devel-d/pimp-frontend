@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     private pimpServices: PimpServices,
     notificationService: NotificationService) {
       notificationService.notificationsChange.subscribe(notifications => {
-        this.unreadNotificationsCount = notifications.filter(not => !not.read).length
+        this.unreadNotificationsCount = notifications.filter(not => !not.acknowledged).length
       });
     }
 
