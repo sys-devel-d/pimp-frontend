@@ -1,19 +1,12 @@
-label {
-  display: block;
-  padding-left: 5px;
-  text-indent: -35px;
-}
-input {
-  width: 13px;
-  height: 13px;
-  padding: 0;
-  margin:0;
-  vertical-align: bottom;
-  position: relative;
-  top: -1px;
-  *overflow: hidden;
+.table {
+  margin-top: 50px;
 }
 
-.delete-icon {
-  float: right;
+.table td {
+   vertical-align: middle;
+   border: none;
+}
+
+.checkbox {
+  margin: 0;
 }

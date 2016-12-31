@@ -1,10 +1,16 @@
-<div *ngFor='let cal of subscribedCals'>
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" [(ngModel)]="cal.subscribed"
-      (click)="clickCalendarCheckbox(cal.key)">
-      {{cal.title}}
+<table class="table table-responsive">
+  <tr *ngFor="let cal of subscribedCals">
+    <td>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" [(ngModel)]="cal.subscribed"
+          (click)="clickCalendarCheckbox(cal.key)">
+          {{cal.title}}
+        </label>
+      </div>
+    </td>
+    <td>
       <i class="fa fa-fw fa-times delete-icon" (click)="unsubscribe(cal.key)"></i>
-    </label>
-  </div>
-</div>
+    </td>
+  </tr>
+</table>

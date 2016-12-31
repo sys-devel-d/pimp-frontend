@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="col-md-2">
 			<div class="row top-buffer">
-				<div class="col-md-12">
+				<div>
 					<app-calendar-search-field
 						(update)="term = $event"
 						(keyup)="searchCalendar(term)"
@@ -10,7 +10,7 @@
 						[results]="calendar">
 					</app-calendar-search-field>
 				</div>
-				<div class="col-md-12">
+				<div>
 					<app-calendar-subscription (subscribedCalendar)="filterEventsByCalendars($event)"></app-calendar-subscription>
 				</div>
 
