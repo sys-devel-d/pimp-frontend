@@ -35,6 +35,9 @@ export default class CalendarSubscriptionComponent implements OnInit {
   }
 
   unsubscribe(key: string) {
-    this.calendarService.unsubscribe(key);
+    const conf = confirm("Wollen Sie das Abonnement dieses Kalenders wirklich beenden?");
+    if(conf) {
+      this.calendarService.unsubscribe(key);
+    }
   }
 }
