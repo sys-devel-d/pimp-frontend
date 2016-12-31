@@ -66,7 +66,6 @@ export class CalendarComponent implements OnInit {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
       this.events = events.map(event => {event.actions = this.actions; return event;});
-      this.calendarService.setAllEvents(this.events);
     });
     this.subscribeCallback = this.subscribeCalendar.bind(this);
   }

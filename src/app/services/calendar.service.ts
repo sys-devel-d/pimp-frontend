@@ -58,6 +58,7 @@ export default class CalendarService {
       this.events = this.calendars
         .map(cal => cal.events)
         .reduce((a, b) => a.concat(b), []);
+      this.allEvents = this.events;
       this.calendars.forEach(cal => this.subscribedCals.push(
         {key: cal.key, title: cal.title, subscribed: true}
       ));
@@ -74,10 +75,7 @@ export default class CalendarService {
       calendar,
       { headers: this.authService.getTokenHeader() }
     ).map( res => res.json() as Calendar )
-    .subscribe( (cal: Calendar) => {
-      this.calendars.push(cal);
-      this.calendarsChange.next([calendar]);
-    });
+    .subscribe( (cal: Calendar) => this.addCalendar(cal) );
   }
 
   getEvents(): CalEvent[] {
@@ -193,12 +191,8 @@ export default class CalendarService {
         {},
         { headers: this.authService.getTokenHeader() }
       )
-      .map((res: Response) => {
-        return res.json();
-      })
-      .subscribe(
-        calendars => this.initCalendars(calendars)
-      );
+      .map((res: Response) => res.json() as Calendar)
+      .subscribe( calendar => this.addCalendar(calendar) );
   }
 
   unsubscribe(key: string) {
@@ -207,30 +201,28 @@ export default class CalendarService {
         Globals.BACKEND + 'calendar/unsubscribe/' + key,
         {},
         { headers: this.authService.getTokenHeader() }
-      )
-      .map((res: Response) => {
-        return res.json();
-      })
-      .subscribe(
-        calendars => this.initCalendars(calendars)
-      );
+      ).subscribe( () => this.removeCalendar(key) );
   }
 
-  private initCalendars(calendars: Calendar[]) {
-    // Bring calendars and their events in the correct format
-    this.calendars = calendars.map(cal => this.mapCalendarEvents(cal));
-    // Produce one array of events by concatenating all of the calendar's events
-    this.events = this.calendars
-      .map(cal => cal.events)
-      .reduce((a, b) => a.concat(b), []);
-    this.subscribedCals = [];
-    this.calendars.forEach(cal => this.subscribedCals.push(
-      {key: cal.key, title: cal.title, subscribed: true}
-    ));
-    this.calendarsChange.next(this.calendars);
-    /* Inform subscribers (CalendarComponent)
-    that events have changed, so the UI updates. */
+  private addCalendar(calendar: Calendar) {
+    calendar = this.mapCalendarEvents(calendar);
+    this.events = this.events.concat(calendar.events);
+    this.calendars.push(calendar);
+    this.subscribedCals.push({
+      key: calendar.key,
+      title: calendar.title,
+      subscribed: true
+    });
     this.eventsChange.next(this.events);
+    this.calendarsChange.next(this.calendars);
+  }
+
+  private removeCalendar(calendarKey: string) {
+    this.calendars = this.calendars.filter(cal => cal.key !== calendarKey);
+    this.subscribedCals = this.subscribedCals.filter(sc => sc.key !== calendarKey);
+    this.events = this.events.filter(evt => evt.calendarKey !== calendarKey);
+    this.eventsChange.next(this.events);
+    this.calendarsChange.next(this.calendars);
   }
 
   private mapEventForBackend(event: CalEvent): any {
@@ -268,10 +260,6 @@ export default class CalendarService {
 
   public getAllEvents(): CalEvent[] {
     return this.allEvents;
-  }
-
-  public setAllEvents(events: CalEvent[]){
-    this.allEvents = events;
   }
 
   public getSubscribedCalendars() {
