@@ -24,6 +24,7 @@ export default class CalendarModalComponent {
   public createCalendar() {
     if (this.calendar.title && /\S/.test(this.calendar.title)) {
       this.calendar.owner = this.userService.currentUser.userName;
+      this.calendar.events = [];
       this.calendarService.createNewCalendar(this.calendar);
       // reinitialize to clear forms
       this.calendar = new Calendar();

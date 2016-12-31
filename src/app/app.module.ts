@@ -17,9 +17,11 @@ import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from "./commons/auth.guard";
 import { AuthService } from "./services/auth.service";
 import { UserService } from "./services/user.service";
+import GroupsService from './services/groups.service';
 import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
 import { UserSearchComponent } from "./user-search/user-search.component";
+import { CalendarSearchComponent } from "./user-search/calendar-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
 import { RoomNamePipe } from './pipes/room-name.pipe';
 import InlineEdit from './inline-edit/inline-edit.component';
@@ -31,12 +33,14 @@ import CreateEventModalComponent from './calendar/modal/event/create-event-modal
 import ReadOnlyEventModalComponent from './calendar/modal/event/readonly/readonly-event-modal.component';
 import UserSelectionComponent from './user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
+import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarComponent,
     CalendarModalComponent,
+    CalendarSubscriptionComponent,
     ChatComponent,
     GroupChatEditorComponent,
     LoginComponent,
@@ -45,6 +49,7 @@ import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
     PageNotFoundComponent,
     RegisterComponent,
     UserSearchComponent,
+    CalendarSearchComponent,
     HighlightDirective,
     RoomNamePipe,
     InlineEdit,
@@ -81,7 +86,8 @@ import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
     AuthService,
     MessageService,
     UserService,
-    CalendarService
+    CalendarService,
+    GroupsService
   ],
   bootstrap: [AppComponent]
 })

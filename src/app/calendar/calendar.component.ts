@@ -20,8 +20,12 @@ import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import ReadOnlyEventModalComponent from './modal/event/readonly/readonly-event-modal.component';
 import CalendarService from '../services/calendar.service';
+<<<<<<< HEAD
 import { AuthService } from '../services/auth.service';
 import { CalEvent } from '../models/base';
+=======
+import { CalEvent, SubscribedCalendar, Calendar } from '../models/base';
+>>>>>>> master
 import { Globals } from '../commons/globals';
 
 type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar' | 'read-event';
@@ -43,6 +47,10 @@ export class CalendarComponent implements OnInit {
   activeDayIsOpen: boolean;
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
+  private term: string;
+  calendarSearchResults: Calendar[] = [];
+  private subscribeCallback: Function;
+
   actions: CalendarEventAction[] = [
     {
       label: '<i class="fa fa-fw fa-pencil"></i>',
@@ -65,9 +73,10 @@ export class CalendarComponent implements OnInit {
     private authService: AuthService,
     private router: Router) {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
-    this.calendarService.eventsChange.subscribe((events: CalEvent[]) => {
+    this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
       this.events = events.map(evt => this.eventMapping(evt));
     });
+    this.subscribeCallback = this.subscribeCalendar.bind(this);
   }
 
   private eventMapping(evt: CalEvent): CalEvent {
@@ -131,6 +140,10 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
+    this.calendarService.filterEventsByCalendars(subscribedCalendars);
+  }
+
   createCalendarClicked() {
     this.mode = 'create-calendar';
     setTimeout(() => {
@@ -149,6 +162,20 @@ export class CalendarComponent implements OnInit {
     event.start = newStart;
     event.end = newEnd;
     this.refresh.next();
+  }
+
+  searchCalendar(term) {
+   if (this.term.length >= 3) {
+      this.calendarService.search(this.term)
+        .subscribe(
+          (cals: Calendar[]) => this.calendarSearchResults = cals,
+          err => console.error(err)
+        );
+    }
+  }
+
+  subscribeCalendar(key: string) {
+    this.calendarService.subscribeCal(key);
   }
 
   private setViewDate(date: Date) {

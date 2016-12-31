@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
-import { CalEvent, Calendar } from '../models/base';
-import { Subject } from 'rxjs';
+import { CalEvent, Calendar, SubscribedCalendar } from '../models/base';
+import { Observable, Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
 
 const colors: any = {
@@ -20,9 +20,13 @@ export default class CalendarService {
   private view: string = 'month';
   private activeDayIsOpen: boolean = true;
   private events: CalEvent[] = [];
-  private calendars: Calendar[];
+  private allEvents: CalEvent[] = [];
+  private calendars: Calendar[] = [];
+  private subscribedCals: SubscribedCalendar[] = [];
+
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
   initializedChange: Subject<boolean> = new Subject<boolean>();
+  calendarsChange: Subject<Calendar[]> = new Subject<Calendar[]>();
 
   constructor(private authService: AuthService, private http: Http) {}
 
@@ -58,6 +62,16 @@ export default class CalendarService {
       this.events = this.calendars
         .map(cal => cal.events)
         .reduce((a, b) => a.concat(b), []);
+      this.allEvents = this.events;
+      this.calendars.forEach(cal => this.subscribedCals.push(
+        {
+          key: cal.key,
+          title: cal.title,
+          active: true,
+          unsubscribable: cal.owner !== this.authService.getCurrentUserName()
+        }
+      ));
+      this.calendarsChange.next(this.calendars);
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
@@ -70,11 +84,8 @@ export default class CalendarService {
       Globals.BACKEND + 'calendar',
       calendar,
       { headers: this.authService.getTokenHeader() }
-    )
-    .map( res => res.json() as Calendar )
-    .subscribe( (cal: Calendar) => {
-      this.calendars.push(cal);
-    });
+    ).map( res => res.json() as Calendar )
+    .subscribe( (cal: Calendar) => this.addCalendar(cal) );
   }
 
   getEvents(): CalEvent[] {
@@ -122,10 +133,13 @@ export default class CalendarService {
       Globals.BACKEND + 'calendar/' + event.calendarKey,
       this.mapEventForBackend(event),
       { headers: this.authService.getTokenHeader() }
-    ).map(response => response.json())
+    )
+    .map(response => response.json())
     .subscribe( (evt: CalEvent) => {
       evt = this.mapEventForFrontend(evt);
-      this.calendars.find(cal => cal.key === evt.calendarKey).events.push(evt);
+      let calendar: Calendar = this.calendars
+        .find(cal => cal.key === evt.calendarKey);
+      calendar.events.push(evt);
       this.events.push(evt);
       this.eventsChange.next(this.events);
     });
@@ -160,7 +174,64 @@ export default class CalendarService {
         this.eventsChange.next(this.events);
       },
       err => console.log(err)
-    )
+    );
+  }
+
+  search(term: string) {
+    return this.http
+      .get(
+        Globals.BACKEND + 'calendar/search/' + term,
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => {
+        return res.json();
+      })
+      .catch((error: any) => Observable
+        .throw(error.json()
+          ? error.json().error
+          : 'Server error while searching for calendar.'));
+  }
+
+  subscribeCal(key: string) {
+    return this.http
+      .patch(
+        Globals.BACKEND + 'calendar/subscribe/' + key,
+        {},
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => res.json() as Calendar)
+      .subscribe( calendar => this.addCalendar(calendar) );
+  }
+
+  unsubscribe(key: string) {
+    return this.http
+      .patch(
+        Globals.BACKEND + 'calendar/unsubscribe/' + key,
+        {},
+        { headers: this.authService.getTokenHeader() }
+      ).subscribe( () => this.removeCalendar(key) );
+  }
+
+  private addCalendar(calendar: Calendar) {
+    calendar = this.mapCalendarEvents(calendar);
+    this.events = this.events.concat(calendar.events);
+    this.calendars.push(calendar);
+    this.subscribedCals.push({
+      key: calendar.key,
+      title: calendar.title,
+      active: true,
+      unsubscribable: calendar.owner !== this.authService.getCurrentUserName()
+    });
+    this.eventsChange.next(this.events);
+    this.calendarsChange.next(this.calendars);
+  }
+
+  private removeCalendar(calendarKey: string) {
+    this.calendars = this.calendars.filter(cal => cal.key !== calendarKey);
+    this.subscribedCals = this.subscribedCals.filter(sc => sc.key !== calendarKey);
+    this.events = this.events.filter(evt => evt.calendarKey !== calendarKey);
+    this.eventsChange.next(this.events);
+    this.calendarsChange.next(this.calendars);
   }
 
   private mapEventForBackend(event: CalEvent): any {
@@ -179,9 +250,39 @@ export default class CalendarService {
     return evt;
   }
 
+  filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
+    const calKeys = subscribedCalendars.filter(sc => sc.active).map(sc => sc.key);
+    const activeCalendars = this.calendars.filter(c => calKeys.indexOf(c.key) !== -1);
+    this.events = activeCalendars
+        .map(cal => cal.events)
+        .reduce((a, b) => a.concat(b), []);
+    this.eventsChange.next(this.events);
+  }
+
+  public getCalendars(): Calendar[] {
+    return this.calendars;
+  }
+
+  public setEvents(events: CalEvent[]) {
+    this.events = events;
+  }
+
+  public getAllEvents(): CalEvent[] {
+    return this.allEvents;
+  }
+
+  public getSubscribedCalendars() {
+    return this.subscribedCals;
+  }
+
+  public setSubscribedCalendars(cals: SubscribedCalendar[]){
+    this.subscribedCals = cals;
+  }
+
   tearDown() {
     this.isInitialized = false;
     this.events = [];
     this.calendars = [];
+    this.allEvents = [];
   }
 }
