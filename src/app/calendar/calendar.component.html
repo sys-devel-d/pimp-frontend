@@ -1,7 +1,11 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-2">
-			<div class="row top-buffer">
+			<div class="row">
+				<div>
+					<div id="btnOpenCalendarModal" class="btn btn-default btn-with-margin" (click)="createCalendarClicked()">Neuer Kalender</div>
+					<div id="btnOpenNewEventModal" class="btn btn-default btn-with-margin" (click)="createEventClicked()">Neuer Termin</div>
+				</div>
 				<div>
 					<app-calendar-search-field
 						(update)="term = $event"
@@ -17,12 +21,6 @@
 			</div>
 		</div>
 		<div class="col-md-10">
-			<div class="row text-center">
-				<div class="col-md-4 col-md-offset-4">
-					<div id="btnOpenCalendarModal" class="btn btn-primary" (click)="createCalendarClicked()">Neuer Kalender</div>
-					<div id="btnOpenNewEventModal" class="btn btn-primary" (click)="createEventClicked()">Neuer Termin</div>
-				</div>
-			</div>
 			<div class="row text-center">
 				<div class="col-md-4">
 					<div class="btn-group">
