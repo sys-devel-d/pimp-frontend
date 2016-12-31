@@ -3,7 +3,7 @@ import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
 import { CalEvent, Calendar, SubscribedCalendar } from '../models/base';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
 
 const colors: any = {
@@ -58,8 +58,14 @@ export default class CalendarService {
       this.events = this.calendars
         .map(cal => cal.events)
         .reduce((a, b) => a.concat(b), []);
+      this.allEvents = this.events;
       this.calendars.forEach(cal => this.subscribedCals.push(
-        {key: cal.key, title: cal.title, subscribed: true}
+        {
+          key: cal.key,
+          title: cal.title,
+          active: true,
+          unsubscribable: cal.owner !== this.authService.getCurrentUserName()
+        }
       ));
       this.calendarsChange.next(this.calendars);
       /* Inform subscribers (CalendarComponent)
@@ -74,10 +80,7 @@ export default class CalendarService {
       calendar,
       { headers: this.authService.getTokenHeader() }
     ).map( res => res.json() as Calendar )
-    .subscribe( (cal: Calendar) => {
-      this.calendars.push(cal);
-      this.calendarsChange.next([calendar]);
-    });
+    .subscribe( (cal: Calendar) => this.addCalendar(cal) );
   }
 
   getEvents(): CalEvent[] {
@@ -168,7 +171,64 @@ export default class CalendarService {
         this.eventsChange.next(this.events);
       },
       err => console.log(err)
-    )
+    );
+  }
+
+  search(term: string) {
+    return this.http
+      .get(
+        Globals.BACKEND + 'calendar/search/' + term,
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => {
+        return res.json();
+      })
+      .catch((error: any) => Observable
+        .throw(error.json()
+          ? error.json().error
+          : 'Server error while searching for calendar.'));
+  }
+
+  subscribeCal(key: string) {
+    return this.http
+      .patch(
+        Globals.BACKEND + 'calendar/subscribe/' + key,
+        {},
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => res.json() as Calendar)
+      .subscribe( calendar => this.addCalendar(calendar) );
+  }
+
+  unsubscribe(key: string) {
+    return this.http
+      .patch(
+        Globals.BACKEND + 'calendar/unsubscribe/' + key,
+        {},
+        { headers: this.authService.getTokenHeader() }
+      ).subscribe( () => this.removeCalendar(key) );
+  }
+
+  private addCalendar(calendar: Calendar) {
+    calendar = this.mapCalendarEvents(calendar);
+    this.events = this.events.concat(calendar.events);
+    this.calendars.push(calendar);
+    this.subscribedCals.push({
+      key: calendar.key,
+      title: calendar.title,
+      active: true,
+      unsubscribable: calendar.owner !== this.authService.getCurrentUserName()
+    });
+    this.eventsChange.next(this.events);
+    this.calendarsChange.next(this.calendars);
+  }
+
+  private removeCalendar(calendarKey: string) {
+    this.calendars = this.calendars.filter(cal => cal.key !== calendarKey);
+    this.subscribedCals = this.subscribedCals.filter(sc => sc.key !== calendarKey);
+    this.events = this.events.filter(evt => evt.calendarKey !== calendarKey);
+    this.eventsChange.next(this.events);
+    this.calendarsChange.next(this.calendars);
   }
 
   private mapEventForBackend(event: CalEvent): any {
@@ -188,7 +248,7 @@ export default class CalendarService {
   }
 
   filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
-    const calKeys = subscribedCalendars.filter(sc => sc.subscribed).map(sc => sc.key);
+    const calKeys = subscribedCalendars.filter(sc => sc.active).map(sc => sc.key);
     const activeCalendars = this.calendars.filter(c => calKeys.indexOf(c.key) !== -1);
     this.events = activeCalendars
         .map(cal => cal.events)
@@ -206,10 +266,6 @@ export default class CalendarService {
 
   public getAllEvents(): CalEvent[] {
     return this.allEvents;
-  }
-
-  public setAllEvents(events: CalEvent[]){
-    this.allEvents = events;
   }
 
   public getSubscribedCalendars() {
