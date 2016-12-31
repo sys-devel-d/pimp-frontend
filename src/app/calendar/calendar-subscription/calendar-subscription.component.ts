@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs';
 
 import { Calendar, SubscribedCalendar } from '../../models/base';
 import CalendarService from '../../services/calendar.service';
@@ -29,7 +28,7 @@ export default class CalendarSubscriptionComponent implements OnInit {
 
   clickCalendarCheckbox(key: string) {
     const clickedCal = this.subscribedCals.find(sc => sc.key === key);
-    clickedCal.subscribed = !clickedCal.subscribed;
+    clickedCal.active = !clickedCal.active;
     this.calendarService.setSubscribedCalendars(this.subscribedCals);
     this.subscribedCalendar.emit(this.subscribedCals);
   }

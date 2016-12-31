@@ -60,7 +60,12 @@ export default class CalendarService {
         .reduce((a, b) => a.concat(b), []);
       this.allEvents = this.events;
       this.calendars.forEach(cal => this.subscribedCals.push(
-        {key: cal.key, title: cal.title, subscribed: true}
+        {
+          key: cal.key,
+          title: cal.title,
+          active: true,
+          unsubscribable: cal.owner !== this.authService.getCurrentUserName()
+        }
       ));
       this.calendarsChange.next(this.calendars);
       /* Inform subscribers (CalendarComponent)
@@ -211,7 +216,8 @@ export default class CalendarService {
     this.subscribedCals.push({
       key: calendar.key,
       title: calendar.title,
-      subscribed: true
+      active: true,
+      unsubscribable: calendar.owner !== this.authService.getCurrentUserName()
     });
     this.eventsChange.next(this.events);
     this.calendarsChange.next(this.calendars);
@@ -242,7 +248,7 @@ export default class CalendarService {
   }
 
   filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
-    const calKeys = subscribedCalendars.filter(sc => sc.subscribed).map(sc => sc.key);
+    const calKeys = subscribedCalendars.filter(sc => sc.active).map(sc => sc.key);
     const activeCalendars = this.calendars.filter(c => calKeys.indexOf(c.key) !== -1);
     this.events = activeCalendars
         .map(cal => cal.events)

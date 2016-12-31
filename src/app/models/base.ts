@@ -37,7 +37,8 @@ export class Calendar {
 export class SubscribedCalendar {
   key: string;
   title: string;
-  subscribed: boolean;
+  active: boolean;
+  unsubscribable: boolean;
 }
 
 export class CalEvent implements CalendarEvent {

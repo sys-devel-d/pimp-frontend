@@ -3,14 +3,14 @@
     <td>
       <div class="checkbox">
         <label>
-          <input type="checkbox" [(ngModel)]="cal.subscribed"
+          <input type="checkbox" [(ngModel)]="cal.active"
           (click)="clickCalendarCheckbox(cal.key)">
           {{cal.title}}
         </label>
       </div>
     </td>
     <td>
-      <i class="fa fa-fw fa-times delete-icon" (click)="unsubscribe(cal.key)"></i>
+      <i *ngIf="cal.unsubscribable" class="fa fa-fw fa-times delete-icon" (click)="unsubscribe(cal.key)"></i>
     </td>
   </tr>
 </table>
