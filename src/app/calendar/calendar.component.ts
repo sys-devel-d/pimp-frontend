@@ -40,9 +40,8 @@ export class CalendarComponent implements OnInit {
   activeDayIsOpen: boolean;
   refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
-  allEvents: CalEvent[] = [];
   private term: string;
-  calendar: Calendar[] = [];
+  calendarSearchResults: Calendar[] = [];
   private subscribeCallback: Function;
 
   actions: CalendarEventAction[] = [
@@ -147,7 +146,7 @@ export class CalendarComponent implements OnInit {
    if (this.term.length >= 3) {
       this.calendarService.search(this.term)
         .subscribe(
-          (cals: Calendar[]) => this.calendar = cals,
+          (cals: Calendar[]) => this.calendarSearchResults = cals,
           err => console.error(err)
         );
     }
