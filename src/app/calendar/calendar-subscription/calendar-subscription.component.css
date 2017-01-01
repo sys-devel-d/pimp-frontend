@@ -1,0 +1,12 @@
+.table {
+  margin-top: 20px;
+}
+
+.table td {
+   vertical-align: middle;
+   border: none;
+}
+
+.checkbox {
+  margin: 0;
+}

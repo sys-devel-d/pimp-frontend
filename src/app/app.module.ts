@@ -25,6 +25,7 @@ import NotificationService from './services/notification.service';
 import WebsocketService from './services/websocket.service';
 import PimpServices from './services/pimp.services';
 import { UserSearchComponent } from "./user-search/user-search.component";
+import { CalendarSearchComponent } from "./user-search/calendar-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
 import { RoomNamePipe } from './pipes/room-name.pipe';
 import InlineEdit from './inline-edit/inline-edit.component';
@@ -35,6 +36,7 @@ import EditEventModalComponent from './calendar/modal/event/edit-event-modal.com
 import CreateEventModalComponent from './calendar/modal/event/create-event-modal.component';
 import UserSelectionComponent from './user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
+import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,7 @@ import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
     CalendarComponent,
     DashboardComponent,
     CalendarModalComponent,
+    CalendarSubscriptionComponent,
     ChatComponent,
     GroupChatEditorComponent,
     LoginComponent,
@@ -50,6 +53,7 @@ import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
     PageNotFoundComponent,
     RegisterComponent,
     UserSearchComponent,
+    CalendarSearchComponent,
     HighlightDirective,
     RoomNamePipe,
     InlineEdit,

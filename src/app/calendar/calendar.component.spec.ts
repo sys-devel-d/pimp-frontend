@@ -10,10 +10,14 @@ import CalendarServiceStub from '../services/test/calendar.service.stub';
 import {UserServiceStub} from '../services/test/user.service.stub';
 import CalendarModalComponent from './modal/calendar-modal.component';
 import EditEventModalComponent from './modal/event/edit-event-modal.component';
+import CalendarSubscriptionComponent
+  from './calendar-subscription/calendar-subscription.component';
+import {CalendarSearchComponent} from '../user-search/calendar-search.component'
 import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import UserSelectionComponent from '../user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
+import { HighlightDirective } from '../directives/highlight.directive';
 
 import { FormsModule } from '@angular/forms';
 
@@ -31,8 +35,11 @@ describe('ChatComponent', () => {
       declarations: [
         CalendarComponent,
         CalendarModalComponent,
-        EditEventModalComponent,
+        CalendarSearchComponent,
+        CalendarSubscriptionComponent,
         CreateEventModalComponent,
+        EditEventModalComponent,
+        HighlightDirective,
         ModalDialogComponent,
         UserSelectionComponent
       ],
