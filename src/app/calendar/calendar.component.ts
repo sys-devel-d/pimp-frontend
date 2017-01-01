@@ -20,12 +20,8 @@ import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import ReadOnlyEventModalComponent from './modal/event/readonly/readonly-event-modal.component';
 import CalendarService from '../services/calendar.service';
-<<<<<<< HEAD
 import { AuthService } from '../services/auth.service';
-import { CalEvent } from '../models/base';
-=======
 import { CalEvent, SubscribedCalendar, Calendar } from '../models/base';
->>>>>>> master
 import { Globals } from '../commons/globals';
 
 type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar' | 'read-event';
@@ -80,7 +76,7 @@ export class CalendarComponent implements OnInit {
   }
 
   private eventMapping(evt: CalEvent): CalEvent {
-    if (evt.creator === this.authService.getCurrentUserName()) {
+    if (evt.creator !== this.authService.getCurrentUserName()) {
       evt.actions = this.actions;
     }
     return evt;
@@ -128,7 +124,7 @@ export class CalendarComponent implements OnInit {
   }
 
   eventClicked(event: CalEvent) {
-    const eventIsWritable = event.creator === this.authService.getCurrentUserName();
+    const eventIsWritable = event.creator !== this.authService.getCurrentUserName();
     this.mode = eventIsWritable ? 'edit-event' : 'read-event';
     if (eventIsWritable) {
       setTimeout(() => {
