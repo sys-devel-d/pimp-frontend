@@ -76,12 +76,14 @@
             cursor: pointer;
         }
     }
-    a {
-        cursor: pointer;
-    }
+
     .most-recent-message {
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 11px;
     }
+}
+
+a {
+  cursor: pointer;
 }
