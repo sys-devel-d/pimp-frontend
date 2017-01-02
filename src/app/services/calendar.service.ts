@@ -135,14 +135,7 @@ export default class CalendarService {
       { headers: this.authService.getTokenHeader() }
     )
     .map(response => response.json())
-    .subscribe( (evt: CalEvent) => {
-      evt = this.mapEventForFrontend(evt);
-      let calendar: Calendar = this.calendars
-        .find(cal => cal.key === evt.calendarKey);
-      calendar.events.push(evt);
-      this.events.push(evt);
-      this.eventsChange.next(this.events);
-    });
+    .subscribe( (evt: CalEvent) => this.addEvent(evt) );
   }
 
   editEvent(event: CalEvent) {
@@ -153,10 +146,7 @@ export default class CalendarService {
         headers: this.authService.getTokenHeader()
       }
     ).subscribe(
-      response => {
-        this.events = this.events.map(evt => evt.key === event.key ? event : evt);
-        this.eventsChange.next(this.events);
-      },
+      () => this.updateEvent(event),
       err => console.log(err)
     )
   }
@@ -169,10 +159,7 @@ export default class CalendarService {
         body: this.mapEventForBackend(event)
       }
     ).subscribe(
-      () => {
-        this.events = this.events.filter(evt => evt.key !== event.key);
-        this.eventsChange.next(this.events);
-      },
+      () => this.removeEvent(event),
       err => console.log(err)
     );
   }
@@ -232,6 +219,36 @@ export default class CalendarService {
     this.events = this.events.filter(evt => evt.calendarKey !== calendarKey);
     this.eventsChange.next(this.events);
     this.calendarsChange.next(this.calendars);
+  }
+
+  private removeEvent(event: any) {
+    this.events = this.events.filter(evt => evt.key !== event.key);
+    this.allEvents= this.allEvents.filter(evt => evt.key !== event.key);
+    const correspondingCal = this.calendars.find(cal => cal.key === event.calendarKey);
+    correspondingCal.events = correspondingCal.events.filter(evt => evt.key !== event.key);
+    this.eventsChange.next(this.events);
+  }
+
+  private addEvent(evt: CalEvent) {
+    evt = this.mapEventForFrontend(evt);
+    let calendar: Calendar = this.calendars
+      .find(cal => cal.key === evt.calendarKey);
+    calendar.events.push(evt);
+    this.events.push(evt);
+    this.allEvents.push(evt);
+    this.eventsChange.next(this.events);
+  }
+
+  private updateEvent(updatedEvent: CalEvent) {
+    const f = (evt) => evt.key === updatedEvent.key;
+    let idx = this.events.findIndex(f);
+    this.events[idx] = updatedEvent;
+    idx = this.allEvents.findIndex(f);
+    this.allEvents[idx] = updatedEvent;
+    const calendar = this.calendars.find(cal => cal.key === updatedEvent.calendarKey);
+    idx = calendar.events.findIndex(f);
+    calendar.events[idx] = updatedEvent;
+    this.eventsChange.next(this.events);
   }
 
   private mapEventForBackend(event: CalEvent): any {
