@@ -90,6 +90,10 @@ export class ChatComponent implements OnInit {
     this.router.navigate(['/profile', privateChatPartner.userName]);
   }
 
+  private linkToChatPartner(userName: String) {
+    this.router.navigate(['/profile', userName]);
+  }
+
   private startPrivatChat(user: User) {
     this.messageService.initChatWith([user], Globals.CHATROOM_TYPE_PRIVATE);
   }

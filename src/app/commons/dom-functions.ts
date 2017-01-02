@@ -12,6 +12,7 @@ export function showAppModal() {
 }
 
 export function hideAppModal() {
+  $('.modal-backdrop').remove();
   $('#app-modal').modal('hide');
 }
 
