@@ -1,7 +1,7 @@
 import { CalEvent, User } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
 import { UserService } from './../../../services/user.service';
-import { hideAppModal, showAppModal, shakeInput } from '../../../commons/dom-functions';
+import { hideAppModal, showAppModal, shakeInput, fadeIn, fadeOut } from '../../../commons/dom-functions';
 
 export abstract class EventModalAbstract {
   inEditingMode: boolean;
@@ -14,12 +14,13 @@ export abstract class EventModalAbstract {
     autoclose: true,
     todayBtn: 'linked',
     todayHighlight: true,
-    format: 'D, dd. MM. yyyy',
-    language: 'de' // TODO: not working
+    language: 'de',
+    placeholder: 'Datum'
   }
   timepickerOpts = {
     showMeridian: false,
-    defaultTime: 'current'
+    defaultTime: 'current',
+    placeholder: 'Uhrzeit'
   }
 
   calendarService: CalendarService;
@@ -53,6 +54,8 @@ export abstract class EventModalAbstract {
       e.end.setTime(e.start.getTime());
       e.end.setHours(23);
       e.end.setMinutes(59);
+      e.start.setHours(0);
+      e.start.setMinutes(0);
     }
 
     if (e.start > e.end) {
@@ -79,5 +82,15 @@ export abstract class EventModalAbstract {
 
   private onSelectedUsersUpdate(users: User[]) {
     this.selectedUsers = users;
+  }
+
+  private getTimePickerOpts() {
+    if(this.event.allDay) {
+      fadeOut('.timepicker');
+    }
+    else {
+      fadeIn('.timepicker');
+    }
+    return this.timepickerOpts;
   }
 }
