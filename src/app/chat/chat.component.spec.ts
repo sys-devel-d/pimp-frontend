@@ -59,18 +59,18 @@ describe('ChatComponent', () => {
     const messages = messageContainer.children;
     expect(messages.length).toBe(2);
     const [msg1, msg2] = messages;
-    expect(msg1.query(By.css('span.message')).nativeElement.textContent.trim())
-        .toBe('Hi');
-    expect(msg1.query(By.css('span.name')).nativeElement.textContent.trim())
-        .toBe('test1:');
-    date = msg1.query(By.css('span.date')).nativeElement.textContent.trim()
+    expect(msg1.query(By.css('.message')).nativeElement.textContent.trim())
+        .toContain('Hi');
+    expect(msg1.query(By.css('.name')).nativeElement.textContent.trim())
+        .toContain('test1');
+    date = msg1.query(By.css('.date')).nativeElement.textContent.trim()
     expect(date).not.toBe('Invalid Date');
     expect(date).toBeTruthy();
-    expect(msg2.query(By.css('span.message')).nativeElement.textContent.trim())
-        .toBe('Hu');
-    expect(msg2.query(By.css('span.name')).nativeElement.textContent.trim())
-        .toBe('test2:');
-    date = msg2.query(By.css('span.date')).nativeElement.textContent.trim();
+    expect(msg2.query(By.css('.message')).nativeElement.textContent.trim())
+        .toContain('Hu');
+    expect(msg2.query(By.css('.name')).nativeElement.textContent.trim())
+        .toContain('test2');
+    date = msg2.query(By.css('.date')).nativeElement.textContent.trim();
     expect(date).not.toBe('Invalid Date');
     expect(date).toBeTruthy();
   });
@@ -86,11 +86,11 @@ describe('ChatComponent', () => {
     fixture.detectChanges();
     expect(messageContainer.children.length).toBe(1);
     const [msg] = messageContainer.children;
-    expect(msg.query(By.css('span.message')).nativeElement.textContent.trim())
+    expect(msg.query(By.css('.message')).nativeElement.textContent.trim())
         .toContain('Bitte ein Bit!');
-    expect(msg.query(By.css('span.name')).nativeElement.textContent.trim())
-        .toContain('Napoleon:');
-    date = msg.query(By.css('span.date')).nativeElement.textContent.trim();
+    expect(msg.query(By.css('.name')).nativeElement.textContent.trim())
+        .toContain('Napoleon');
+    date = msg.query(By.css('.date')).nativeElement.textContent.trim();
     expect(date).not.toBe('Invalid Date');
     expect(date).toBeTruthy();
 
