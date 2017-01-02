@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   subDays,
   addDays,
@@ -9,7 +10,7 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import {
   CalendarEventAction,
   CalendarEventTimesChangedEvent
@@ -17,11 +18,13 @@ import {
 import CalendarModalComponent from './modal/calendar-modal.component';
 import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
+import ReadOnlyEventModalComponent from './modal/event/readonly/readonly-event-modal.component';
 import CalendarService from '../services/calendar.service';
+import { AuthService } from '../services/auth.service';
 import { CalEvent, SubscribedCalendar, Calendar } from '../models/base';
 import { Globals } from '../commons/globals';
 
-type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar';
+type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar' | 'read-event';
 
 @Component({
   selector: 'angular-calendar',
@@ -47,31 +50,40 @@ export class CalendarComponent implements OnInit {
   actions: CalendarEventAction[] = [
     {
       label: '<i class="fa fa-fw fa-pencil"></i>',
-      onClick: ({event}: {event: CalEvent}): void => {
+      onClick: ({event}: { event: CalEvent }): void => {
         this.eventClicked(event);
       }
     },
     {
       label: '<i class="fa fa-fw fa-times"></i>',
-      onClick: ({event}: {event: CalEvent}): void => {
-        if(confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
+      onClick: ({event}: { event: CalEvent }): void => {
+        if (confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
           this.calendarService.deleteEvent(event);
         }
       }
     }
   ];
 
-  constructor(private calendarService: CalendarService) {
+  constructor(
+    private calendarService: CalendarService,
+    private authService: AuthService,
+    private router: Router) {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
-      this.events = events.map(event => {event.actions = this.actions; return event;});
+      this.events = events.map(evt => this.eventMapping(evt));
     });
     this.subscribeCallback = this.subscribeCalendar.bind(this);
   }
 
+  private eventMapping(evt: CalEvent): CalEvent {
+    if (evt.creator === this.authService.getCurrentUserName()) {
+      evt.actions = this.actions;
+    }
+    return evt;
+  }
+
   ngOnInit() {
-    this.events = this.calendarService.getEvents();
-    this.events = this.events.map(event => {event.actions = this.actions; return event;});
+    this.events = this.calendarService.getEvents().map(evt => this.eventMapping(evt));
     this.viewDate = this.calendarService.getViewDate();
     this.view = this.calendarService.getView();
     this.activeDayIsOpen = this.calendarService.getActiveDayIsOpen();
@@ -100,7 +112,7 @@ export class CalendarComponent implements OnInit {
     this.calendarService.setViewDate(this.viewDate);
   }
 
-  dayClicked({date, events}: {date: Date, events: CalEvent[]}): void {
+  dayClicked({date, events}: { date: Date, events: CalEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true || events.length === 0) {
         this.activeDayIsOpen = false;
@@ -112,10 +124,16 @@ export class CalendarComponent implements OnInit {
   }
 
   eventClicked(event: CalEvent) {
-    this.mode = 'edit-event';
-    setTimeout(() => {
-      this.editEventModalComponent.showDialog(event);
-    }, 0);
+    const eventIsWritable = event.creator === this.authService.getCurrentUserName();
+    this.mode = eventIsWritable ? 'edit-event' : 'read-event';
+    if (eventIsWritable) {
+      setTimeout(() => {
+        this.editEventModalComponent.showDialog(event);
+      }, 0);
+    }
+    else {
+      this.router.navigate(['calendar', 'event', event.key]);
+    }
   }
 
   filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
