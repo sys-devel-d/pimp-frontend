@@ -70,7 +70,7 @@
       <div id="collapse-{{project.key}}" class="panel-collapse collapse">
         <div class="panel-body">
           <div *ngFor="let userName of project.userNames">
-            <a routerLink="/{{userName}}">{{userName}}</a>
+            <a *ngIf="userName !== userService.currentUser.userName" routerLink="/profile/{{userName}}">{{userName}}</a>
           </div>
         </div>
       </div>
