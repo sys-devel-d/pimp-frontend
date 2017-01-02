@@ -1,0 +1,36 @@
+<modal-dialog title="Termin: {{event.title}}">
+
+  <div modal-body>
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <table class="table">
+          <tr>
+            <td class="col-md-6"><strong>Kalender</strong></td>
+            <td class="col-md-6">{{ calendarTitle }}</td>
+          </tr>
+          <tr>
+            <td class="col-md-6"><strong>Ort</strong></td>
+            <td class="col-md-6">{{ event.place }}</td>
+          </tr>
+          <tr>
+            <td class="col-md-6"><strong>Beschreibung</strong></td>
+            <td class="col-md-6">{{ event.description }}</td>
+          </tr>
+          <tr>
+            <td class="col-md-6"><strong>Ersteller des Termins</strong></td>
+            <td class="col-md-6"><a routerLink="/profile/{{ event.creator }}">{{ event.creator }}</a></td>
+          </tr>
+          <tr>
+            <td class="col-md-6"><strong>Teilnehmer</strong></td>
+            <td class="col-md-6">
+              <p *ngFor="let participant of event.participants">
+                <a (click)="navigateToUser(participant)">{{ participant }}</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</modal-dialog>

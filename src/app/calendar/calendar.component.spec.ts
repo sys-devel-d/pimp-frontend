@@ -1,13 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 import { CalendarModule } from 'angular-calendar';
 
 import { CalendarComponent } from './calendar.component';
 import CalendarService from '../services/calendar.service';
-import {UserService} from '../services/user.service';
+import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
-import {UserServiceStub} from '../services/test/user.service.stub';
+import { UserServiceStub } from '../services/test/user.service.stub';
+import { AuthServiceStub } from '../services/test/auth.service.stub';
 import CalendarModalComponent from './modal/calendar-modal.component';
 import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CalendarSubscriptionComponent
@@ -15,6 +18,7 @@ import CalendarSubscriptionComponent
 import {CalendarSearchComponent} from '../user-search/calendar-search.component'
 import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
+import ReadOnlyEventModalComponent from './modal/event/readonly/readonly-event-modal.component';
 import UserSelectionComponent from '../user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import { HighlightDirective } from '../directives/highlight.directive';
@@ -30,6 +34,7 @@ describe('ChatComponent', () => {
       imports: [
         FormsModule,
         CalendarModule.forRoot(),
+        RouterTestingModule.withRoutes([]),
         NKDatetimeModule
       ],
       declarations: [
@@ -41,6 +46,7 @@ describe('ChatComponent', () => {
         EditEventModalComponent,
         HighlightDirective,
         ModalDialogComponent,
+        ReadOnlyEventModalComponent,
         UserSelectionComponent
       ],
       providers: [
@@ -49,10 +55,13 @@ describe('ChatComponent', () => {
         },
         {
           provide: UserService, useClass: UserServiceStub
+        },
+        {
+          provide: AuthService, useClass: AuthServiceStub
         }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

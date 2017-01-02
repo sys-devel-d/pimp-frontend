@@ -15,7 +15,7 @@ const colors: any = {
 @Injectable()
 export default class CalendarService {
 
-  private isInitialized = false;
+  isInitialized = false;
   private viewDate: Date = new Date();
   private view: string = 'month';
   private activeDayIsOpen: boolean = true;
@@ -25,6 +25,7 @@ export default class CalendarService {
   private subscribedCals: SubscribedCalendar[] = [];
 
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
+  initializedChange: Subject<boolean> = new Subject<boolean>();
   calendarsChange: Subject<Calendar[]> = new Subject<Calendar[]>();
 
   constructor(private authService: AuthService, private http: Http) {}
@@ -50,8 +51,11 @@ export default class CalendarService {
       { headers: this.authService.getTokenHeader() }
     ).map((res: Response) => {
       return res.json() as Calendar[]
-    }).subscribe((calendars: Calendar[]) => {
-      this.isInitialized = true;
+    }).finally(() => {
+      // emit true or false in any case
+      this.initializedChange.next(this.isInitialized);
+    })
+    .subscribe((calendars: Calendar[]) => {
       // Bring calendars and their events in the correct format
       this.calendars = calendars.map(cal => this.mapCalendarEvents(cal));
       // Produce one array of events by concatenating all of the calendar's events
@@ -71,6 +75,7 @@ export default class CalendarService {
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
+      this.isInitialized = true;
     });
   }
 
@@ -93,11 +98,9 @@ export default class CalendarService {
    * users' private calendars.
    */
   getWritableCalendars(): Calendar[] {
-    return this.calendars.filter( cal => {
-      return !( cal.isPrivate && 
-                cal.owner !== this.authService.getCurrentUserName()
-              );
-    });
+    return this.calendars.filter( cal =>
+      cal.owner === this.authService.getCurrentUserName()
+    );
   }
 
   getCalendarByKey(key: string): Calendar {
@@ -132,14 +135,7 @@ export default class CalendarService {
       { headers: this.authService.getTokenHeader() }
     )
     .map(response => response.json())
-    .subscribe( (evt: CalEvent) => {
-      evt = this.mapEventForFrontend(evt);
-      let calendar: Calendar = this.calendars
-        .find(cal => cal.key === evt.calendarKey);
-      calendar.events.push(evt);
-      this.events.push(evt);
-      this.eventsChange.next(this.events);
-    });
+    .subscribe( (evt: CalEvent) => this.addEvent(evt) );
   }
 
   editEvent(event: CalEvent) {
@@ -150,10 +146,7 @@ export default class CalendarService {
         headers: this.authService.getTokenHeader()
       }
     ).subscribe(
-      response => {
-        this.events = this.events.map(evt => evt.key === event.key ? event : evt);
-        this.eventsChange.next(this.events);
-      },
+      () => this.updateEvent(event),
       err => console.log(err)
     )
   }
@@ -166,10 +159,7 @@ export default class CalendarService {
         body: this.mapEventForBackend(event)
       }
     ).subscribe(
-      () => {
-        this.events = this.events.filter(evt => evt.key !== event.key);
-        this.eventsChange.next(this.events);
-      },
+      () => this.removeEvent(event),
       err => console.log(err)
     );
   }
@@ -229,6 +219,36 @@ export default class CalendarService {
     this.events = this.events.filter(evt => evt.calendarKey !== calendarKey);
     this.eventsChange.next(this.events);
     this.calendarsChange.next(this.calendars);
+  }
+
+  private removeEvent(event: any) {
+    this.events = this.events.filter(evt => evt.key !== event.key);
+    this.allEvents= this.allEvents.filter(evt => evt.key !== event.key);
+    const correspondingCal = this.calendars.find(cal => cal.key === event.calendarKey);
+    correspondingCal.events = correspondingCal.events.filter(evt => evt.key !== event.key);
+    this.eventsChange.next(this.events);
+  }
+
+  private addEvent(evt: CalEvent) {
+    evt = this.mapEventForFrontend(evt);
+    let calendar: Calendar = this.calendars
+      .find(cal => cal.key === evt.calendarKey);
+    calendar.events.push(evt);
+    this.events.push(evt);
+    this.allEvents.push(evt);
+    this.eventsChange.next(this.events);
+  }
+
+  private updateEvent(updatedEvent: CalEvent) {
+    const f = (evt) => evt.key === updatedEvent.key;
+    let idx = this.events.findIndex(f);
+    this.events[idx] = updatedEvent;
+    idx = this.allEvents.findIndex(f);
+    this.allEvents[idx] = updatedEvent;
+    const calendar = this.calendars.find(cal => cal.key === updatedEvent.calendarKey);
+    idx = calendar.events.findIndex(f);
+    calendar.events[idx] = updatedEvent;
+    this.eventsChange.next(this.events);
   }
 
   private mapEventForBackend(event: CalEvent): any {

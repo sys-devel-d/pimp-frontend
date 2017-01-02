@@ -53,10 +53,7 @@
             <span class="message">{{ message.message }}</span>
           </div>
           <div *ngIf="message.userName !== userService.currentUser.userName">
-            <a (click)="linkToChatPartner(message.userName)">
-              <span class="name">{{ message.userName }}: </span>
-            </a>
-            <span class="message">{{ message.message }}</span>
+            <a  class="name" (click)="linkToChatPartner(message.userName)">{{ message.userName }}</a><span class="message">: {{ message.message }}</span>
           </div>
         </div>
       </div>
