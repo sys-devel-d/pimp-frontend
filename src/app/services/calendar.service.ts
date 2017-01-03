@@ -324,5 +324,6 @@ export default class CalendarService {
     this.events = [];
     this.calendars = [];
     this.allEvents = [];
+    this.subscribedCals = [];
   }
 }
