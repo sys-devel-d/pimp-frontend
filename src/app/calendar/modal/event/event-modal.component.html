@@ -44,7 +44,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="eventStart">{{event.allDay ? 'Tag' : 'Beginn'}}</label>
-          <datetime id="eventStart" [datepicker]="datepickerOpts" [timepicker]="timepickerOpts" [(ngModel)]="event.start"></datetime>
+          <datetime id="eventStart" [datepicker]="datepickerOpts" [timepicker]="getTimePickerOpts()" [(ngModel)]="event.start"></datetime>
         </div>
       </div>
 
