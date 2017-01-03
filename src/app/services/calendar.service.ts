@@ -5,11 +5,15 @@ import { AuthService } from './auth.service';
 import { CalEvent, Calendar, SubscribedCalendar } from '../models/base';
 import { Observable, Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
+import {
+  CalendarEventAction
+} from 'angular-calendar';
 
 const colors: any = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
   blue: { primary: '#1e90ff', secondary: '#D1E8FF' },
-  yellow: { primary: '#e3bc08', secondary: '#FDF1BA' }
+  yellow: { primary: '#e3bc08', secondary: '#FDF1BA' },
+  grey: { primary: '#d3d3d3', secondary: '#D4D4D4' }
 };
 
 @Injectable()
@@ -27,6 +31,24 @@ export default class CalendarService {
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
   initializedChange: Subject<boolean> = new Subject<boolean>();
   calendarsChange: Subject<Calendar[]> = new Subject<Calendar[]>();
+  eventClicked: Function;
+
+  actions: CalendarEventAction[] = [
+    {
+      label: '<i class="fa fa-fw fa-pencil"></i>',
+      onClick: ({event}: { event: CalEvent }): void => {
+        this.eventClicked(event);
+      }
+    },
+    {
+      label: '<i class="fa fa-fw fa-times"></i>',
+      onClick: ({event}: { event: CalEvent }): void => {
+        if (confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
+          this.deleteEvent(event);
+        }
+      }
+    }
+  ];
 
   constructor(private authService: AuthService, private http: Http) {}
 
@@ -41,7 +63,7 @@ export default class CalendarService {
   so they are in the right format
   */
   private mapCalendarEvents(calendar: Calendar): Calendar {
-    calendar.events = calendar.events.map(this.mapEventForFrontend);
+    calendar.events = calendar.events.map(evt => this.mapEventForFrontend(evt));
     return calendar;
   }
 
@@ -252,7 +274,7 @@ export default class CalendarService {
   }
 
   private mapEventForBackend(event: CalEvent): any {
-    const evt: any = Object.assign({}, event)
+    const evt: any = Object.assign({}, event);
     delete evt.color;
     delete evt.actions;
     evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
@@ -264,6 +286,12 @@ export default class CalendarService {
     evt.start = new Date(evt.start);
     evt.end = new Date(evt.end);
     evt.color = evt.isPrivate ? colors.red : colors.blue;
+    if (evt.creator === this.authService.getCurrentUserName()) {
+      evt.actions = this.actions;
+    }
+    else if(evt.isPrivate) {
+      evt.title = "Privater Termin";
+    }
     return evt;
   }
 
