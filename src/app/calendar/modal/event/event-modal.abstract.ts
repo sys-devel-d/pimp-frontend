@@ -29,6 +29,7 @@ export abstract class EventModalAbstract {
   constructor(calendarService: CalendarService, userService: UserService) {
     this.calendarService = calendarService;
     this.userService = userService;
+    this.event.start = new Date();
   }
 
   showDialog(evt?: CalEvent) {
@@ -39,6 +40,7 @@ export abstract class EventModalAbstract {
   }
 
   abstract saveAction(event: CalEvent): void;
+  abstract updateEndDate(startDate: Date): void;
 
   saveEvent() {
     const e = this.event;
