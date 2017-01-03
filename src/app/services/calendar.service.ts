@@ -84,15 +84,15 @@ export default class CalendarService {
       this.events = this.calendars
         .map(cal => cal.events)
         .reduce((a, b) => a.concat(b), []);
-      this.allEvents = this.events;
-      this.calendars.forEach(cal => this.subscribedCals.push(
-        {
+      this.allEvents = this.events.slice(0);
+      this.subscribedCals = this.calendars.map( cal => {
+        return {
           key: cal.key,
           title: cal.title,
           active: true,
           unsubscribable: cal.owner !== this.authService.getCurrentUserName()
         }
-      ));
+      });
       this.calendarsChange.next(this.calendars);
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
@@ -290,7 +290,10 @@ export default class CalendarService {
       evt.actions = this.actions;
     }
     else if(evt.isPrivate) {
-      evt.title = "Privater Termin";
+      const start = DateFormatter.format(evt.start, 'de', 'HH:mm');
+      const end = DateFormatter.format(evt.end, 'de', 'HH:mm');
+      evt.title = `PRIVATER TERMIN (${evt.creator}, ${start} - ${end})`;
+      evt.color = colors.grey;
     }
     return evt;
   }
@@ -308,20 +311,12 @@ export default class CalendarService {
     return this.calendars;
   }
 
-  public setEvents(events: CalEvent[]) {
-    this.events = events;
-  }
-
   public getAllEvents(): CalEvent[] {
     return this.allEvents;
   }
 
   public getSubscribedCalendars() {
     return this.subscribedCals;
-  }
-
-  public setSubscribedCalendars(cals: SubscribedCalendar[]){
-    this.subscribedCals = cals;
   }
 
   tearDown() {

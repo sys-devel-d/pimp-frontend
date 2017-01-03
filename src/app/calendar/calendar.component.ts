@@ -12,7 +12,6 @@ import {
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import {
-  CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import CalendarModalComponent from './modal/calendar-modal.component';
@@ -53,7 +52,7 @@ export class CalendarComponent implements OnInit {
     private router: Router) {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
-      this.events = [].concat(events);
+      this.events = events.slice(0);
     });
     this.calendarService.eventClicked = this.eventClicked.bind(this);
     this.subscribeCallback = this.subscribeCalendar.bind(this);
