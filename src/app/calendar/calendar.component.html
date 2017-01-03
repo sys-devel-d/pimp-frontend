@@ -49,7 +49,7 @@
 					[activeDayIsOpen]="activeDayIsOpen"
 					[locale]="locale"
 					[weekStartsOn]="weekStartsOn"
-					(eventClicked)="eventClicked($event.event)"
+					(eventClicked)="eventClickedInMonthView($event.event)"
 					(dayClicked)="dayClicked($event.day)">
 				</mwl-calendar-month-view>
 				<mwl-calendar-week-view *ngSwitchCase="'week'"

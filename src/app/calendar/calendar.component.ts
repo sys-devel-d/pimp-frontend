@@ -139,6 +139,11 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  eventClickedInMonthView(event: CalEvent) {
+    this.viewDate = event.start;
+    this.view = 'day';
+  }
+
   filterEventsByCalendars(subscribedCalendars: SubscribedCalendar[]) {
     this.calendarService.filterEventsByCalendars(subscribedCalendars);
   }
