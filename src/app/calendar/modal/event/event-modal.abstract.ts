@@ -14,8 +14,7 @@ export abstract class EventModalAbstract {
     autoclose: true,
     todayBtn: 'linked',
     todayHighlight: true,
-    format: 'D, dd. MM. yyyy',
-    language: 'de' // TODO: not working
+    language: 'de'
   }
   timepickerOpts = {
     showMeridian: false,

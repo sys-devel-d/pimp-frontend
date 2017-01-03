@@ -34,6 +34,7 @@ import ModalDialogComponent from './modal-dialog/modal-dialog.component';
 import CalendarModalComponent from './calendar/modal/calendar-modal.component';
 import EditEventModalComponent from './calendar/modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './calendar/modal/event/create-event-modal.component';
+import ReadOnlyEventModalComponent from './calendar/modal/event/readonly/readonly-event-modal.component';
 import UserSelectionComponent from './user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
@@ -60,6 +61,7 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
     ModalDialogComponent,
     EditEventModalComponent,
     CreateEventModalComponent,
+    ReadOnlyEventModalComponent,
     UserSelectionComponent
   ],
   imports: [
@@ -69,7 +71,12 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
     NKDatetimeModule,
     CalendarModule.forRoot(),
     RouterModule.forRoot([
-      { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
+      { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard],
+        children: [
+          { path: '' },
+          { path: 'event/:eventId', component: ReadOnlyEventModalComponent, canActivate: [AuthGuard] },
+        ]
+      },
       { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
       { path: 'dashboard', component: DashboardComponent },

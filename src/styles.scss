@@ -23,8 +23,8 @@ div.inline {
   -moz-animation: shake .5s linear;
 }
 
-i.fa {
-  cursor: pointer;
+a, i.fa {
+    cursor: pointer;
 }
 
 @-webkit-keyframes shake {
