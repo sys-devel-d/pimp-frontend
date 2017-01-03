@@ -64,6 +64,9 @@ export class CalendarComponent implements OnInit {
     }
   ];
 
+  locale = 'de';
+  weekStartsOn = 1;
+
   constructor(
     private calendarService: CalendarService,
     private authService: AuthService,
