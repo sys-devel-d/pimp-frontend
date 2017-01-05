@@ -24,9 +24,13 @@
 			<div class="row text-center">
 				<div class="col-md-4">
 					<div class="btn-group">
-						<div class="btn btn-primary" (click)="decrement()">Zurück</div>
+						<div class="btn pimp-btn" (click)="decrement()">
+              <i title="Zurück" class="fa fa-arrow-left" aria-hidden="true"></i>
+            </div>
 						<div class="btn btn-default" (click)="today()">Heute</div>
-						<div class="btn btn-primary" (click)="increment()">Vor</div>
+						<div class="btn pimp-btn" (click)="increment()">
+              <i title="Vor" class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -34,9 +38,9 @@
 				</div>
 				<div class="col-md-4">
 					<div class="btn-group">
-						<div class="btn btn-primary" (click)="view = 'month'" [class.active]="view === 'month'">Monat</div>
-						<div class="btn btn-primary" (click)="view = 'week'" [class.active]="view === 'week'">Woche</div>
-						<div class="btn btn-primary" (click)="view = 'day'" [class.active]="view === 'day'">Tag</div>
+						<div class="btn pimp-btn" (click)="view = 'month'" [class.active]="view === 'month'">Monat</div>
+						<div class="btn pimp-btn" (click)="view = 'week'" [class.active]="view === 'week'">Woche</div>
+						<div class="btn pimp-btn" (click)="view = 'day'" [class.active]="view === 'day'">Tag</div>
 					</div>
 				</div>
 			</div>

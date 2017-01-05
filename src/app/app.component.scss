@@ -1,12 +1,26 @@
 .link {
-  color: #000;
+  color: #fff;
+  border-radius: 0px;
 
   &.active {
-    background-color: #eee;
+    background-color: #ea4d2a;
+    color: #000;
+    padding-left: 15px;
   }
+}
+
+.container-fluid {
+  background-color: #444;
+  border: solid #444;
+  border-width: 15px 15px 0 0;
 }
 
 .pimp-navbar {
   box-shadow: 1px 0 0 #ccc;
-  height: 75vh;
+  padding: 0px;
+}
+
+.pimp-content {
+  background-color: #fff;
+  padding: 15px;
 }

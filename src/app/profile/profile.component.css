@@ -6,3 +6,20 @@
 .col-md-6 {
   margin-bottom: 5px;
 }
+
+a {
+  cursor: pointer;
+  color: #ea4d2a;
+}
+
+.fileUploadBtn{
+    right: 0;
+    margin: 12px 0;
+    padding: 0;
+}
+
+.profile-content {
+  height: 95vh;
+}
+
+
