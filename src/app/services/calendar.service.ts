@@ -255,6 +255,7 @@ export default class CalendarService {
     const evt: any = Object.assign({}, event)
     delete evt.color;
     delete evt.actions;
+    delete evt.draggable;
     evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
     evt.end = DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm');
     return evt;
@@ -264,6 +265,7 @@ export default class CalendarService {
     evt.start = new Date(evt.start);
     evt.end = new Date(evt.end);
     evt.color = evt.isPrivate ? colors.red : colors.blue;
+    evt.draggable = true;
     return evt;
   }
 

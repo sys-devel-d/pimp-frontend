@@ -41,7 +41,6 @@ export class CalendarComponent implements OnInit {
   view: string;
   viewDate: Date;
   activeDayIsOpen: boolean;
-  refresh: Subject<any> = new Subject(); // Why? How?
   events: CalEvent[] = [];
   private term: string;
   calendarSearchResults: Calendar[] = [];
@@ -162,10 +161,12 @@ export class CalendarComponent implements OnInit {
     }, 0);
   }
 
-  eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {
-    event.start = newStart;
-    event.end = newEnd;
-    this.refresh.next();
+  eventTimesChanged({event, newStart, newEnd}): void {
+    const evt = event;
+    evt.start = newStart;
+    evt.end = newEnd;
+    this.calendarService.editEvent(evt);
+    this.viewDate = newStart;
   }
 
   searchCalendar(term) {
