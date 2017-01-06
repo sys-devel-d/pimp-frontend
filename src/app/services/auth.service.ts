@@ -28,10 +28,18 @@ export class AuthService {
       .post(Globals.BACKEND + 'oauth/token', urlSearchParams.toString(), {headers: headers})
       .map((res: Response) => {
         let token = res.json() && res.json().access_token;
+        let expiresIn = res.json() && res.json().expires_in;
+        let refreshToken = res.json() && res.json().refresh_token;
         if (token) {
           this.token = token;
           this.userName = userName;
-          localStorage.setItem('currentUser', JSON.stringify({ userName: userName, token: token }));
+          localStorage.setItem('currentUser', JSON.stringify({
+            userName: userName,
+            token: token,
+            refreshToken: refreshToken,
+            expiresIn: expiresIn,
+            startDate: new Date()
+          }));
         }
         return token && true;
       })
@@ -39,6 +47,38 @@ export class AuthService {
         const err = (400 <= error.status && error.status < 500) ?
                     'Username or password is wrong' : 'Server Error'
         return Observable.throw(err)
+      });
+  }
+
+  reAuth(refreshToken) {
+    console.log('resuth');
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    headers.append('Authorization', 'Basic ' + btoa('angularClient:secret123'));
+    let urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('grant_type', 'password');
+    urlSearchParams.append('refresh_token', refreshToken);
+
+    return this.http
+      .post(Globals.BACKEND + 'oauth/token', urlSearchParams.toString(), {headers: headers})
+      .map((res: Response) => {
+        let token = res.json() && res.json().access_token;
+        let expiresIn = res.json() && res.json().expires_in;
+        let newRefreshToken = res.json() && res.json().refresh_token;
+        let userName = JSON.parse(localStorage.getItem('currentUser')).userName;
+        if (token) {
+          this.token = token;
+          this.userName = userName;
+          localStorage.setItem('currentUser', JSON.stringify({
+            userName: userName,
+            token: token,
+            refreshToken: newRefreshToken,
+            expiresIn: expiresIn,
+            startDate: new Date()
+          }));
+          return true;
+        }
+        return false;
       });
   }
 
