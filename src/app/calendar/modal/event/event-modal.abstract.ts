@@ -52,8 +52,8 @@ export abstract class EventModalAbstract {
     }
 
     if(e.allDay) {
-      e.end = new Date();
-      e.end.setTime(e.start.getTime());
+      //e.end = new Date();
+      //e.end.setTime(e.start.getTime());
       e.end.setHours(23);
       e.end.setMinutes(59);
       e.start.setHours(0);

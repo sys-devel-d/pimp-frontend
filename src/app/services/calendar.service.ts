@@ -252,10 +252,11 @@ export default class CalendarService {
   }
 
   private mapEventForBackend(event: CalEvent): any {
-    const evt: any = Object.assign({}, event)
+    const evt: any = Object.assign({}, event);
     delete evt.color;
     delete evt.actions;
     delete evt.draggable;
+    delete evt.resizable;
     evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
     evt.end = DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm');
     return evt;
@@ -266,6 +267,10 @@ export default class CalendarService {
     evt.end = new Date(evt.end);
     evt.color = evt.isPrivate ? colors.red : colors.blue;
     evt.draggable = true;
+    evt.resizable = {
+      beforeStart: true,
+      afterEnd: true
+    }
     return evt;
   }
 

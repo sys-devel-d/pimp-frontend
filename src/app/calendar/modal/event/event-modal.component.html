@@ -43,12 +43,12 @@
 
       <div class="col-md-6">
         <div class="form-group">
-          <label for="eventStart">{{event.allDay ? 'Tag' : 'Beginn'}}</label>
+          <label for="eventStart">Beginn</label>
           <datetime id="eventStart" [datepicker]="datepickerOpts" [timepicker]="getTimePickerOpts()" (ngModelChange)="updateEndDate($event)" [(ngModel)]="event.start"></datetime>
         </div>
       </div>
 
-      <div *ngIf="!event.allDay" class="col-md-6">
+      <div class="col-md-6">
         <label for="eventEnd">Ende</label>
         <datetime id="eventEnd" [datepicker]="datepickerOpts" [timepicker]="timepickerOpts" [(ngModel)]="event.end"></datetime>
       </div>
