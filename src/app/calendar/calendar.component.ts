@@ -12,7 +12,6 @@ import {
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import {
-  CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
 import CalendarModalComponent from './modal/calendar-modal.component';
@@ -46,23 +45,6 @@ export class CalendarComponent implements OnInit {
   calendarSearchResults: Calendar[] = [];
   private subscribeCallback: Function;
 
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fa fa-fw fa-pencil"></i>',
-      onClick: ({event}: { event: CalEvent }): void => {
-        this.eventClicked(event);
-      }
-    },
-    {
-      label: '<i class="fa fa-fw fa-times"></i>',
-      onClick: ({event}: { event: CalEvent }): void => {
-        if (confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
-          this.calendarService.deleteEvent(event);
-        }
-      }
-    }
-  ];
-
   locale = 'de';
   weekStartsOn = 1;
 
@@ -72,20 +54,14 @@ export class CalendarComponent implements OnInit {
     private router: Router) {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
-      this.events = events.map(evt => this.eventMapping(evt));
+      this.events = events.slice(0);
     });
+    this.calendarService.eventClicked = this.eventClicked.bind(this);
     this.subscribeCallback = this.subscribeCalendar.bind(this);
   }
 
-  private eventMapping(evt: CalEvent): CalEvent {
-    if (evt.creator === this.authService.getCurrentUserName()) {
-      evt.actions = this.actions;
-    }
-    return evt;
-  }
-
   ngOnInit() {
-    this.events = this.calendarService.getEvents().map(evt => this.eventMapping(evt));
+    this.events = this.calendarService.getEvents();
     this.viewDate = this.calendarService.getViewDate();
     this.view = this.calendarService.getView();
     this.activeDayIsOpen = this.calendarService.getActiveDayIsOpen();
@@ -133,7 +109,7 @@ export class CalendarComponent implements OnInit {
         this.editEventModalComponent.showDialog(event);
       }, 0);
     }
-    else {
+    else if(!event.isPrivate) {
       this.router.navigate(['calendar', 'event', event.key]);
     }
   }
