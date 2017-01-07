@@ -1,20 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 @import "../node_modules/angular-calendar/dist/css/angular-calendar.css";
 
+$PIMP_ORANGE: #ea4d2a;
+$PIMP_ORANGE_DARK: #952E17;
+
 .centered-content {
     text-align: center;
 }
 
 .ng-valid[required], .ng-valid.required  {
-    border-left: 5px solid #42A948; /* green */
+    border-left: 5px solid #42A948;
 }
 
 .ng-invalid:not(form)  {
-    border-left: 5px solid #a94442; /* red */
+    border-left: 5px solid #a94442;
 }
 
 div.inline {
     display: inline-block;
+}
+
+.stretched-content {
+    height: 93vh;
 }
 
 .form-control.invalid-params {
@@ -23,8 +30,36 @@ div.inline {
     -moz-animation: shake .5s linear;
 }
 
-a, i.fa {
+a {
+  cursor: pointer;
+  color: $PIMP_ORANGE !important;
+  &.hover {
+      color: $PIMP_ORANGE_DARK !important;
+  }
+}
+
+i.fa {
     cursor: pointer;
+}
+
+.btn-with-margin {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.pimp-btn {
+    background-color: $PIMP_ORANGE;
+    border-color: $PIMP_ORANGE_DARK;
+}
+
+.btn {
+    &.active {
+        color: #fff;
+    }
+
+    &.active, &.focus, &.hover {
+        background-color: $PIMP_ORANGE_DARK;
+    }
 }
 
 @-webkit-keyframes shake {

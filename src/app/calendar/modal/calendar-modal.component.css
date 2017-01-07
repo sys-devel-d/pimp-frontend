@@ -1,21 +1,2 @@
-.btn-with-margin {
-    margin-bottom: 10px;
-    width: 100%;
-}
 
-.pimp-btn {
-   background-color: #ea4d2a;
-   border-color: #952E17;
-}
-
- .btn.active {
-    background-color: #952E17;
-    color: #fff;
- }
- .btn.hover {
-    background-color: #952E17;
-  }
- .btn.focus {
-    background-color: #952E17;
-  }
 
