@@ -1,12 +1,22 @@
+@import "../variables";
+
 .link {
   color: #fff;
   border-radius: 0px;
+}
 
-  &.active {
-    background-color: #ea4d2a;
-    color: #000;
-    padding-left: 15px;
-  }
+a:hover {
+  background-color: $PIMP_ORANGE !important;
+  color: #000 !important;
+}
+
+.link.active {
+  background-color: $PIMP_ORANGE !important;
+  color: #000 !important;
+}
+
+li {
+  margin: 0 !important;
 }
 
 .container-fluid {

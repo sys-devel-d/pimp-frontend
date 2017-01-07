@@ -47,11 +47,11 @@
       <div class="panel panel-default chat-message" *ngFor='let message of currentRoom.messages'>
         <div class="panel-body chat-message-body">
           <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
-          <div *ngIf="message.userName === userService.currentUser.userName">
+          <div *ngIf="message.userName === currentUserName">
             <span class="name">{{ message.userName }}: </span>
             <span class="message">{{ message.message }}</span>
           </div>
-          <div *ngIf="message.userName !== userService.currentUser.userName">
+          <div *ngIf="message.userName !== currentUserName">
             <a  class="name" (click)="linkToChatPartner(message.userName)">{{ message.userName }}</a><span class="message">: {{ message.message }}</span>
           </div>
         </div>

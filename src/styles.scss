@@ -1,8 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "../node_modules/angular-calendar/dist/css/angular-calendar.css";
-
-$PIMP_ORANGE: #ea4d2a;
-$PIMP_ORANGE_DARK: #952E17;
+@import "./variables";
 
 .centered-content {
     text-align: center;
@@ -49,7 +47,8 @@ i.fa {
 
 .pimp-btn {
     background-color: $PIMP_ORANGE;
-    border-color: $PIMP_ORANGE_DARK;
+    // I think looks better without
+    //border-color: $PIMP_ORANGE_DARK;
 }
 
 .btn {
