@@ -23,6 +23,7 @@ import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
 import NotificationService from './services/notification.service';
 import WebsocketService from './services/websocket.service';
+import PimpServices from './services/pimp.services';
 import { UserSearchComponent } from "./user-search/user-search.component";
 import { CalendarSearchComponent } from "./user-search/calendar-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
@@ -94,7 +95,8 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
     CalendarService,
     GroupsService,
     NotificationService,
-    WebsocketService
+    WebsocketService,
+    PimpServices
   ],
   bootstrap: [AppComponent]
 })

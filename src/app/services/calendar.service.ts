@@ -8,6 +8,7 @@ import {DateFormatter} from "@angular/common/src/facade/intl";
 import {
   CalendarEventAction
 } from 'angular-calendar';
+import { IPimpService } from './pimp.services';
 
 const colors: any = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -17,7 +18,7 @@ const colors: any = {
 };
 
 @Injectable()
-export default class CalendarService {
+export default class CalendarService implements IPimpService {
 
   isInitialized = false;
   private viewDate: Date = new Date();

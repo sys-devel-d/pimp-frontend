@@ -19,4 +19,8 @@ export default class DashboardComponent implements OnInit {
   ngOnInit() {
     this.notifications = this.notificationService.getNotifications();
   }
+
+  announce() {
+    this.notificationService.announce()
+  }
 }

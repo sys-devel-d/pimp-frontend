@@ -57,7 +57,9 @@ export class CalEvent implements CalendarEvent {
   actions?: CalendarEventAction[];
 }
 
-export class Notification {
-  message: string;
-  read: boolean;
+export type NotificationType = 'NEW_MESSAGE'
+
+export class Notification extends Message {
+  type: NotificationType;
+  acknowledged: boolean;
 }

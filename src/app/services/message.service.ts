@@ -7,9 +7,10 @@ import WebsocketService from './websocket.service';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { Observable, Subject } from 'rxjs';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export class MessageService {
+export class MessageService implements IPimpService {
 
   private stompClient: any;
   private stompSubscriptions: Object = {};
@@ -104,12 +105,20 @@ export class MessageService {
   }
 
   private connectAndSubscribeMultiple(rooms: Room[]): void {
-    this.stompClient.connect({}, (/*frame*/) => {
-      this.connected = true;
+    const subscribe = () => {
       for(let room of rooms) {
         this.subscribeToRoom(room);
       }
-    }, err => console.log('err', err) );
+    }
+
+    if(this.websocketService.connected) {
+      subscribe();
+    }
+    else {
+      this.websocketService.connectedChange.take(1).subscribe( frame => {
+        subscribe();
+      })
+    }
   }
 
   private handleIncomingMessage(roomName: string, { body }) {
