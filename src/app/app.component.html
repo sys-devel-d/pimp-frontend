@@ -1,11 +1,16 @@
 <div class="container-fluid">
   <div class="page-header">
-    <h1>{{title}}</h1>
+    <h1>Pim Plus Suite</h1>
   </div>
   <div class="row">
-    <div class="col-md-1 pimp-navbar">
+    <div class="col-md-2 pimp-navbar">
 
       <ul class="nav nav-pills nav-stacked">
+        <li>
+          <a routerLink="/dashboard" routerLinkActive="active" class="link">
+            Dashboard <span class="badge">{{ unreadNotificationsCount }}</span>
+          </a>
+        </li>
         <li> <a routerLink="/chat" routerLinkActive="active" class="link">Chat</a> </li>
         <li> <a routerLink="/calendar" routerLinkActive="active" class="link">Kalender</a> </li>
         <li> <a routerLink="/profile" routerLinkActive="active" class="link">Profil</a>  </li>

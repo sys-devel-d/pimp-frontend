@@ -11,6 +11,7 @@ import GroupChatEditorComponent from './chat/editor/group-chat-editor.component'
 import { LoginComponent } from './login/login.component';
 import { RouterModule } from "@angular/router";
 import { ProfileComponent } from './profile/profile.component';
+import DashboardComponent from './dashboard/dashboard.component';
 import { OtherProfileComponent } from './profile/other-profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RegisterComponent } from './register/register.component';
@@ -20,6 +21,7 @@ import { UserService } from "./services/user.service";
 import GroupsService from './services/groups.service';
 import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
+import NotificationService from './services/notification.service';
 import { UserSearchComponent } from "./user-search/user-search.component";
 import { CalendarSearchComponent } from "./user-search/calendar-search.component";
 import { HighlightDirective } from './directives/highlight.directive';
@@ -39,6 +41,7 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
   declarations: [
     AppComponent,
     CalendarComponent,
+    DashboardComponent,
     CalendarModalComponent,
     CalendarSubscriptionComponent,
     ChatComponent,
@@ -74,6 +77,7 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
       },
       { path: 'chat', component: ChatComponent, canActivate: [AuthGuard] },
       { path: 'login', component: LoginComponent },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'profile/:userName', component: OtherProfileComponent, canActivate: [AuthGuard] },
       { path: 'register', component: RegisterComponent },
@@ -87,7 +91,8 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
     MessageService,
     UserService,
     CalendarService,
-    GroupsService
+    GroupsService,
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })
