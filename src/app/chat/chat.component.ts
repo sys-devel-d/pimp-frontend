@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from '../services/message.service';
-import { Message, User, Room } from '../models/base';
+import { Message, User, Room, Notification } from '../models/base';
 import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
+import NotificationService from '../services/notification.service';
 import { Globals } from '../commons/globals';
 import { shakeInput, scrollDownChatMessageContainer } from '../commons/dom-functions';
 import GroupChatEditorComponent from './editor/group-chat-editor.component'
@@ -32,7 +34,9 @@ export class ChatComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private userService: UserService) {
+    private userService: UserService,
+    private notificationService: NotificationService,
+    private authService: AuthService) {
       this.router = router;
       this.privateChatCallback = this.startPrivatChat.bind(this);
       this.groupChatCallback = this.fetchUsersForSelectionAndOpenDialog.bind(this);
@@ -96,6 +100,14 @@ export class ChatComponent implements OnInit {
 
   private startPrivatChat(user: User) {
     this.messageService.initChatWith([user], Globals.CHATROOM_TYPE_PRIVATE);
+    let notification = new Notification();
+    notification.acknowledged = false;
+    notification.message = 'A new private chat was started by '
+      + this.authService.getCurrentUserName;
+    notification.sendingUser = this.authService.getCurrentUserName();
+    notification.receivingUser = user.userName;
+    notification.type = 'NEW_MESSAGE';
+    this.notificationService.announce(notification);
   }
 
 

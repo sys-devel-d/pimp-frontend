@@ -44,7 +44,6 @@ export default class GroupChatEditorComponent {
   }
 
   private startGroupChat() {
-    console.log(this.selectedUsers);
     if (this.displayName) {
       this.messageService.initChatWith(
         this.selectedUsers,

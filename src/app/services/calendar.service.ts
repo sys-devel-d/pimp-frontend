@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
-import { CalEvent, Calendar, SubscribedCalendar } from '../models/base';
+import NotificationService from './notification.service';
+import { CalEvent, Calendar, SubscribedCalendar, InvitationResponse, Notification } from '../models/base';
 import { Observable, Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
 import {
@@ -51,7 +52,8 @@ export default class CalendarService implements IPimpService {
     }
   ];
 
-  constructor(private authService: AuthService, private http: Http) {}
+  constructor(private authService: AuthService, private http: Http,
+  private notificationService: NotificationService) {}
 
   init() {
     if (!this.isInitialized) {
@@ -150,15 +152,20 @@ export default class CalendarService implements IPimpService {
     return this.activeDayIsOpen;
   }
 
-  createEvent(event: CalEvent) {
+  createEvent(event: CalEvent): any {
     event.creator = this.authService.getCurrentUserName();
-    this.http.post(
+    return this.http.post(
       Globals.BACKEND + 'calendar/' + event.calendarKey,
       this.mapEventForBackend(event),
       { headers: this.authService.getTokenHeader() }
     )
-    .map(response => response.json())
-    .subscribe( (evt: CalEvent) => this.addEvent(evt) );
+    .map(response => 
+      response.json()
+    )
+    .subscribe( (evt: CalEvent) => {
+      this.addEvent(evt);
+      this.notificationService.announceInvitation(evt);
+    });
   }
 
   editEvent(event: CalEvent) {
@@ -221,6 +228,49 @@ export default class CalendarService implements IPimpService {
         { headers: this.authService.getTokenHeader() }
       ).subscribe( () => this.removeCalendar(key) );
   }
+
+  acceptOrDeclineInvitation(accept: boolean, notification: Notification, answer?: string) {
+    let invitationResponse = this.mapNotificationToInvitationResponse(accept, 
+    notification, answer);
+    return this.http.post(
+      Globals.BACKEND + 'calendar/invitation',
+      invitationResponse,
+      { headers: this.authService.getTokenHeader() }
+    ).subscribe(result => {
+      let invitationResponseNotification = 
+        this.mapInvitationResponseToNotification(invitationResponse);
+      this.notificationService.announce(invitationResponseNotification)
+      this.notificationService.acknowledgeNotification(notification)
+    })  
+  }
+
+  private mapNotificationToInvitationResponse(accept: boolean,
+  notification: Notification, answer?: string): InvitationResponse {
+    let response = new InvitationResponse();
+    response.state = accept ? InvitationResponse.ACCEPTED :
+      InvitationResponse.DECLINED;
+    response.answer = answer || '';
+    response.eventKey = notification.eventKey;
+    response.calendarKey = notification.calendarKey;
+    response.userName = notification.receivingUser;
+    response.invitee = notification.sendingUser;
+    return response;
+  }
+
+  private mapInvitationResponseToNotification(invitationResponse: InvitationResponse): Notification {
+    let notification = new Notification();
+    notification.type = 'EVENT_UPDATE';
+    notification.acknowledged = false;
+    notification.message = InvitationResponse.ACCEPTED === invitationResponse.state 
+      ? invitationResponse.userName + ' will attend the event.' 
+      : invitationResponse.userName + ' will not attend the event. the reason was: ' 
+        + '"' + invitationResponse.answer + '"';
+    notification.eventKey = invitationResponse.eventKey;
+    notification.calendarKey = invitationResponse.calendarKey;
+    notification.receivingUser = invitationResponse.invitee;
+    notification.sendingUser = invitationResponse.userName;
+    return notification;
+  } 
 
   private addCalendar(calendar: Calendar) {
     calendar = this.mapCalendarEvents(calendar);

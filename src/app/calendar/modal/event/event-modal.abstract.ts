@@ -1,5 +1,6 @@
 import { CalEvent, User } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
+import NotificationService from '../../../services/notification.service';
 import { UserService } from './../../../services/user.service';
 import { hideAppModal, showAppModal, shakeInput, fadeIn, fadeOut } from '../../../commons/dom-functions';
 
@@ -25,11 +26,14 @@ export abstract class EventModalAbstract {
 
   calendarService: CalendarService;
   userService: UserService;
+  notificationService: NotificationService;
 
-  constructor(calendarService: CalendarService, userService: UserService) {
+  constructor(calendarService: CalendarService, userService: UserService,
+  notificationService: NotificationService) {
     this.calendarService = calendarService;
     this.userService = userService;
     this.event.start = new Date();
+    this.notificationService = notificationService;
   }
 
   showDialog(evt?: CalEvent) {

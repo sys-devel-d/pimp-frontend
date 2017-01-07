@@ -19,6 +19,7 @@ import EditEventModalComponent from './modal/event/edit-event-modal.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import ReadOnlyEventModalComponent from './modal/event/readonly/readonly-event-modal.component';
 import CalendarService from '../services/calendar.service';
+import NotificationService from '../services/notification.service'
 import { AuthService } from '../services/auth.service';
 import { CalEvent, SubscribedCalendar, Calendar } from '../models/base';
 import { Globals } from '../commons/globals';
@@ -51,7 +52,8 @@ export class CalendarComponent implements OnInit {
   constructor(
     private calendarService: CalendarService,
     private authService: AuthService,
-    private router: Router) {
+    private router: Router,
+    private notificationService: NotificationService) {
     // TODO: Optimize this! Add a new subsciption for when only one event is added
     this.calendarService.eventsChange.subscribe( (events: CalEvent[]) => {
       this.events = events.slice(0);

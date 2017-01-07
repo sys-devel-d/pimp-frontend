@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { CalEvent, Calendar } from '../../../models/base';
+import { CalEvent, Calendar, Notification } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
+import NotificationService from '../../../services/notification.service';
 import { UserService } from './../../../services/user.service';
 import { EventModalAbstract } from './event-modal.abstract';
 
@@ -12,8 +13,9 @@ export default class CreateEventModalComponent extends EventModalAbstract {
   
   private calendars: Calendar[];
 
-  constructor(calendarService: CalendarService, userService: UserService) {
-    super(calendarService, userService);
+  constructor(calendarService: CalendarService, userService: UserService, 
+  notificationService: NotificationService) {
+    super(calendarService, userService, notificationService);
     this.modalTitle = 'Termin erstellen';
     this.calendars = this.calendarService.getWritableCalendars();
   }
@@ -30,5 +32,5 @@ export default class CreateEventModalComponent extends EventModalAbstract {
       this.event.end = newDate;
     }
   }
-
+  
 }

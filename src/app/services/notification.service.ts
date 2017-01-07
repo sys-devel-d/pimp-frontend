@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Notification } from '../models/base';
+import { Notification, CalEvent, InvitationResponse } from '../models/base';
 import { Subject } from 'rxjs';
 import { IPimpService } from './pimp.services';
 import WebsocketService from './websocket.service';
@@ -51,14 +51,37 @@ export default class NotificationService implements IPimpService {
     }
   }
 
-  announce() {
-    const not = JSON.stringify({
-      type: 'NEW_MESSAGE',
-      acknowledged: false,
-      message: 'TEST NOTIFICATION TO MYSELF',
-      roomId: this.authService.getCurrentUserName()
+  announce(notification: Notification) {
+    this.stompClient.send('/app/broker/notifications/' + notification.receivingUser,
+      {}, JSON.stringify(notification));
+  }
+
+  announceInvitation(event: CalEvent) {
+    event.participants.forEach(participant => {
+      let notification = new Notification();
+      notification.type = 'EVENT_INVITATION';
+      notification.acknowledged = false;
+      notification.message = event.title;
+      notification.calendarKey = event.calendarKey;
+      notification.eventKey = event.key;
+      notification.sendingUser = 
+        this.authService.getCurrentUserName();
+      notification.receivingUser = participant;
+      this.announce(notification);
+    })
+  }
+
+  acknowledgeNotification(notification: Notification) {
+    this.http.post(
+      Globals.BACKEND + 'notification/acknowledge',
+      notification,
+      {
+        headers: this.authService.getTokenHeader()
+      }
+    ).subscribe((res) => {
+      this.notifications = this.notifications.filter(not => not.key !== notification.key);
+      this.notificationsChange.next(this.notifications);
     });
-    this.stompClient.send('/app/broker/notifications/' + this.authService.getCurrentUserName(), {}, not);
   }
 
   getNotifications(): Notification[] {
