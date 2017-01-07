@@ -66,6 +66,7 @@ export default class CalendarService {
       this.calendars.forEach(cal => this.subscribedCals.push(
         {
           key: cal.key,
+          owner: cal.owner,
           title: cal.title,
           active: true,
           unsubscribable: cal.owner !== this.authService.getCurrentUserName()
@@ -206,6 +207,7 @@ export default class CalendarService {
     this.subscribedCals.push({
       key: calendar.key,
       title: calendar.title,
+      owner: calendar.owner,
       active: true,
       unsubscribable: calendar.owner !== this.authService.getCurrentUserName()
     });

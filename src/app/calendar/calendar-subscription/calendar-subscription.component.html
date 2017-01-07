@@ -5,8 +5,7 @@
         <label>
           <input type="checkbox" [(ngModel)]="cal.active"
           (click)="clickCalendarCheckbox(cal.key)">
-          {{cal.title}}
-          {{cal.owner}}
+          {{cal.title}} <small>({{ cal.owner }})</small>
         </label>
       </div>
     </td>
