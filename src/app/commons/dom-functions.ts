@@ -21,3 +21,11 @@ export function scrollDownChatMessageContainer() {
     $("#chat-message-container").scrollTop($("#chat-message-container")[0].scrollHeight);
   }, 100);
 }
+
+export function fadeOut(selector: string) {
+  $(selector).fadeOut();
+}
+
+export function fadeIn(selector: string) {
+  $(selector).fadeIn();
+}

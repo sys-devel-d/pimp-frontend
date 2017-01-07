@@ -29,7 +29,6 @@ export default class CalendarSubscriptionComponent implements OnInit {
   clickCalendarCheckbox(key: string) {
     const clickedCal = this.subscribedCals.find(sc => sc.key === key);
     clickedCal.active = !clickedCal.active;
-    this.calendarService.setSubscribedCalendars(this.subscribedCals);
     this.subscribedCalendar.emit(this.subscribedCals);
   }
 
