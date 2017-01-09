@@ -36,22 +36,11 @@ export default class NotificationService implements IPimpService {
   }
 
   connectAndSubscribe() {
-    const subscribe = () => {
-      this.stompSubscription = this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
-        const not = JSON.parse(body);
-        this.notifications.push(not);
-        this.notificationsChange.next(this.notifications);
-      });
-    }
-
-    if(this.websocketService.connected) {
-      subscribe();
-    }
-    else {
-      this.websocketService.connectedChange.take(1).subscribe( frame => {
-        subscribe();
-      })
-    }
+    this.stompSubscription = this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
+      const not = JSON.parse(body);
+      this.notifications.push(not);
+      this.notificationsChange.next(this.notifications);
+    });
   }
 
   announce(notification: Notification) {

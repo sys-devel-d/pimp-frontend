@@ -104,19 +104,8 @@ export class MessageService implements IPimpService {
   }
 
   private connectAndSubscribeMultiple(rooms: Room[]): void {
-    const subscribe = () => {
-      for(let room of rooms) {
-        this.subscribeToRoom(room);
-      }
-    }
-
-    if(this.websocketService.connected) {
-      subscribe();
-    }
-    else {
-      this.websocketService.connectedChange.take(1).subscribe( frame => {
-        subscribe();
-      })
+    for(let room of rooms) {
+      this.subscribeToRoom(room);
     }
   }
 
