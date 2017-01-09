@@ -11,6 +11,8 @@ import { Globals } from '../commons/globals';
 export default class NotificationService implements IPimpService {
 
   stompClient: any;
+  private stompSubscription: any;
+  connected:boolean = false;
   private notifications: Notification[];
   notificationsChange: Subject<Notification[]> = new Subject<Notification[]>();
 
@@ -35,7 +37,7 @@ export default class NotificationService implements IPimpService {
 
   connectAndSubscribe() {
     const subscribe = () => {
-      this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
+      this.stompSubscription = this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
         const not = JSON.parse(body);
         this.notifications.push(not);
         this.notificationsChange.next(this.notifications);
@@ -110,5 +112,6 @@ export default class NotificationService implements IPimpService {
   tearDown() {
     this.notifications = [];
     this.notificationsChange.next([]);
+    this.stompSubscription.unsubscribe();
   }
 }
