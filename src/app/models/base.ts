@@ -58,13 +58,13 @@ export class CalEvent implements CalendarEvent {
   actions?: CalendarEventAction[];
 }
 
-export type NotificationType = 'NEW_MESSAGE'
+export type NotificationType = 'NEW_MESSAGE' | 'NEW_CHAT' | 'EVENT_UPDATE' | 'EVENT_INVITATION';
 
 export class Notification extends Message {
-  type: string;
+  type: NotificationType;
   acknowledged: boolean;
-  eventKey: string;
-  calendarKey: string;
+  referenceKey: string;
+  referenceParentKey: string;
   sendingUser: string;
   receivingUser: string;
 }
