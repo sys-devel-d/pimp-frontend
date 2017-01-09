@@ -6,6 +6,8 @@ import { CalendarModule } from 'angular-calendar';
 
 import { CalendarComponent } from './calendar.component';
 import CalendarService from '../services/calendar.service';
+import NotificationService from '../services/notification.service';
+import NotificationServiceStub from '../services/test/notification.service.stub';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
@@ -58,6 +60,9 @@ describe('CalendarComponent', () => {
         },
         {
           provide: AuthService, useClass: AuthServiceStub
+        },
+        {
+          provide: NotificationService, useClass: NotificationServiceStub
         }
       ]
     })
