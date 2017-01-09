@@ -15,7 +15,6 @@ export interface IPimpService {
 export default class PimpServices implements IPimpService {
 
   services: IPimpService[];
-  websocketServices: IPimpService[];
 
   constructor(messageService: MessageService,
               calendarService: CalendarService,
@@ -24,27 +23,16 @@ export default class PimpServices implements IPimpService {
               notificationService: NotificationService,
               websocketService: WebsocketService) {
 
-                websocketService.connectedChange.subscribe( connected => {
-                  this.initWebsocketServices();
-                });
-
                 this.services = [
                   websocketService,
                   calendarService,
                   userService,
-                  groupsService
-                ];
-
-                this.websocketServices = [
+                  groupsService,
                   messageService,
                   notificationService
                 ];
                 
               }
-    
-  initWebsocketServices() {
-    this.websocketServices.forEach( s => s.init());
-  }
 
   init() {
     this.services.forEach(s => s.init());
@@ -52,6 +40,5 @@ export default class PimpServices implements IPimpService {
 
   tearDown() {
     this.services.forEach(s => s.tearDown());
-    this.websocketServices.forEach(s => s.tearDown());
   }
 }

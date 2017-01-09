@@ -15,12 +15,10 @@ export class MessageService implements IPimpService {
 
   private stompClient: any;
   private stompSubscriptions: Object = {};
-  connected = false;
   private currentRoom: Room;
   currentRoomChange: Subject<Room> = new Subject<Room>();
   private rooms: Room[] = [];
   roomsChange: Subject<Room[]> = new Subject<Room[]>();
-
   chatErrorMessageChange : Subject<string> = new Subject<string>();
 
   constructor(
@@ -30,19 +28,17 @@ export class MessageService implements IPimpService {
     private websocketService: WebsocketService) {}
 
   init() {
-    if(!this.connected) {
-      this.getInitialRooms().subscribe( (rooms: Room[]) => {
-        this.stompClient = this.websocketService.getStompClient();
+    this.getInitialRooms().subscribe( (rooms: Room[]) => {
+      this.stompClient = this.websocketService.getStompClient();
 
-        if(rooms.length > 0) {
-          this.setCurrentRoom(rooms[0]);
-          this.rooms = rooms;
-          this.roomsChange.next(rooms);
-        }
+      if(rooms.length > 0) {
+        this.setCurrentRoom(rooms[0]);
+        this.rooms = rooms;
+        this.roomsChange.next(rooms);
+      }
 
-        this.connectAndSubscribeMultiple(rooms);
-      });
-    }
+      this.connectAndSubscribeMultiple(rooms);
+    });
   }
 
   /* Get all rooms in which user is member */
@@ -185,7 +181,6 @@ export class MessageService implements IPimpService {
 
   tearDown(): void {
     this.rooms =  [];
-    this.connected = false;
   }
 
 }
