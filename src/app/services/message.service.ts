@@ -4,6 +4,7 @@ import * as Stomp from 'stompjs';
 import { Message, User, Room } from '../models/base';
 import { AuthService } from './auth.service';
 import WebsocketService from './websocket.service';
+import NotificationService from './notification.service';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { Observable, Subject } from 'rxjs';
@@ -24,6 +25,7 @@ export class MessageService implements IPimpService {
 
   constructor(
     private authService: AuthService,
+    private notificationService: NotificationService,
     private http: Http,
     private websocketService: WebsocketService) {}
 
@@ -94,6 +96,7 @@ export class MessageService implements IPimpService {
         this.rooms.push(room);
         this.roomsChange.next(this.rooms);
         this.currentRoomChange.next(room);
+        this.notificationService.announceNewChat(room);
       },
       err => {
         const message = err.status == 409 ?
