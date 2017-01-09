@@ -250,8 +250,8 @@ export default class CalendarService implements IPimpService {
     response.state = accept ? InvitationResponse.ACCEPTED :
       InvitationResponse.DECLINED;
     response.answer = answer || '';
-    response.eventKey = notification.eventKey;
-    response.calendarKey = notification.calendarKey;
+    response.eventKey = notification.referenceKey;
+    response.calendarKey = notification.referenceParentKey;
     response.userName = notification.receivingUser;
     response.invitee = notification.sendingUser;
     return response;
@@ -265,8 +265,8 @@ export default class CalendarService implements IPimpService {
       ? invitationResponse.userName + ' will attend the event.' 
       : invitationResponse.userName + ' will not attend the event. the reason was: ' 
         + '"' + invitationResponse.answer + '"';
-    notification.eventKey = invitationResponse.eventKey;
-    notification.calendarKey = invitationResponse.calendarKey;
+    notification.referenceKey = invitationResponse.eventKey;
+    notification.referenceParentKey = invitationResponse.calendarKey;
     notification.receivingUser = invitationResponse.invitee;
     notification.sendingUser = invitationResponse.userName;
     return notification;
