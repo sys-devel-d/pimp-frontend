@@ -1,16 +1,21 @@
 <div>
-	<div class="well well-sm notification" *ngFor="let notification of notifications">
-		<div *ngIf="(notification.type === 'EVENT_UPDATE')">
-			An <a routerLink="/calendar/event/{{ notification.eventKey }}" > event </a> was updated: {{ notification.message }}
-			<a (click)="this.notificationService.acknowledgeNotification(notification)"> close </a>
-		</div>
-		<div *ngIf="notification.type === 'EVENT_INVITATION'"> 
-			You are invited to an event with the title <a routerLink="/calendar/event/{{ notification.eventKey }}"> {{ notification.message }} </a>. Do you want to attend?
-			<a (click)="handleInvitation(true, notification, 'a good reason to say yes')"> Yes </a>
-			<a (click)="handleInvitation(false, notification, undefined)"> No </a>
-		</div>
-		<div *ngIf="notification.type === 'NEW_MESSAGE'">
-			You got a new private chat message from {{notification.sendingUser}}
-			<a (click)="this.notificationService.acknowledgeNotification(notification)"> close </a>
-		</div>
+    <div class="well well-sm notification" *ngFor="let notification of notifications">
+        <div *ngIf="(notification.type === 'EVENT_UPDATE')">
+            An <a routerLink="/calendar/event/{{ notification.eventKey }}"> event </a> was updated: {{ notification.message }}
+            <a (click)="this.notificationService.acknowledgeNotification(notification)"> close </a>
+        </div>
+        <div *ngIf="notification.type === 'EVENT_INVITATION'">
+            You are invited to an event with the title <a routerLink="/calendar/event/{{ notification.eventKey }}"> {{ notification.message }} </a>.
+            Do you want to attend?
+            <a (click)="handleInvitation(true, notification, 'a good reason to say yes')"> Yes </a>
+            <a (click)="handleInvitation(false, notification, undefined)"> No </a>
+        </div>
+        <div *ngIf="notification.type === 'NEW_MESSAGE'">
+            You got a new private chat message from {{notification.sendingUser}}
+        </div>
+        <div *ngIf="notification.type === 'NEW_CHAT'">
+            Neuer Chat mit {{notification.sendingUser}}
+            <a (click)="this.notificationService.acknowledgeNotification(notification)"> close </a>
+        </div>
+    </div>
 </div>
