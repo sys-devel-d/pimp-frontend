@@ -1,4 +1,5 @@
 <div>
+    <p *ngIf="!notifications || notifications.length == 0">Keine Neuigkeiten. Sehr gut!</p>
     <div class="well well-sm notification" *ngFor="let notification of notifications">
         <div *ngIf="(notification.type === 'EVENT_UPDATE')">
             <a routerLink="/calendar/event/{{ notification.referenceKey }}"> Termin </a> wurde aktualisiert: {{ notification.message }}

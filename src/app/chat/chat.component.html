@@ -58,10 +58,11 @@
         </div>
       </div>
     </div>
-    <form (ngSubmit)="send()">
+    <form *ngIf="currentRoom" (ngSubmit)="send()">
       <input id="message-input" type="text" [(ngModel)]="text" class="form-control message-input"
              placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
     </form>
+    <p *ngIf="!currentRoom">Keine Chats ;(</p>
   </div>
 
 </div>
