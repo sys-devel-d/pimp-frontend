@@ -1,6 +1,22 @@
 <div>
-	<button (click)="announce()">Klick</button>
-	<div class="well well-sm notification" *ngFor="let notification of notifications">
-    {{ notification.message }}
-	</div>
+    <div class="well well-sm notification" *ngFor="let notification of notifications">
+        <div *ngIf="(notification.type === 'EVENT_UPDATE')">
+            An <a routerLink="/calendar/event/{{ notification.referenceKey }}"> event </a> was updated: {{ notification.message }}
+            <a (click)="acknowledgeNotification(notification)"> close </a>
+        </div>
+        <div *ngIf="notification.type === 'EVENT_INVITATION'">
+            You are invited to an event with the title <a routerLink="/calendar/event/{{ notification.referenceKey }}"> {{ notification.message }} </a>.
+            Do you want to attend?
+            <a (click)="handleInvitation(true, notification, 'Gerne doch!')"> Yes </a>
+            <a (click)="handleInvitation(false, notification)"> No </a>
+        </div>
+        <div *ngIf="notification.type === 'NEW_MESSAGE'">
+            You got a new private chat message from {{notification.sendingUser}}
+            <a (click)="acknowledgeNotification(notification)"> close </a>
+        </div>
+        <div *ngIf="notification.type === 'NEW_CHAT'">
+            Neuer Chat mit {{notification.sendingUser}}
+            <a (click)="acknowledgeNotification(notification)"> close </a>
+        </div>
+    </div>
 </div>

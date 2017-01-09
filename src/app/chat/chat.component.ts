@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MessageService } from '../services/message.service';
 import { Message, User, Room } from '../models/base';
 import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 import { Globals } from '../commons/globals';
 import { shakeInput, scrollDownChatMessageContainer } from '../commons/dom-functions';
 import GroupChatEditorComponent from './editor/group-chat-editor.component'
@@ -32,7 +33,8 @@ export class ChatComponent implements OnInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private userService: UserService) {
+    private userService: UserService,
+    private authService: AuthService) {
       this.router = router;
       this.privateChatCallback = this.startPrivatChat.bind(this);
       this.groupChatCallback = this.fetchUsersForSelectionAndOpenDialog.bind(this);

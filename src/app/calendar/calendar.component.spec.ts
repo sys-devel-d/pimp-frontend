@@ -6,6 +6,8 @@ import { CalendarModule } from 'angular-calendar';
 
 import { CalendarComponent } from './calendar.component';
 import CalendarService from '../services/calendar.service';
+import NotificationService from '../services/notification.service';
+import NotificationServiceStub from '../services/test/notification.service.stub';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
@@ -25,7 +27,7 @@ import { HighlightDirective } from '../directives/highlight.directive';
 
 import { FormsModule } from '@angular/forms';
 
-describe('ChatComponent', () => {
+describe('CalendarComponent', () => {
   let component: CalendarComponent;
   let fixture: ComponentFixture<CalendarComponent>;
 
@@ -58,6 +60,9 @@ describe('ChatComponent', () => {
         },
         {
           provide: AuthService, useClass: AuthServiceStub
+        },
+        {
+          provide: NotificationService, useClass: NotificationServiceStub
         }
       ]
     })
@@ -88,10 +93,10 @@ describe('ChatComponent', () => {
     // close modal
     fixture.debugElement.query(By.css('button.close')).nativeElement.click();
 
-    fixture.debugElement.query(By.css('.cal-open-day-events .cal-event-title')).nativeElement.click();
+    fixture.debugElement.query(By.css('#btnOpenNewEventModal')).nativeElement.click();
     fixture.detectChanges();
     // get new modal title
     modalTitle = fixture.debugElement.query(By.css('.modal-title'));
-    expect(modalTitle.nativeElement.textContent.trim()).toEqual('Termin bearbeiten');
+    expect(modalTitle.nativeElement.textContent.trim()).toEqual('Termin erstellen');
   });
 });

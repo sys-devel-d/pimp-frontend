@@ -1,7 +1,8 @@
 import { CalEvent, User } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
+import NotificationService from '../../../services/notification.service';
 import { UserService } from './../../../services/user.service';
-import { hideAppModal, showAppModal, shakeInput } from '../../../commons/dom-functions';
+import { hideAppModal, showAppModal, shakeInput, fadeIn, fadeOut } from '../../../commons/dom-functions';
 
 export abstract class EventModalAbstract {
   inEditingMode: boolean;
@@ -14,19 +15,25 @@ export abstract class EventModalAbstract {
     autoclose: true,
     todayBtn: 'linked',
     todayHighlight: true,
-    language: 'de'
+    language: 'de',
+    placeholder: 'Datum'
   }
   timepickerOpts = {
     showMeridian: false,
-    defaultTime: 'current'
+    defaultTime: 'current',
+    placeholder: 'Uhrzeit'
   }
 
   calendarService: CalendarService;
   userService: UserService;
+  notificationService: NotificationService;
 
-  constructor(calendarService: CalendarService, userService: UserService) {
+  constructor(calendarService: CalendarService, userService: UserService,
+  notificationService: NotificationService) {
     this.calendarService = calendarService;
     this.userService = userService;
+    this.event.start = new Date();
+    this.notificationService = notificationService;
   }
 
   showDialog(evt?: CalEvent) {
@@ -37,6 +44,7 @@ export abstract class EventModalAbstract {
   }
 
   abstract saveAction(event: CalEvent): void;
+  abstract updateEndDate(startDate: Date): void;
 
   saveEvent() {
     const e = this.event;
@@ -48,10 +56,12 @@ export abstract class EventModalAbstract {
     }
 
     if(e.allDay) {
-      e.end = new Date();
-      e.end.setTime(e.start.getTime());
+      //e.end = new Date();
+      //e.end.setTime(e.start.getTime());
       e.end.setHours(23);
       e.end.setMinutes(59);
+      e.start.setHours(0);
+      e.start.setMinutes(0);
     }
 
     if (e.start > e.end) {
@@ -78,5 +88,15 @@ export abstract class EventModalAbstract {
 
   private onSelectedUsersUpdate(users: User[]) {
     this.selectedUsers = users;
+  }
+
+  private getTimePickerOpts() {
+    if(this.event.allDay) {
+      fadeOut('.timepicker');
+    }
+    else {
+      fadeIn('.timepicker');
+    }
+    return this.timepickerOpts;
   }
 }

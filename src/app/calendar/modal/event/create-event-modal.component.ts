@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { CalEvent, Calendar } from '../../../models/base';
+import { CalEvent, Calendar, Notification } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
+import NotificationService from '../../../services/notification.service';
 import { UserService } from './../../../services/user.service';
 import { EventModalAbstract } from './event-modal.abstract';
 
@@ -12,8 +13,9 @@ export default class CreateEventModalComponent extends EventModalAbstract {
   
   private calendars: Calendar[];
 
-  constructor(calendarService: CalendarService, userService: UserService) {
-    super(calendarService, userService);
+  constructor(calendarService: CalendarService, userService: UserService, 
+  notificationService: NotificationService) {
+    super(calendarService, userService, notificationService);
     this.modalTitle = 'Termin erstellen';
     this.calendars = this.calendarService.getWritableCalendars();
   }
@@ -22,4 +24,13 @@ export default class CreateEventModalComponent extends EventModalAbstract {
     this.calendarService.createEvent(event);
   }
 
+  // Everytime the start date get updated make the enddate one hour later
+  updateEndDate(startDate: Date) {
+    if(startDate) {
+      const newDate = new Date(startDate.getTime());
+      newDate.setTime(newDate.getTime() + 60*60*1000);
+      this.event.end = newDate;
+    }
+  }
+  
 }

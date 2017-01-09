@@ -4,6 +4,7 @@ export class Message {
   creationDate: Date;
   userName: string;
   message: string;
+  key: string;
 }
 
 export class Room {
@@ -57,9 +58,26 @@ export class CalEvent implements CalendarEvent {
   actions?: CalendarEventAction[];
 }
 
-export type NotificationType = 'NEW_MESSAGE'
+export type NotificationType = 'NEW_MESSAGE' | 'NEW_CHAT' | 'EVENT_UPDATE' | 'EVENT_INVITATION';
 
 export class Notification extends Message {
   type: NotificationType;
   acknowledged: boolean;
+  referenceKey: string;
+  referenceParentKey: string;
+  sendingUser: string;
+  receivingUser: string;
+}
+
+export class InvitationResponse {
+  public static readonly ACCEPTED = 'ACCEPTED';
+  public static readonly DECLINED = 'DECLINED';
+
+  userName: string;
+  state: string;
+  answer: string;
+  eventKey: string;
+  calendarKey: string;
+  invitee: string;
+
 }

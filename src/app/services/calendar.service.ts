@@ -2,15 +2,20 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
-import { CalEvent, Calendar, SubscribedCalendar } from '../models/base';
+import NotificationService from './notification.service';
+import { CalEvent, Calendar, SubscribedCalendar, InvitationResponse, Notification } from '../models/base';
 import { Observable, Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
+import {
+  CalendarEventAction
+} from 'angular-calendar';
 import { IPimpService } from './pimp.services';
 
 const colors: any = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
   blue: { primary: '#1e90ff', secondary: '#D1E8FF' },
-  yellow: { primary: '#e3bc08', secondary: '#FDF1BA' }
+  yellow: { primary: '#e3bc08', secondary: '#FDF1BA' },
+  grey: { primary: '#d3d3d3', secondary: '#D4D4D4' }
 };
 
 @Injectable()
@@ -28,8 +33,27 @@ export default class CalendarService implements IPimpService {
   eventsChange: Subject<CalEvent[]> = new Subject<CalEvent[]>();
   initializedChange: Subject<boolean> = new Subject<boolean>();
   calendarsChange: Subject<Calendar[]> = new Subject<Calendar[]>();
+  eventClicked: Function;
 
-  constructor(private authService: AuthService, private http: Http) {}
+  actions: CalendarEventAction[] = [
+    {
+      label: '<i class="fa fa-fw fa-pencil"></i>',
+      onClick: ({event}: { event: CalEvent }): void => {
+        this.eventClicked(event);
+      }
+    },
+    {
+      label: '<i class="fa fa-fw fa-times"></i>',
+      onClick: ({event}: { event: CalEvent }): void => {
+        if (confirm(Globals.messages.DELETE_EVENT_CONFIRMATION)) {
+          this.deleteEvent(event);
+        }
+      }
+    }
+  ];
+
+  constructor(private authService: AuthService, private http: Http,
+  private notificationService: NotificationService) {}
 
   init() {
     if (!this.isInitialized) {
@@ -42,7 +66,7 @@ export default class CalendarService implements IPimpService {
   so they are in the right format
   */
   private mapCalendarEvents(calendar: Calendar): Calendar {
-    calendar.events = calendar.events.map(this.mapEventForFrontend);
+    calendar.events = calendar.events.map(evt => this.mapEventForFrontend(evt));
     return calendar;
   }
 
@@ -63,15 +87,15 @@ export default class CalendarService implements IPimpService {
       this.events = this.calendars
         .map(cal => cal.events)
         .reduce((a, b) => a.concat(b), []);
-      this.allEvents = this.events;
-      this.calendars.forEach(cal => this.subscribedCals.push(
-        {
+      this.allEvents = this.events.slice(0);
+      this.subscribedCals = this.calendars.map( cal => {
+        return {
           key: cal.key,
           title: cal.title,
           active: true,
           unsubscribable: cal.owner !== this.authService.getCurrentUserName()
         }
-      ));
+      });
       this.calendarsChange.next(this.calendars);
       /* Inform subscribers (CalendarComponent)
       that events have changed, so the UI updates. */
@@ -128,15 +152,20 @@ export default class CalendarService implements IPimpService {
     return this.activeDayIsOpen;
   }
 
-  createEvent(event: CalEvent) {
+  createEvent(event: CalEvent): any {
     event.creator = this.authService.getCurrentUserName();
-    this.http.post(
+    return this.http.post(
       Globals.BACKEND + 'calendar/' + event.calendarKey,
       this.mapEventForBackend(event),
       { headers: this.authService.getTokenHeader() }
     )
-    .map(response => response.json())
-    .subscribe( (evt: CalEvent) => this.addEvent(evt) );
+    .map(response => 
+      response.json()
+    )
+    .subscribe( (evt: CalEvent) => {
+      this.addEvent(evt);
+      this.notificationService.announceInvitation(evt);
+    });
   }
 
   editEvent(event: CalEvent) {
@@ -200,6 +229,46 @@ export default class CalendarService implements IPimpService {
       ).subscribe( () => this.removeCalendar(key) );
   }
 
+  acceptOrDeclineInvitation(accept: boolean, notification: Notification, answer?: string) {
+    let invitationResponse = this.mapNotificationToInvitationResponse(accept, notification, answer);
+    return this.http.post(
+      Globals.BACKEND + 'calendar/invitation',
+      invitationResponse,
+      { headers: this.authService.getTokenHeader() }
+    ).subscribe(result => {
+      let invitationResponseNotification = 
+        this.mapInvitationResponseToNotification(invitationResponse);
+      this.notificationService.announce(invitationResponseNotification);
+      this.notificationService.acknowledgeNotification(notification);
+    });
+  }
+
+  private mapNotificationToInvitationResponse(accept: boolean, notification: Notification, answer?: string): InvitationResponse {
+    let response = new InvitationResponse();
+    response.state = accept ? InvitationResponse.ACCEPTED : InvitationResponse.DECLINED;
+    response.answer = answer || '';
+    response.eventKey = notification.referenceKey;
+    response.calendarKey = notification.referenceParentKey;
+    response.userName = notification.receivingUser;
+    response.invitee = notification.sendingUser;
+    return response;
+  }
+
+  private mapInvitationResponseToNotification(invitationResponse: InvitationResponse): Notification {
+    let notification = new Notification();
+    notification.type = 'EVENT_UPDATE';
+    notification.acknowledged = false;
+    notification.message = InvitationResponse.ACCEPTED === invitationResponse.state 
+      ? invitationResponse.userName + ' wird teilnehmen.' 
+      : invitationResponse.userName + ' wird nicht teilnehmen. Grund: ' 
+        + '"' + invitationResponse.answer + '"';
+    notification.referenceKey = invitationResponse.eventKey;
+    notification.referenceParentKey = invitationResponse.calendarKey;
+    notification.receivingUser = invitationResponse.invitee;
+    notification.sendingUser = invitationResponse.userName;
+    return notification;
+  } 
+
   private addCalendar(calendar: Calendar) {
     calendar = this.mapCalendarEvents(calendar);
     this.events = this.events.concat(calendar.events);
@@ -253,9 +322,11 @@ export default class CalendarService implements IPimpService {
   }
 
   private mapEventForBackend(event: CalEvent): any {
-    const evt: any = Object.assign({}, event)
+    const evt: any = Object.assign({}, event);
     delete evt.color;
     delete evt.actions;
+    delete evt.draggable;
+    delete evt.resizable;
     evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
     evt.end = DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm');
     return evt;
@@ -265,6 +336,22 @@ export default class CalendarService implements IPimpService {
     evt.start = new Date(evt.start);
     evt.end = new Date(evt.end);
     evt.color = evt.isPrivate ? colors.red : colors.blue;
+    evt.draggable = true;
+    evt.resizable = {
+      beforeStart: true,
+      afterEnd: true
+    }
+
+    if (evt.creator === this.authService.getCurrentUserName()) {
+      evt.actions = this.actions;
+    }
+    else if(evt.isPrivate) {
+      const start = DateFormatter.format(evt.start, 'de', 'HH:mm');
+      const end = DateFormatter.format(evt.end, 'de', 'HH:mm');
+      evt.title = `PRIVATER TERMIN (${evt.creator}, ${start} - ${end})`;
+      evt.color = colors.grey;
+    }
+    
     return evt;
   }
 
@@ -281,10 +368,6 @@ export default class CalendarService implements IPimpService {
     return this.calendars;
   }
 
-  public setEvents(events: CalEvent[]) {
-    this.events = events;
-  }
-
   public getAllEvents(): CalEvent[] {
     return this.allEvents;
   }
@@ -293,14 +376,11 @@ export default class CalendarService implements IPimpService {
     return this.subscribedCals;
   }
 
-  public setSubscribedCalendars(cals: SubscribedCalendar[]){
-    this.subscribedCals = cals;
-  }
-
   tearDown() {
     this.isInitialized = false;
     this.events = [];
     this.calendars = [];
     this.allEvents = [];
+    this.subscribedCals = [];
   }
 }

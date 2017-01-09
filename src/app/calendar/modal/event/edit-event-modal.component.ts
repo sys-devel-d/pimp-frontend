@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { hideAppModal } from '../../../commons/dom-functions';
 import { CalEvent, User } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
+import NotificationService from '../../../services/notification.service';
 import { UserService } from './../../../services/user.service';
 import { EventModalAbstract } from './event-modal.abstract';
 import { Globals } from '../../../commons/globals';
@@ -14,8 +15,9 @@ export default class EditEventModalComponent extends EventModalAbstract {
 
   calendarTitle: string;
 
-  constructor(calendarService: CalendarService, userService: UserService) {
-    super(calendarService, userService);
+  constructor(calendarService: CalendarService, userService: UserService, 
+  notificationService: NotificationService) {
+    super(calendarService, userService, notificationService);
     this.modalTitle = 'Termin bearbeiten';
     this.inEditingMode = true;
   }
@@ -41,5 +43,7 @@ export default class EditEventModalComponent extends EventModalAbstract {
       hideAppModal();
     }
   }
+
+  updateEndDate(startDate: Date) {}
 
 }
