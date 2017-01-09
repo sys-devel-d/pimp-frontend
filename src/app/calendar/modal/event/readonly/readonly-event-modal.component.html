@@ -9,6 +9,14 @@
             <td class="col-md-6">{{ calendarTitle }}</td>
           </tr>
           <tr>
+            <td class="col-md-6"><strong>Beginn</strong></td>
+            <td class="col-md-6">{{ formatDate(event.start) }}</td>
+          </tr>
+          <tr>
+            <td class="col-md-6"><strong>Ende</strong></td>
+            <td class="col-md-6">{{ formatDate(event.end) }}</td>
+          </tr>
+          <tr>
             <td class="col-md-6"><strong>Ort</strong></td>
             <td class="col-md-6">{{ event.place }}</td>
           </tr>
