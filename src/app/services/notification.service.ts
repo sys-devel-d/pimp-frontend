@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Notification, CalEvent, InvitationResponse } from '../models/base';
+import { Notification, CalEvent, InvitationResponse, Room } from '../models/base';
 import { Subject } from 'rxjs';
 import { IPimpService } from './pimp.services';
 import WebsocketService from './websocket.service';
@@ -38,6 +38,7 @@ export default class NotificationService implements IPimpService {
       this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
         const not = JSON.parse(body);
         this.notifications.push(not);
+        this.notificationsChange.next(this.notifications);
       })
     }
 
@@ -52,8 +53,11 @@ export default class NotificationService implements IPimpService {
   }
 
   announce(notification: Notification) {
-    this.stompClient.send('/app/broker/notifications/' + notification.receivingUser,
-      {}, JSON.stringify(notification));
+    this.stompClient.send(
+      '/app/broker/notifications/' + notification.receivingUser,
+      {},
+      JSON.stringify(notification)
+    );
   }
 
   announceInvitation(event: CalEvent) {
@@ -62,13 +66,28 @@ export default class NotificationService implements IPimpService {
       notification.type = 'EVENT_INVITATION';
       notification.acknowledged = false;
       notification.message = event.title;
-      notification.calendarKey = event.calendarKey;
-      notification.eventKey = event.key;
+      notification.referenceParentKey = event.calendarKey;
+      notification.referenceKey = event.key;
       notification.sendingUser = 
         this.authService.getCurrentUserName();
       notification.receivingUser = participant;
       this.announce(notification);
     })
+  }
+
+  announceNewChat(room: Room, isPrivateChat: boolean = true) {
+    const currentUserName = this.authService.getCurrentUserName();
+    const receivingUsers = room.participants.filter(user => user.userName !== currentUserName);
+    const notification = new Notification();
+    notification.acknowledged = false;
+    notification.referenceKey = room.roomName;
+    notification.message = 'Neuer privater Chat mit ' + currentUserName;
+    notification.sendingUser = currentUserName;
+    notification.type = 'NEW_CHAT';
+    receivingUsers.forEach( user => {
+      notification.receivingUser = user.userName;
+      this.announce(notification);
+    });
   }
 
   acknowledgeNotification(notification: Notification) {
