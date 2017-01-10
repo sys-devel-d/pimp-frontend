@@ -4,7 +4,7 @@ import { User } from '../models/base';
 @Component({
   selector: 'user-selection',
   templateUrl: './user-selection.component.html',
-  styleUrls: ['./user-selection.component.scss']
+  styles: ['.select-action { color: lightsalmon; }']
 })
 export default class UserSelectionComponent {
   

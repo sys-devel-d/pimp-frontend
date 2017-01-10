@@ -143,7 +143,7 @@ export class CalendarComponent implements OnInit {
     const evt = event;
     evt.start = newStart;
     evt.end = newEnd;
-    this.calendarService.editEvent(evt);
+    this.calendarService.editEvent(evt, []);
     this.viewDate = newStart;
   }
 

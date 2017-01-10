@@ -13,7 +13,7 @@ export default class CreateEventModalComponent extends EventModalAbstract {
   
   private calendars: Calendar[];
 
-  constructor(calendarService: CalendarService, userService: UserService, 
+  constructor(calendarService: CalendarService, userService: UserService,
   notificationService: NotificationService) {
     super(calendarService, userService, notificationService);
     this.modalTitle = 'Termin erstellen';

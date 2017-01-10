@@ -14,8 +14,9 @@ import { Globals } from '../../../commons/globals';
 export default class EditEventModalComponent extends EventModalAbstract {
 
   calendarTitle: string;
+  alreadyInvitedUsers: string[];
 
-  constructor(calendarService: CalendarService, userService: UserService, 
+  constructor(calendarService: CalendarService, userService: UserService,
   notificationService: NotificationService) {
     super(calendarService, userService, notificationService);
     this.modalTitle = 'Termin bearbeiten';
@@ -23,17 +24,25 @@ export default class EditEventModalComponent extends EventModalAbstract {
   }
 
   saveAction(event: CalEvent) {
-    this.calendarService.editEvent(event);
+    const newlyInvitedUsers = event.invited.filter( user => {
+      return this.alreadyInvitedUsers.indexOf(user) === -1;
+    });
+    this.calendarService.editEvent(event, newlyInvitedUsers);
+  }
+
+  userMapFunc(userName: string) {
+    const u = new User();
+    u.userName = userName;
+    return u;
   }
 
   showDialog(evt: CalEvent) {
     this.event = Object.assign({}, evt);
     this.calendarTitle = this.calendarService.getCalendarByKey(evt.calendarKey).title;
-    this.selectedUsers = evt.participants.map( part => {
-      const u = new User();
-      u.userName = part;
-      return u;
-    });
+    this.participants = evt.participants.map(this.userMapFunc);
+    this.invited = evt.invited.map(this.userMapFunc);
+    this.declined = evt.declined.map(this.userMapFunc);
+    this.alreadyInvitedUsers = this.invited.map(u => u.userName);
     super.showDialog();
   }
 

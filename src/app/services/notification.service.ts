@@ -15,6 +15,8 @@ export default class NotificationService implements IPimpService {
   connected:boolean = false;
   private notifications: Notification[];
   notificationsChange: Subject<Notification[]> = new Subject<Notification[]>();
+  // See calendarService where this function is set.
+  fetchSingleEvent: Function;
 
   constructor(
     private websocketService: WebsocketService,
@@ -39,8 +41,21 @@ export default class NotificationService implements IPimpService {
     this.stompSubscription = this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
       const not = JSON.parse(body);
       this.notifications.push(not);
+      this.handleNotification(not);
       this.notificationsChange.next(this.notifications);
     });
+  }
+
+  handleNotification(notification: Notification): void {
+    switch(notification.type) {
+      case "EVENT_UPDATE":
+      case "EVENT_INVITATION":
+        this.fetchSingleEvent(notification.referenceParentKey, notification.referenceKey);
+        break;
+      case "NEW_CHAT":
+        // Fetch chatRoom and add
+        break;
+    }
   }
 
   announce(notification: Notification) {
@@ -52,7 +67,7 @@ export default class NotificationService implements IPimpService {
   }
 
   announceInvitation(event: CalEvent) {
-    event.participants.forEach(participant => {
+    event.invited.forEach( invited => {
       let notification = new Notification();
       notification.type = 'EVENT_INVITATION';
       notification.acknowledged = false;
@@ -61,7 +76,7 @@ export default class NotificationService implements IPimpService {
       notification.referenceKey = event.key;
       notification.sendingUser = 
         this.authService.getCurrentUserName();
-      notification.receivingUser = participant;
+      notification.receivingUser = invited;
       this.announce(notification);
     })
   }

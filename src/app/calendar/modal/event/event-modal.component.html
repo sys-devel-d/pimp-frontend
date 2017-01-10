@@ -54,14 +54,15 @@
       </div>
 
       <div class="col-md-12">
-        <user-selection
+        <user-invitation
           (update)="onSelectedUsersUpdate($event)"
           [users]="users"
-          [selectedUsers]="selectedUsers"
+          [invited]="invited"
+          [declined]="declined"
+          [participants]="participants"
           [displayUser]="displayUser"
-          [displaySelectedUser]="displayUser"
           [canRemoveUsers]="!inEditingMode">
-        </user-selection>
+        </user-invitation>
       </div>
     </div>
   </div>

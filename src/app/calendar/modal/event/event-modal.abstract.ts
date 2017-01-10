@@ -9,7 +9,9 @@ export abstract class EventModalAbstract {
   modalTitle: string;
   event: CalEvent = new CalEvent();
   users: User[];
-  selectedUsers: User[] = [];
+  invited: User[] = [];
+  declined: User[] = [];
+  participants: User[] = [];
   datepickerOpts = {
     //startDate: new Date(),
     autoclose: true,
@@ -75,7 +77,7 @@ export abstract class EventModalAbstract {
       e.allDay = false;
     }
 
-    e.participants = this.selectedUsers.map( usr => usr.userName);
+    e.invited = this.invited.map( usr => usr.userName);
 
     this.saveAction(e);
     hideAppModal();
@@ -87,7 +89,7 @@ export abstract class EventModalAbstract {
   }
 
   private onSelectedUsersUpdate(users: User[]) {
-    this.selectedUsers = users;
+    this.invited = users;
   }
 
   private getTimePickerOpts() {

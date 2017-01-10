@@ -36,6 +36,7 @@ import EditEventModalComponent from './calendar/modal/event/edit-event-modal.com
 import CreateEventModalComponent from './calendar/modal/event/create-event-modal.component';
 import ReadOnlyEventModalComponent from './calendar/modal/event/readonly/readonly-event-modal.component';
 import UserSelectionComponent from './user-selection/user-selection.component';
+import UserInvitationComponent from './user-invitation/user-invitation.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
 
@@ -62,7 +63,8 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
     EditEventModalComponent,
     CreateEventModalComponent,
     ReadOnlyEventModalComponent,
-    UserSelectionComponent
+    UserSelectionComponent,
+    UserInvitationComponent
   ],
   imports: [
     BrowserModule,

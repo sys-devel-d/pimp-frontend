@@ -1,0 +1,26 @@
+<div class="row">
+	<div class="col-md-4">
+		<h4>Lade Teilnehmer ein:</h4>
+		<div *ngFor="let user of users">
+			<div>
+				<i (click)="addToInvitedUsers(user)" class="fa fa-plus select-action" aria-hidden="true"></i>
+                {{ displayUser(user) }}
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<h4>Eingeladene: {{ invited ? invited.length : 0 }}</h4>
+		<div *ngFor="let user of invited">
+			<i class="fa fa-minus select-action" aria-hidden="true" *ngIf="canRemoveUsers" (click)="removeFromInvitedUsers(user)"></i>
+            {{ displayUser(user) }}
+		</div>
+	</div>
+
+    <div class="col-md-4">
+		<h4>Teilnehmer: {{ participants ? participants.length : 0 }}</h4>
+		<div *ngFor="let user of participants">
+            {{ displayUser(user) }}
+		</div>
+	</div>
+</div>

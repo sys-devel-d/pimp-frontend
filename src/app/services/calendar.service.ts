@@ -15,7 +15,8 @@ const colors: any = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
   blue: { primary: '#1e90ff', secondary: '#D1E8FF' },
   yellow: { primary: '#e3bc08', secondary: '#FDF1BA' },
-  grey: { primary: '#d3d3d3', secondary: '#D4D4D4' }
+  grey: { primary: '#d3d3d3', secondary: '#D4D4D4' },
+  white: { primary: '#FFF', secondary: '#FFF' }
 };
 
 @Injectable()
@@ -52,8 +53,21 @@ export default class CalendarService implements IPimpService {
     }
   ];
 
-  constructor(private authService: AuthService, private http: Http,
-  private notificationService: NotificationService) {}
+  readOnlyActions: CalendarEventAction[] = [
+    {
+      label: '<i class="fa fa-info"></i>',
+      onClick: ({event}: { event: CalEvent }): void => {
+        this.eventClicked(event);
+      }
+    }
+  ];
+
+  constructor(
+    private authService: AuthService,
+    private http: Http,
+    private notificationService: NotificationService) {
+      notificationService.fetchSingleEvent = this.fetchSingleEvent.bind(this);
+    }
 
   init() {
     if (!this.isInitialized) {
@@ -101,6 +115,21 @@ export default class CalendarService implements IPimpService {
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
       this.isInitialized = true;
+    });
+  }
+
+  fetchSingleEvent(calendarKey: string, eventKey: string) {
+    this.http.get(
+      Globals.BACKEND + `calendar/${calendarKey}/event/${eventKey}`,
+      { headers: this.authService.getTokenHeader() }
+    ).map( res => res.json() )
+    .subscribe( (event: CalEvent) => {
+      if(this.allEvents.find(evt => evt.key === event.key)) {
+        this.updateEvent(event);
+      }
+      else {
+        this.addEvent(event);
+      }
     });
   }
 
@@ -168,7 +197,7 @@ export default class CalendarService implements IPimpService {
     });
   }
 
-  editEvent(event: CalEvent) {
+  editEvent(event: CalEvent, newlyInvitedUsers: string[]) {
     this.http.put(
       Globals.BACKEND + 'calendar/event/' + event.key,
       this.mapEventForBackend(event),
@@ -176,7 +205,12 @@ export default class CalendarService implements IPimpService {
         headers: this.authService.getTokenHeader()
       }
     ).subscribe(
-      () => this.updateEvent(event),
+      () => {
+        this.updateEvent(event);
+        const copyEvent = Object.assign({}, event);
+        copyEvent.invited = newlyInvitedUsers;
+        this.notificationService.announceInvitation(copyEvent);
+      },
       err => console.log(err)
     )
   }
@@ -235,11 +269,20 @@ export default class CalendarService implements IPimpService {
       Globals.BACKEND + 'calendar/invitation',
       invitationResponse,
       { headers: this.authService.getTokenHeader() }
-    ).subscribe(result => {
-      let invitationResponseNotification = 
+    ).subscribe( () => {
+      let invitationResponseNotification =
         this.mapInvitationResponseToNotification(invitationResponse);
       this.notificationService.announce(invitationResponseNotification);
       this.notificationService.acknowledgeNotification(notification);
+      const eventToBeUpdated = this.allEvents.find( evt => evt.key === notification.referenceKey );
+      eventToBeUpdated.invited = eventToBeUpdated.invited.filter ( u => u !== this.authService.getCurrentUserName() );
+      if(accept) {
+        eventToBeUpdated.participants.push(this.authService.getCurrentUserName());
+      }
+      else {
+        eventToBeUpdated.declined.push(this.authService.getCurrentUserName());
+      }
+      this.updateEvent(eventToBeUpdated);
     });
   }
 
@@ -310,6 +353,7 @@ export default class CalendarService implements IPimpService {
   }
 
   private updateEvent(updatedEvent: CalEvent) {
+    updatedEvent = this.mapEventForFrontend(updatedEvent);
     const f = (evt) => evt.key === updatedEvent.key;
     let idx = this.events.findIndex(f);
     this.events[idx] = updatedEvent;
@@ -333,16 +377,22 @@ export default class CalendarService implements IPimpService {
   }
 
   private mapEventForFrontend(evt: any): CalEvent {
+
+    const currentUserName = this.authService.getCurrentUserName();
+    const isEditable = evt.creator === currentUserName;
+
     evt.start = new Date(evt.start);
     evt.end = new Date(evt.end);
     evt.color = evt.isPrivate ? colors.red : colors.blue;
-    evt.draggable = true;
+    evt.draggable = isEditable;
     evt.resizable = {
-      beforeStart: true,
-      afterEnd: true
+      beforeStart: isEditable,
+      afterEnd: isEditable
     }
 
-    if (evt.creator === this.authService.getCurrentUserName()) {
+    evt.actions = this.readOnlyActions;
+
+    if (isEditable) {
       evt.actions = this.actions;
     }
     else if(evt.isPrivate) {
@@ -350,6 +400,10 @@ export default class CalendarService implements IPimpService {
       const end = DateFormatter.format(evt.end, 'de', 'HH:mm');
       evt.title = `PRIVATER TERMIN (${evt.creator}, ${start} - ${end})`;
       evt.color = colors.grey;
+    }
+
+    if(evt.participants.findIndex(part => part === currentUserName) === -1) {
+      evt.color = colors.white;
     }
     
     return evt;

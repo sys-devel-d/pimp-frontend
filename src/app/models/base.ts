@@ -55,6 +55,8 @@ export class CalEvent implements CalendarEvent {
   color: any;
   creator: string;
   participants: string[];
+  invited: string[];
+  declined: string[];
   actions?: CalendarEventAction[];
 }
 
