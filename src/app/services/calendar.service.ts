@@ -70,6 +70,7 @@ export default class CalendarService implements IPimpService {
   init() {
     if (!this.isInitialized) {
       this.notificationService.fetchSingleEvent = this.fetchSingleEvent.bind(this);
+      this.notificationService.removeEvent = this.removeEvent.bind(this);
       this.fetchUsersCalendars();
     }
   }
@@ -189,7 +190,7 @@ export default class CalendarService implements IPimpService {
       this.mapEventForBackend(event),
       { headers: this.authService.getTokenHeader() }
     )
-    .map(response => 
+    .map(response =>
       response.json()
     )
     .subscribe( (evt: CalEvent) => {
@@ -218,7 +219,7 @@ export default class CalendarService implements IPimpService {
     )
   }
 
-  deleteEvent(event: any) {
+  deleteEvent(event: any, shouldAnnounce = true) {
     this.http.delete(
       Globals.BACKEND + 'calendar/event/' + event.key,
       {
@@ -226,7 +227,12 @@ export default class CalendarService implements IPimpService {
         body: this.mapEventForBackend(event)
       }
     ).subscribe(
-      () => this.removeEvent(event),
+      () => {
+        this.removeEvent(event);
+        if(shouldAnnounce) {
+          this.notificationService.announceEventDeletion(event);
+        }
+      },
       err => console.log(err)
     );
   }
@@ -278,14 +284,16 @@ export default class CalendarService implements IPimpService {
       this.notificationService.announce(invitationResponseNotification);
       this.notificationService.acknowledgeNotification(notification);
       const eventToBeUpdated = this.allEvents.find( evt => evt.key === notification.referenceKey );
-      eventToBeUpdated.invited = eventToBeUpdated.invited.filter ( u => u !== this.authService.getCurrentUserName() );
-      if(accept) {
-        eventToBeUpdated.participants.push(this.authService.getCurrentUserName());
+      if(eventToBeUpdated) {
+        eventToBeUpdated.invited = eventToBeUpdated.invited.filter ( u => u !== this.authService.getCurrentUserName() );
+        if(accept) {
+          eventToBeUpdated.participants.push(this.authService.getCurrentUserName());
+        }
+        else {
+          eventToBeUpdated.declined.push(this.authService.getCurrentUserName());
+        }
+        this.updateEvent(eventToBeUpdated);
       }
-      else {
-        eventToBeUpdated.declined.push(this.authService.getCurrentUserName());
-      }
-      this.updateEvent(eventToBeUpdated);
     });
   }
 
@@ -337,9 +345,24 @@ export default class CalendarService implements IPimpService {
     this.calendarsChange.next(this.calendars);
   }
 
-  private removeEvent(event: any) {
+  private removeEvent(event: any, viaNotification = false) {
+    let calendarKey = event.calendarKey;
+    if(viaNotification) {
+      // The event deletion was announced via notification
+      calendarKey = this.allEvents.find(evt => evt.key === event.key).calendarKey;
+      if(calendarKey !== event.calendarKey) {
+        // This event was copied from another event
+        const copiedEvent = new CalEvent();
+        copiedEvent.key = event.key;
+        copiedEvent.calendarKey = calendarKey;
+        // OK now we can delete this event from the server. 
+        // But don't announce the deletion again because this is a copied event.
+        this.deleteEvent(copiedEvent, false);
+        return;
+      }
+    }
     this.events = this.events.filter(evt => evt.key !== event.key);
-    this.allEvents= this.allEvents.filter(evt => evt.key !== event.key);
+    this.allEvents = this.allEvents.filter(evt => evt.key !== event.key);
     const correspondingCal = this.calendars.find(cal => cal.key === event.calendarKey);
     correspondingCal.events = correspondingCal.events.filter(evt => evt.key !== event.key);
     this.eventsChange.next(this.events);
@@ -349,13 +372,13 @@ export default class CalendarService implements IPimpService {
     evt = this.mapEventForFrontend(evt);
     let calendar: Calendar = this.calendars
       .find(cal => cal.key === evt.calendarKey);
-    /* So here is the case where we are probably invited to
-    an event which is part of a calendar that we are not subscribed to.
-    So now we just copy this event into our calendar (one of our calendars). */
     if(!calendar) {
+      /* So here is the case where we are probably invited to
+         an event which is part of a calendar that we are not subscribed to.
+         So now we just copy this event into our calendar (one of our calendars). */
       calendar = this.calendars.find(cal => cal.owner === this.authService.getCurrentUserName());
       if(!calendar) {
-        throw new Error("There is no calendar owned by the user. So the event cannot be added.");
+        throw new Error("There is no calendar owned by the user. The event cannot be added.");
       }
       else {
         evt.calendarKey = calendar.key;

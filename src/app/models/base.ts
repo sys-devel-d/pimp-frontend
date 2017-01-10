@@ -60,7 +60,7 @@ export class CalEvent implements CalendarEvent {
   actions?: CalendarEventAction[];
 }
 
-export type NotificationType = 'NEW_MESSAGE' | 'NEW_CHAT' | 'EVENT_UPDATE' | 'EVENT_INVITATION';
+export type NotificationType = 'NEW_MESSAGE' | 'NEW_CHAT' | 'EVENT_UPDATE' | 'EVENT_INVITATION' | 'EVENT_DELETION';
 
 export class Notification extends Message {
   type: NotificationType;

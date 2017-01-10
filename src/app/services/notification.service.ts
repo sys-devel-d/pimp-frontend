@@ -15,8 +15,9 @@ export default class NotificationService implements IPimpService {
   connected:boolean = false;
   private notifications: Notification[];
   notificationsChange: Subject<Notification[]> = new Subject<Notification[]>();
-  // See calendarService where this function is set.
+  // See calendarService where these functions are set
   fetchSingleEvent: Function;
+  removeEvent: Function;
 
   constructor(
     private websocketService: WebsocketService,
@@ -40,7 +41,7 @@ export default class NotificationService implements IPimpService {
   connectAndSubscribe() {
     this.stompSubscription = this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
       const not = JSON.parse(body);
-      this.notifications.push(not);
+      this.notifications.unshift(not);
       this.handleNotification(not);
       this.notificationsChange.next(this.notifications);
     });
@@ -53,7 +54,13 @@ export default class NotificationService implements IPimpService {
         this.fetchSingleEvent(notification.referenceParentKey, notification.referenceKey);
         break;
       case "NEW_CHAT":
-        // Fetch chatRoom and add
+        // TODO
+        break;
+      case "EVENT_DELETION":
+        const event = new CalEvent();
+        event.key = notification.referenceKey;
+        event.calendarKey = notification.referenceParentKey;
+        this.removeEvent(event, true);
         break;
     }
   }
@@ -81,7 +88,7 @@ export default class NotificationService implements IPimpService {
     })
   }
 
-  announceNewChat(room: Room, isPrivateChat: boolean = true) {
+  announceNewChat(room: Room) {
     const currentUserName = this.authService.getCurrentUserName();
     const receivingUsers = room.participants.filter(user => user.userName !== currentUserName);
     const notification = new Notification();
@@ -94,6 +101,24 @@ export default class NotificationService implements IPimpService {
       notification.receivingUser = user.userName;
       this.announce(notification);
     });
+  }
+
+  announceEventDeletion(event: CalEvent) {
+    const notification = new Notification();
+    notification.acknowledged = false;
+    notification.message = event.title;
+    notification.sendingUser = this.authService.getCurrentUserName();
+    notification.type = 'EVENT_DELETION';
+    notification.referenceKey = event.key;
+    notification.referenceParentKey = event.calendarKey;
+    const usersToBeInformed = ([], event.participants)
+      .concat(([], event.invited))
+      .concat(([], event.declined))
+      .filter( usr => usr !== this.authService.getCurrentUserName());
+    usersToBeInformed.forEach( user => {
+      notification.receivingUser = user;
+      this.announce(notification);
+    })
   }
 
   acknowledgeNotification(notification: Notification) {
