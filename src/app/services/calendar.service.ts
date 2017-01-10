@@ -65,12 +65,11 @@ export default class CalendarService implements IPimpService {
   constructor(
     private authService: AuthService,
     private http: Http,
-    private notificationService: NotificationService) {
-      notificationService.fetchSingleEvent = this.fetchSingleEvent.bind(this);
-    }
+    private notificationService: NotificationService) {}
 
   init() {
     if (!this.isInitialized) {
+      this.notificationService.fetchSingleEvent = this.fetchSingleEvent.bind(this);
       this.fetchUsersCalendars();
     }
   }

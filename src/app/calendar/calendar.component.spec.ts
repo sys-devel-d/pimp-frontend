@@ -22,6 +22,7 @@ import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import ReadOnlyEventModalComponent from './modal/event/readonly/readonly-event-modal.component';
 import UserSelectionComponent from '../user-selection/user-selection.component';
+import UserInvitationComponent from '../user-invitation/user-invitation.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import { HighlightDirective } from '../directives/highlight.directive';
 
@@ -49,7 +50,8 @@ describe('CalendarComponent', () => {
         HighlightDirective,
         ModalDialogComponent,
         ReadOnlyEventModalComponent,
-        UserSelectionComponent
+        UserSelectionComponent,
+        UserInvitationComponent
       ],
       providers: [
         {
