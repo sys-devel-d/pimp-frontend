@@ -180,8 +180,10 @@ export default class CalendarService implements IPimpService {
     return this.activeDayIsOpen;
   }
 
-  createEvent(event: CalEvent): any {
-    event.creator = this.authService.getCurrentUserName();
+  createEvent(event: CalEvent, shouldAnnounce = true): any {
+    if(!event.creator) {
+      event.creator = this.authService.getCurrentUserName();
+    }
     return this.http.post(
       Globals.BACKEND + 'calendar/' + event.calendarKey,
       this.mapEventForBackend(event),
@@ -192,7 +194,9 @@ export default class CalendarService implements IPimpService {
     )
     .subscribe( (evt: CalEvent) => {
       this.addEvent(evt);
-      this.notificationService.announceInvitation(evt);
+      if(shouldAnnounce) {
+        this.notificationService.announceInvitation(evt);
+      }
     });
   }
 
@@ -345,6 +349,20 @@ export default class CalendarService implements IPimpService {
     evt = this.mapEventForFrontend(evt);
     let calendar: Calendar = this.calendars
       .find(cal => cal.key === evt.calendarKey);
+    /* So here is the case where we are probably invited to
+    an event which is part of a calendar that we are not subscribed to.
+    So now we just copy this event into our calendar (one of our calendars). */
+    if(!calendar) {
+      calendar = this.calendars.find(cal => cal.owner === this.authService.getCurrentUserName());
+      if(!calendar) {
+        throw new Error("There is no calendar owned by the user. So the event cannot be added.");
+      }
+      else {
+        evt.calendarKey = calendar.key;
+        this.createEvent(evt, false);
+        return;
+      }
+    }
     calendar.events.push(evt);
     this.events.push(evt);
     this.allEvents.push(evt);
