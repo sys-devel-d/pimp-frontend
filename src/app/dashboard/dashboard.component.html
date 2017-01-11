@@ -16,7 +16,7 @@
             <a (click)="acknowledgeNotification(notification)"> <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
         </div>
         <div *ngIf="notification.type === 'NEW_CHAT'">
-            Neuer Chat mit {{notification.sendingUser}}
+            Neuer <a [routerLink]="['/chat']" [queryParams]="{ roomId: notification.referenceKey }">Chat</a> mit {{notification.sendingUser}}
             <a (click)="acknowledgeNotification(notification)">  <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
         </div>
         <div *ngIf="notification.type === 'EVENT_DELETION'">

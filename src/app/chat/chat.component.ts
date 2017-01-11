@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService } from '../services/message.service';
 import { Message, User, Room } from '../models/base';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 import { Globals } from '../commons/globals';
 import { shakeInput, scrollDownChatMessageContainer } from '../commons/dom-functions';
-import GroupChatEditorComponent from './editor/group-chat-editor.component'
+import GroupChatEditorComponent from './editor/group-chat-editor.component';
 
 @Component({
   selector: 'app-chat',
@@ -30,7 +30,10 @@ export class ChatComponent implements OnInit {
   private groupChatCallback: Function;
   private updateRoomCallback: Function;
 
+  private queryParamRoomId: string;
+
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private messageService: MessageService,
     private userService: UserService,
@@ -51,6 +54,7 @@ export class ChatComponent implements OnInit {
 
       this.messageService.roomsChange.subscribe ( (rooms:Room[]) => {
         this.rooms = rooms;
+        this.setCurrentRoomFromUrl();
       });
 
       this.messageService.chatErrorMessageChange.subscribe( err => {
@@ -81,6 +85,18 @@ export class ChatComponent implements OnInit {
           (users: User[]) => this.users = users,
           err => this.setError(err)
         );
+    }
+  }
+
+  private setCurrentRoomFromUrl() {
+    if (this.queryParamRoomId) {
+      const currentRoom = this.messageService
+        .getRooms()
+        .find(r => r.roomName === this.queryParamRoomId);
+      if (currentRoom) {
+        this.messageService.setCurrentRoom(currentRoom);
+      }
+      window.history.replaceState(null, '', '/chat');
     }
   }
 
@@ -117,6 +133,13 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.route
+      .queryParams
+      .subscribe(params => {
+        this.queryParamRoomId = params['roomId'];
+        this.setCurrentRoomFromUrl();
+      });
+
     this.currentRoom = this.messageService.getCurrentRoom();
     this.rooms = this.messageService.getRooms();
     if (this.rooms.length > 0) {
