@@ -8,16 +8,17 @@ export class AuthGuard implements CanActivate {
 
   constructor(private router: Router, private authService: AuthService) { }
 
-  canActivate(): Observable<boolean> {
+  canActivate(): boolean {
     let user = JSON.parse(localStorage.getItem('currentUser'));
     let expireDate = new Date(user.startDate).getTime();
 
     if (localStorage.getItem('currentUser')) {
       if (Date.now() - user.expiresIn < expireDate) {
-        return Observable.of(true);
+        return true;
       }
     }
+    
     this.router.navigate(['/login']);
-    return Observable.of(false);
+    return false;
   }
 }
