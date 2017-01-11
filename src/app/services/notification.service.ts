@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Notification, CalEvent, InvitationResponse, Room } from '../models/base';
+import { Notification, CalEvent, Room } from '../models/base';
 import { Subject } from 'rxjs';
 import { IPimpService } from './pimp.services';
 import WebsocketService from './websocket.service';
 import { AuthService } from './auth.service';
 import { Globals } from '../commons/globals';
+import { NotificationsService as NSLibService } from 'angular2-notifications';
+import { defaultIcons } from 'angular2-notifications/src/icons';
 
 @Injectable()
 export default class NotificationService implements IPimpService {
@@ -22,6 +24,7 @@ export default class NotificationService implements IPimpService {
   constructor(
     private websocketService: WebsocketService,
     private authService: AuthService,
+    private _nsService: NSLibService,
     private http: Http) {}
 
   init() {
@@ -48,6 +51,7 @@ export default class NotificationService implements IPimpService {
   }
 
   handleNotification(notification: Notification): void {
+    this.displayToastNotification(notification);
     switch(notification.type) {
       case "EVENT_UPDATE":
       case "EVENT_INVITATION":
@@ -65,6 +69,46 @@ export default class NotificationService implements IPimpService {
     }
   }
 
+  private displayToastNotification(n: Notification): void {
+    if(window.location.pathname.startsWith('/dashboard')) {
+      return;
+    }
+
+    let title;
+    let message;
+
+    switch(n.type) {
+      case 'EVENT_UPDATE':
+        title = 'Terminaktualisierung';
+        message = n.message;
+        break;
+      case 'EVENT_INVITATION':
+        title = 'Einladung';
+        message = n.sendingUser + ' läd sie zur Teilnahme an ' + n.message + ' ein';
+        break;
+      case 'NEW_CHAT':
+        title = 'Neuer Chat';
+        message = 'Sie sind nun mit ' + n.sendingUser + ' in einem Chat';
+    }
+
+    const ns = this._nsService;
+
+    switch(n.intent) {
+      case 'success':
+        ns.success(title, message);
+        break;
+      case 'info':
+        ns.info(title, message);
+        break;
+      case 'alert':
+        ns.alert(title, message);
+        break;
+      case 'error':
+        ns.error(title, message);
+        break;
+    }
+  }
+
   announce(notification: Notification) {
     this.stompClient.send(
       '/app/broker/notifications/' + notification.receivingUser,
@@ -75,49 +119,55 @@ export default class NotificationService implements IPimpService {
 
   announceInvitation(event: CalEvent) {
     event.invited.forEach( invited => {
-      let notification = new Notification();
-      notification.type = 'EVENT_INVITATION';
-      notification.acknowledged = false;
-      notification.message = event.title;
-      notification.referenceParentKey = event.calendarKey;
-      notification.referenceKey = event.key;
-      notification.sendingUser = 
+      let n = new Notification();
+      n.type = 'EVENT_INVITATION';
+      n.acknowledged = false;
+      n.message = event.title;
+      n.referenceParentKey = event.calendarKey;
+      n.referenceKey = event.key;
+      n.intent = 'info';
+      n.sendingUser = 
         this.authService.getCurrentUserName();
-      notification.receivingUser = invited;
-      this.announce(notification);
+      n.receivingUser = invited;
+      this.announce(n);
     })
   }
 
   announceNewChat(room: Room) {
     const currentUserName = this.authService.getCurrentUserName();
     const receivingUsers = room.participants.filter(user => user.userName !== currentUserName);
-    const notification = new Notification();
-    notification.acknowledged = false;
-    notification.referenceKey = room.roomName;
-    notification.message = 'Neuer privater Chat mit ' + currentUserName;
-    notification.sendingUser = currentUserName;
-    notification.type = 'NEW_CHAT';
+    const n = new Notification();
+    n.acknowledged = false;
+    n.referenceKey = room.roomName;
+    n.message = 'Neuer Chat mit ' + currentUserName;
+    if(room.roomType == Globals.CHATROOM_TYPE_GROUP) {
+      n.message = n.message + ' und anderen';
+    }
+    n.sendingUser = currentUserName;
+    n.intent = 'info';
+    n.type = 'NEW_CHAT';
     receivingUsers.forEach( user => {
-      notification.receivingUser = user.userName;
-      this.announce(notification);
+      n.receivingUser = user.userName;
+      this.announce(n);
     });
   }
 
   announceEventDeletion(event: CalEvent) {
-    const notification = new Notification();
-    notification.acknowledged = false;
-    notification.message = event.title;
-    notification.sendingUser = this.authService.getCurrentUserName();
-    notification.type = 'EVENT_DELETION';
-    notification.referenceKey = event.key;
-    notification.referenceParentKey = event.calendarKey;
-    const usersToBeInformed = ([], event.participants)
-      .concat(([], event.invited))
-      .concat(([], event.declined))
+    const n = new Notification();
+    n.acknowledged = false;
+    n.message = event.title;
+    n.intent = 'alert';
+    n.sendingUser = this.authService.getCurrentUserName();
+    n.type = 'EVENT_DELETION';
+    n.referenceKey = event.key;
+    n.referenceParentKey = event.calendarKey;
+    const usersToBeInformed = (event.participants, [])
+      .concat((event.invited, []))
+      .concat((event.declined, []))
       .filter( usr => usr !== this.authService.getCurrentUserName());
     usersToBeInformed.forEach( user => {
-      notification.receivingUser = user;
-      this.announce(notification);
+      n.receivingUser = user;
+      this.announce(n);
     })
   }
 

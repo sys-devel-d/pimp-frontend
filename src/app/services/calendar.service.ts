@@ -279,48 +279,50 @@ export default class CalendarService implements IPimpService {
       invitationResponse,
       { headers: this.authService.getTokenHeader() }
     ).subscribe( () => {
-      let invitationResponseNotification =
-        this.mapInvitationResponseToNotification(invitationResponse);
-      this.notificationService.announce(invitationResponseNotification);
+      let invitationResponseNotification = this.mapInvitationResponseToNotification(invitationResponse);
       this.notificationService.acknowledgeNotification(notification);
       const eventToBeUpdated = this.allEvents.find( evt => evt.key === notification.referenceKey );
       if(eventToBeUpdated) {
         eventToBeUpdated.invited = eventToBeUpdated.invited.filter ( u => u !== this.authService.getCurrentUserName() );
         if(accept) {
+          invitationResponseNotification.intent = 'success';
           eventToBeUpdated.participants.push(this.authService.getCurrentUserName());
         }
         else {
+          invitationResponseNotification.intent = 'error'; // ;)
           eventToBeUpdated.declined.push(this.authService.getCurrentUserName());
         }
+        
+        this.notificationService.announce(invitationResponseNotification);
         this.updateEvent(eventToBeUpdated);
       }
     });
   }
 
   private mapNotificationToInvitationResponse(accept: boolean, notification: Notification, answer?: string): InvitationResponse {
-    let response = new InvitationResponse();
-    response.state = accept ? InvitationResponse.ACCEPTED : InvitationResponse.DECLINED;
-    response.answer = answer || '';
-    response.eventKey = notification.referenceKey;
-    response.calendarKey = notification.referenceParentKey;
-    response.userName = notification.receivingUser;
-    response.invitee = notification.sendingUser;
-    return response;
+    let r = new InvitationResponse();
+    r.state = accept ? InvitationResponse.ACCEPTED : InvitationResponse.DECLINED;
+    r.answer = answer || '';
+    r.eventKey = notification.referenceKey;
+    r.calendarKey = notification.referenceParentKey;
+    r.userName = notification.receivingUser;
+    r.invitee = notification.sendingUser;
+    return r;
   }
 
   private mapInvitationResponseToNotification(invitationResponse: InvitationResponse): Notification {
-    let notification = new Notification();
-    notification.type = 'EVENT_UPDATE';
-    notification.acknowledged = false;
-    notification.message = InvitationResponse.ACCEPTED === invitationResponse.state 
+    let n = new Notification();
+    n.type = 'EVENT_UPDATE';
+    n.acknowledged = false;
+    n.message = InvitationResponse.ACCEPTED === invitationResponse.state 
       ? invitationResponse.userName + ' wird teilnehmen.' 
       : invitationResponse.userName + ' wird nicht teilnehmen. Grund: ' 
         + '"' + invitationResponse.answer + '"';
-    notification.referenceKey = invitationResponse.eventKey;
-    notification.referenceParentKey = invitationResponse.calendarKey;
-    notification.receivingUser = invitationResponse.invitee;
-    notification.sendingUser = invitationResponse.userName;
-    return notification;
+    n.referenceKey = invitationResponse.eventKey;
+    n.referenceParentKey = invitationResponse.calendarKey;
+    n.receivingUser = invitationResponse.invitee;
+    n.sendingUser = invitationResponse.userName;
+    return n;
   } 
 
   private addCalendar(calendar: Calendar) {

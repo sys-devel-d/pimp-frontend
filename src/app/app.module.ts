@@ -39,6 +39,7 @@ import UserSelectionComponent from './user-selection/user-selection.component';
 import UserInvitationComponent from './user-invitation/user-invitation.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
+import { SimpleNotificationsModule } from 'angular2-notifications';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
   ],
   imports: [
     BrowserModule,
+    SimpleNotificationsModule,
     FormsModule,
     HttpModule,
     NKDatetimeModule,

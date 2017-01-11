@@ -26,7 +26,7 @@ export default class DashboardComponent implements OnInit {
   }
 
   handleInvitation(accept: boolean, notification: Notification) {
-    let answer;
+    let answer = "Grundlos";
     if (!accept) {
       answer = prompt("Nennen Sie bitte den Grund der Absage!");
     }

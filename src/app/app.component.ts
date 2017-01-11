@@ -12,6 +12,11 @@ import PimpServices from './services/pimp.services';
 export class AppComponent implements OnInit {
 
   unreadNotificationsCount: number = 0;
+  options = {
+    position: ["bottom", "right"],
+    timeOut: 5000,
+    lastOnBottom: true
+  }
 
   constructor(
     private router: Router,
