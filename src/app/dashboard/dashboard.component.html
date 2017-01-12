@@ -1,31 +1,33 @@
 <div>
-    <p *ngIf="!notifications || notifications.length == 0">Keine Neuigkeiten. Sehr gut!</p>
-    <div class="well well-sm notification" *ngFor="let notification of notifications">
-        <div *ngIf="(notification.type === 'EVENT_UPDATE')">
-            <i class="fa fa-calendar" aria-hidden="true"></i>
-            <a routerLink="/calendar/event/{{ notification.referenceKey }}"> Termin </a> wurde aktualisiert: {{ notification.message }}
-            <a (click)="acknowledgeNotification(notification)"> <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
-        </div>
-        <div *ngIf="notification.type === 'EVENT_INVITATION'">
-            <i class="fa fa-calendar" aria-hidden="true"></i>
-            {{ notification.sendingUser }} läd sie zum Termin <a routerLink="/calendar/event/{{ notification.referenceKey }}"> {{ notification.message }} </a> ein.
-            Nehmen Sie teil?
-            <a (click)="handleInvitation(true, notification)"> Ja </a>
-            <a (click)="handleInvitation(false, notification)"> Nein </a>
-        </div>
-        <div *ngIf="notification.type === 'NEW_MESSAGE'">
-            You got a new private chat message from {{notification.sendingUser}}
-            <a (click)="acknowledgeNotification(notification)"> <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
-        </div>
-        <div *ngIf="notification.type === 'NEW_CHAT'">
-            <i class="fa fa-weixin" aria-hidden="true"></i>
-            <a [routerLink]="['/chat']" [queryParams]="{ roomId: notification.referenceKey }">{{notification.message}}</a>
-            <a (click)="acknowledgeNotification(notification)">  <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
-        </div>
-        <div *ngIf="notification.type === 'EVENT_DELETION'">
-            <i class="fa fa-calendar" aria-hidden="true"></i>
-            {{notification.sendingUser}} hat den Termin {{notification.message}} gelöscht.
-            <a (click)="acknowledgeNotification(notification)">  <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
+    <div *ngFor="let key of availableKeys" class="col-md-6">
+        <h3>{{ getTitle(key) }}</h3>
+        <div class="well well-sm notification" *ngFor="let notification of notifications[key]">
+            <div *ngIf="(notification.type === 'EVENT_UPDATE')">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+                <a routerLink="/calendar/event/{{ notification.referenceKey }}"> Termin </a> wurde aktualisiert: {{ notification.message }}
+                <a (click)="acknowledgeNotification(notification)"> <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
+            </div>
+            <div *ngIf="notification.type === 'EVENT_INVITATION'">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+                {{ notification.sendingUser }} läd sie zum Termin <a routerLink="/calendar/event/{{ notification.referenceKey }}"> {{ notification.message }} </a> ein.
+                Nehmen Sie teil?
+                <a (click)="handleInvitation(true, notification)"> Ja </a>
+                <a (click)="handleInvitation(false, notification)"> Nein </a>
+            </div>
+            <div *ngIf="notification.type === 'NEW_MESSAGE'">
+                You got a new private chat message from {{notification.sendingUser}}
+                <a (click)="acknowledgeNotification(notification)"> <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
+            </div>
+            <div *ngIf="notification.type === 'NEW_CHAT'">
+                <i class="fa fa-weixin" aria-hidden="true"></i>
+                <a [routerLink]="['/chat']" [queryParams]="{ roomId: notification.referenceKey }">{{notification.message}}</a>
+                <a (click)="acknowledgeNotification(notification)">  <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
+            </div>
+            <div *ngIf="notification.type === 'EVENT_DELETION'">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+                {{notification.sendingUser}} hat den Termin {{notification.message}} gelöscht.
+                <a (click)="acknowledgeNotification(notification)">  <i class="close-notification fa fa-times" aria-hidden="true"></i></a>
+            </div>
         </div>
     </div>
 </div>

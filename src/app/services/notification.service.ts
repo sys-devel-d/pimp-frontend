@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Notification, CalEvent, Room } from '../models/base';
+import { Notification, CalEvent, Room, Notifications } from '../models/base';
 import { Subject } from 'rxjs';
 import { IPimpService } from './pimp.services';
 import WebsocketService from './websocket.service';
@@ -15,8 +15,8 @@ export default class NotificationService implements IPimpService {
   stompClient: any;
   private stompSubscription: any;
   connected:boolean = false;
-  private notifications: Notification[];
-  notificationsChange: Subject<Notification[]> = new Subject<Notification[]>();
+  private notifications: Notifications = {};
+  notificationsChange: Subject<Notifications> = new Subject<Notifications>();
   // See calendarService where these functions are set
   fetchSingleEvent: Function;
   removeEvent: Function;
@@ -35,16 +35,32 @@ export default class NotificationService implements IPimpService {
       { headers: this.authService.getTokenHeader() }
     )
     .map( (resp: Response) => resp['_body'] !== '' ? resp.json() : [])
-    .subscribe( nots => {
-      this.notifications = nots;
-      this.notificationsChange.next(nots);
+    .subscribe( (nots:Notification[]) => {
+      nots.forEach(not => {
+        this.addNotification(not);
+      });
+      this.notificationsChange.next(this.notifications);
     });
+  }
+
+  private getMapKey(not: Notification): string {
+    return (not.type === 'EVENT_UPDATE' || not.type === 'EVENT_DELETION') ? 'EVENT_UPDATE' : not.type;
+  }
+
+  private addNotification(not: Notification): void {
+    const key = this.getMapKey(not);
+    if(this.notifications[key]) {
+      this.notifications[key].unshift(not);
+    }
+    else {
+      this.notifications[key] = [not];
+    }
   }
 
   connectAndSubscribe() {
     this.stompSubscription = this.stompClient.subscribe('/notifications/' + this.authService.getCurrentUserName(), ({ body }) => {
-      const not = JSON.parse(body);
-      this.notifications.unshift(not);
+      const not = JSON.parse(body) as Notification;
+      this.addNotification(not);
       this.handleNotification(not);
       this.notificationsChange.next(this.notifications);
     });
@@ -58,7 +74,7 @@ export default class NotificationService implements IPimpService {
         this.fetchSingleEvent(notification.referenceParentKey, notification.referenceKey);
         break;
       case "NEW_CHAT":
-        // TODO
+        // TODO: Fetch that room
         break;
       case "EVENT_DELETION":
         const event = new CalEvent();
@@ -89,6 +105,13 @@ export default class NotificationService implements IPimpService {
       case 'NEW_CHAT':
         title = 'Neuer Chat';
         message = 'Sie sind nun mit ' + n.sendingUser + ' in einem Chat';
+        break;
+      case 'EVENT_DELETION':
+        title = 'Termin gelöscht';
+        message = n.sendingUser + 'hat den Termin ' + n.message + ' gelöscht';
+        break;
+      default:
+        throw new Error(`Define a title and message for type ${n.type}`);
     }
 
     const ns = this._nsService;
@@ -161,9 +184,9 @@ export default class NotificationService implements IPimpService {
     n.type = 'EVENT_DELETION';
     n.referenceKey = event.key;
     n.referenceParentKey = event.calendarKey;
-    const usersToBeInformed = (event.participants, [])
-      .concat((event.invited, []))
-      .concat((event.declined, []))
+    const usersToBeInformed = (event.participants || [])
+      .concat(event.invited || [])
+      .concat(event.declined || [])
       .filter( usr => usr !== this.authService.getCurrentUserName());
     usersToBeInformed.forEach( user => {
       n.receivingUser = user;
@@ -179,18 +202,19 @@ export default class NotificationService implements IPimpService {
         headers: this.authService.getTokenHeader()
       }
     ).subscribe((res) => {
-      this.notifications = this.notifications.filter(not => not.key !== notification.key);
+      this.notifications[notification.type] 
+        = this.notifications[notification.type].filter(not => not.key !== notification.key);
       this.notificationsChange.next(this.notifications);
     });
   }
 
-  getNotifications(): Notification[] {
+  getNotifications(): Notifications {
     return this.notifications;
   }
 
   tearDown() {
-    this.notifications = [];
-    this.notificationsChange.next([]);
+    this.notifications = {};
+    this.notificationsChange.next({});
     this.stompSubscription.unsubscribe();
   }
 }

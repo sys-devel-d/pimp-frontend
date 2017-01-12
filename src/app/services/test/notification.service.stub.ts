@@ -9,6 +9,6 @@ export default class NotificationServiceStub extends NotificationService {
   }
 
   getNotifications() {
-    return [];
+    return {};
   }
 }

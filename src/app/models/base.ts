@@ -85,3 +85,7 @@ export class InvitationResponse {
   invitee: string;
 
 }
+
+export interface Notifications {
+  [type: string]: Notification[]
+}
