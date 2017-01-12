@@ -44,14 +44,19 @@
 
   <div class="col-xs-9 pull-right chat-col">
     <div *ngIf="currentRoom" id="chat-message-container">
-      <div class="panel panel-default chat-message" *ngFor='let message of currentRoom.messages'>
-        <div class="panel-body chat-message-body">
-          <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
-          <div *ngIf="message.userName === currentUserName">
+      <div class="chat-message" *ngFor='let message of currentRoom.messages'>
+        <div *ngIf="message.userName === currentUserName">
+          <div class="panel-body chat-message-body message-of-me">
+            <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
+            <br/>
             <span class="name">{{ message.userName }}: </span>
             <span class="message">{{ message.message }}</span>
           </div>
-          <div *ngIf="message.userName !== currentUserName">
+        </div>
+        <div *ngIf="message.userName !== currentUserName">
+          <div class="panel-body chat-message-body">
+            <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
+            <br/>
             <a  class="name" (click)="linkToChatPartner(message.userName)">{{ message.userName }}</a><span class="message">: {{ message.message }}</span>
           </div>
         </div>

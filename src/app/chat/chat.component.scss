@@ -6,10 +6,20 @@
         word-wrap: break-word;
         width: calc(100%);
         margin-bottom: 5px;
+        border: 0px;
+        float: right;
     }
 
     .chat-message-body {
         padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 60%;
+    }
+
+    .message-of-me {
+        background-color: #eee;
+        float: right;
     }
 
     .date {
