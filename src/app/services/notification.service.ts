@@ -7,7 +7,6 @@ import WebsocketService from './websocket.service';
 import { AuthService } from './auth.service';
 import { Globals } from '../commons/globals';
 import { NotificationsService as NSLibService } from 'angular2-notifications';
-import { defaultIcons } from 'angular2-notifications/src/icons';
 
 @Injectable()
 export default class NotificationService implements IPimpService {
@@ -19,6 +18,7 @@ export default class NotificationService implements IPimpService {
   notificationsChange: Subject<Notifications> = new Subject<Notifications>();
   // See calendarService where these functions are set
   fetchSingleEvent: Function;
+  fetchSingleRoom: Function;
   removeEvent: Function;
 
   constructor(
@@ -74,7 +74,7 @@ export default class NotificationService implements IPimpService {
         this.fetchSingleEvent(notification.referenceParentKey, notification.referenceKey);
         break;
       case "NEW_CHAT":
-        // TODO: Fetch that room
+        this.fetchSingleRoom(notification.referenceKey);
         break;
       case "EVENT_DELETION":
         const event = new CalEvent();

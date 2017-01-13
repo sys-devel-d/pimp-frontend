@@ -25,7 +25,9 @@ export class MessageService implements IPimpService {
     private authService: AuthService,
     private notificationService: NotificationService,
     private http: Http,
-    private websocketService: WebsocketService) {}
+    private websocketService: WebsocketService) {
+      notificationService.fetchSingleRoom = this.fetchSingleRoom.bind(this);
+    }
 
   init() {
     this.getInitialRooms().subscribe( (rooms: Room[]) => {
@@ -101,6 +103,19 @@ export class MessageService implements IPimpService {
         this.chatErrorMessageChange.next(message);
       }
     );
+  }
+
+  fetchSingleRoom(id: string) {
+    this.http.get(
+      Globals.BACKEND + 'rooms/' + id,
+      { headers: this.authService.getTokenHeader() }
+    ).map( res => {
+      return res.json() as Room
+    }).subscribe( (room: Room) => {
+      this.rooms.push(room);
+      this.roomsChange.next(this.rooms);
+      this.subscribeToRoom(room);
+    });
   }
 
   private connectAndSubscribeMultiple(rooms: Room[]): void {
