@@ -25,11 +25,10 @@ export class MessageService implements IPimpService {
     private authService: AuthService,
     private notificationService: NotificationService,
     private http: Http,
-    private websocketService: WebsocketService) {
-      notificationService.fetchSingleRoom = this.fetchSingleRoom.bind(this);
-    }
+    private websocketService: WebsocketService) { }
 
   init() {
+    this.notificationService.fetchSingleRoom = this.fetchSingleRoom.bind(this);
     this.getInitialRooms().subscribe( (rooms: Room[]) => {
       this.stompClient = this.websocketService.getStompClient();
 
