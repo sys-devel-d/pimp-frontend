@@ -1,0 +1,45 @@
+  <h2>Teams</h2>
+  
+  <div class="panel-group" id="accordion">
+    <div *ngFor="let team of teams" class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{team.key}}">
+            <inline-edit [isEditable]="true" [text]="team.name" (edit)="editName($event, i)"></inline-edit>
+          </a>
+        </h4>
+      </div>
+      <div id="collapse-{{team.key}}" class="panel-collapse collapse">
+        <div class="panel-body">
+          <div *ngFor="let userName of team.userNames">
+            <a routerLink="/profile/{{userName}}">{{userName}}</a>
+          </div>
+          <i class="fa fa-fw fa-plus" (click)="editGroup(team.name)"></i>
+        </div>
+      </div>
+    </div>
+    <i class="fa fa-fw fa-plus" (click)="addGroup()"></i>
+  </div>
+
+  <h2>Projekte</h2>
+
+  <div class="panel-group" id="accordion">
+    <div *ngFor="let project of projects" class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{project.key}}">
+            <inline-edit [isEditable]="true" [text]="project.name" (edit)="editName($event, i)"></inline-edit>
+          </a>
+        </h4>
+      </div>
+      <div id="collapse-{{project.key}}" class="panel-collapse collapse">
+        <div class="panel-body">
+          <div *ngFor="let userName of project.userNames">
+            <a routerLink="/profile/{{userName}}">{{userName}}</a>
+          </div>
+          <i class="fa fa-fw fa-plus" (click)="editGroup(project.name)"></i>
+        </div>
+      </div>
+    </div>
+    <i class="fa fa-fw fa-plus" (click)="addGroup()"></i>
+  </div>

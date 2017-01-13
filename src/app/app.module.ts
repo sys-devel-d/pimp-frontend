@@ -34,6 +34,8 @@ import ReadOnlyEventModalComponent from './calendar/modal/event/readonly/readonl
 import UserSelectionComponent from './user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
+import { AdminComponent } from './admin/admin.component';
+import AdminModalComponent from './admin/modal/admin-modal.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +59,9 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
     EditEventModalComponent,
     CreateEventModalComponent,
     ReadOnlyEventModalComponent,
-    UserSelectionComponent
+    UserSelectionComponent,
+    AdminComponent,
+    AdminModalComponent
   ],
   imports: [
     BrowserModule,
@@ -76,6 +80,7 @@ import CalendarSubscriptionComponent from './calendar/calendar-subscription/cale
       { path: 'login', component: LoginComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'profile/:userName', component: OtherProfileComponent, canActivate: [AuthGuard] },
+      { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
       { path: 'register', component: RegisterComponent },
       { path: '', component: LoginComponent },
       { path: '**', component: PageNotFoundComponent }
