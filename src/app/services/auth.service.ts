@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, URLSearchParams } from '@angular/http';
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
 import { Globals } from '../commons/globals';
@@ -9,6 +9,7 @@ import { Globals } from '../commons/globals';
 export class AuthService {
   private token: string;
   private userName: string;
+  private roles: string[];
 
   constructor(private http: Http) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -29,14 +30,17 @@ export class AuthService {
       .map((res: Response) => {
         let token = res.json() && res.json().access_token;
         let expiresIn = res.json() && res.json().expires_in;
+        let roles = res.json() && res.json().user_roles;
         if (token) {
           this.token = token;
           this.userName = userName;
+          this.roles = roles;
           localStorage.setItem('currentUser', JSON.stringify({
             userName: userName,
             token: token,
             expiresIn: expiresIn,
-            startDate: new Date()
+            startDate: new Date(),
+            roles: roles
           }));
         }
         return token && true;
@@ -69,6 +73,10 @@ export class AuthService {
 
   getCurrentUserName(): string {
     return this.userName;
+  }
+
+  getRoles(): string[] {
+    return this.roles;
   }
 
 }
