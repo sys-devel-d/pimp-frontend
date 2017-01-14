@@ -43,4 +43,6 @@ export default class EditEventModalComponent extends EventModalAbstract {
     }
   }
 
+  updateEndDate(startDate: Date) {}
+
 }

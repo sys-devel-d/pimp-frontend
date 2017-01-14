@@ -28,10 +28,16 @@ export class AuthService {
       .post(Globals.BACKEND + 'oauth/token', urlSearchParams.toString(), {headers: headers})
       .map((res: Response) => {
         let token = res.json() && res.json().access_token;
+        let expiresIn = res.json() && res.json().expires_in;
         if (token) {
           this.token = token;
           this.userName = userName;
-          localStorage.setItem('currentUser', JSON.stringify({ userName: userName, token: token }));
+          localStorage.setItem('currentUser', JSON.stringify({
+            userName: userName,
+            token: token,
+            expiresIn: expiresIn,
+            startDate: new Date()
+          }));
         }
         return token && true;
       })
