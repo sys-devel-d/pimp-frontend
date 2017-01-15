@@ -5,6 +5,7 @@ export abstract class SearchComponent implements OnInit {
   results: Object[];
   term: string;
   userSearch: boolean;
+  forChat: boolean;
 
   ngOnInit() {
     this.reset();

@@ -15,6 +15,7 @@ export class CalendarSearchComponent extends SearchComponent {
   constructor() {
     super();
     this.userSearch = false;
+    this.forChat  = false;
   }
 
   subscribeCalendar(cal: Calendar) {
