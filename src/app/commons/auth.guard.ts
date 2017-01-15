@@ -1,15 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private authService: AuthService) { }
 
-  canActivate() {
+  canActivate(): boolean {
+    let user = JSON.parse(localStorage.getItem('currentUser'));
+    let expireDate = new Date(user.startDate).getTime();
+
     if (localStorage.getItem('currentUser')) {
-      return true;
+      if (Date.now() - user.expiresIn < expireDate) {
+        return true;
+      }
     }
+    
     this.router.navigate(['/login']);
     return false;
   }
