@@ -36,7 +36,6 @@ import UserSelectionComponent from './user-selection/user-selection.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
 import { AdminComponent } from './admin/admin.component';
-import AdminModalComponent from './admin/modal/admin-modal.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +61,6 @@ import AdminModalComponent from './admin/modal/admin-modal.component';
     ReadOnlyEventModalComponent,
     UserSelectionComponent,
     AdminComponent,
-    AdminModalComponent,
     AllUserSearchComponent
   ],
   imports: [

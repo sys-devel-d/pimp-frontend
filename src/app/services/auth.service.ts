@@ -60,6 +60,8 @@ export class AuthService {
 
   logout(): void {
     this.token = null;
+    this.roles = null;
+    this.userName = null;
     localStorage.removeItem('currentUser');
   }
 
@@ -79,5 +81,11 @@ export class AuthService {
     return this.roles;
   }
 
+  isAdmin(): boolean {
+    if (this.roles.indexOf('ROLE_ADMIN') !== -1) {
+      return true;
+    }
+    return false;
+  }
 }
 

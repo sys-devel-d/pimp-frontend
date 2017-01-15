@@ -6,13 +6,13 @@
         <h4 class="panel-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{team.key}}">
             <inline-edit 
-              [isEditable]="true" 
-              [text]="team.name" 
+              [isEditable]="isAdmin"
+              [text]="team.name"
               (edit)="editName($event, team, 'team')">
             </inline-edit>
           </a>
           <div class="pull-right">
-            <i class="fa fa-trash-o" title="Lösche Team" (click)="removeGroup(team, 'team')"></i>
+            <i class="fa fa-trash-o" *ngIf="isAdmin" title="Lösche Team" (click)="removeGroup(team, 'team')"></i>
           </div>
         </h4>
       </div>
@@ -20,7 +20,7 @@
         <div class="panel-body">
           <div *ngFor="let userName of team.userNames">
             <a routerLink="/profile/{{userName}}">{{userName}}</a>
-            <i class="fa fa-minus select-action" aria-hidden="true" 
+            <i class="fa fa-minus select-action" aria-hidden="true" *ngIf="isAdmin"
             (click)="removeUser(userName, team, 'team')"></i>
           </div>
           <app-all-user-search-field *ngIf="userAddingMode"
@@ -30,11 +30,11 @@
             [results]="users">
             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
           </app-all-user-search-field>
-          <i class="fa fa-fw fa-plus" (click)="editGroup(team, 'team')"></i>
+          <i class="fa fa-fw fa-plus" *ngIf="isAdmin" (click)="editGroup(team, 'team')"></i>
         </div>
       </div>
     </div>
-    <i class="fa fa-fw fa-plus" (click)="addGroup('team')"></i>
+    <i class="fa fa-fw fa-plus" *ngIf="isAdmin" (click)="addGroup('team')"></i>
   </div>
 
   <h2>Projekte</h2>
@@ -45,13 +45,13 @@
         <h4 class="panel-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{project.key}}">
             <inline-edit 
-              [isEditable]="true" 
-              [text]="project.name" 
+              [isEditable]="isAdmin"
+              [text]="project.name"
               (edit)="editName($event, project, 'project')">
             </inline-edit>
           </a>
           <div class="pull-right">
-            <i class="fa fa fa-trash-o" aria-hidden="true" title="Lösche Projekt" (click)="removeGroup(team, 'team')"></i>
+            <i class="fa fa fa-trash-o" aria-hidden="true" *ngIf="isAdmin" title="Lösche Projekt" (click)="removeGroup(team, 'team')"></i>
           </div>
         </h4>
       </div>
@@ -59,7 +59,7 @@
         <div class="panel-body">
           <div *ngFor="let userName of project.userNames">
             <a routerLink="/profile/{{userName}}">{{userName}}</a>
-            <i class="fa fa-minus select-action" aria-hidden="true" 
+            <i class="fa fa-minus select-action" aria-hidden="true" *ngIf="isAdmin"
             (click)="removeUser(userName, project, 'project')"></i>
           </div>
           <app-all-user-search-field *ngIf="userAddingMode"
@@ -69,9 +69,9 @@
             [results]="users">
             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
           </app-all-user-search-field>
-          <i class="fa fa-fw fa-plus" (click)="editGroup(project, 'project')"></i>
+          <i class="fa fa-fw fa-plus" *ngIf="isAdmin" (click)="editGroup(project, 'project')"></i>
         </div>
       </div>
     </div>
-    <i class="fa fa-fw fa-plus" (click)="addGroup('project')"></i>
+    <i class="fa fa-fw fa-plus" *ngIf="isAdmin" (click)="addGroup('project')"></i>
   </div>
