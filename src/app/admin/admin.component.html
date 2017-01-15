@@ -5,20 +5,36 @@
       <div class="panel-heading">
         <h4 class="panel-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{team.key}}">
-            <inline-edit [isEditable]="true" [text]="team.name" (edit)="editName($event, i)"></inline-edit>
+            <inline-edit 
+              [isEditable]="true" 
+              [text]="team.name" 
+              (edit)="editName($event, team, 'team')">
+            </inline-edit>
           </a>
+          <div class="pull-right">
+            <i class="fa fa-trash-o" title="Lösche Team" (click)="removeGroup(team, 'team')"></i>
+          </div>
         </h4>
       </div>
       <div id="collapse-{{team.key}}" class="panel-collapse collapse">
         <div class="panel-body">
           <div *ngFor="let userName of team.userNames">
             <a routerLink="/profile/{{userName}}">{{userName}}</a>
+            <i class="fa fa-minus select-action" aria-hidden="true" 
+            (click)="removeUser(userName, team, 'team')"></i>
           </div>
-          <i class="fa fa-fw fa-plus" (click)="editGroup(team.name)"></i>
+          <app-all-user-search-field *ngIf="userAddingMode"
+            (update)="term = $event"
+            (keyup)="searchForUser(term, team.userNames)"
+            [addUserCallback]="addUserCallback"
+            [results]="users">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+          </app-all-user-search-field>
+          <i class="fa fa-fw fa-plus" (click)="editGroup(team, 'team')"></i>
         </div>
       </div>
     </div>
-    <i class="fa fa-fw fa-plus" (click)="addGroup()"></i>
+    <i class="fa fa-fw fa-plus" (click)="addGroup('team')"></i>
   </div>
 
   <h2>Projekte</h2>
@@ -28,18 +44,34 @@
       <div class="panel-heading">
         <h4 class="panel-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{project.key}}">
-            <inline-edit [isEditable]="true" [text]="project.name" (edit)="editName($event, i)"></inline-edit>
+            <inline-edit 
+              [isEditable]="true" 
+              [text]="project.name" 
+              (edit)="editName($event, project, 'project')">
+            </inline-edit>
           </a>
+          <div class="pull-right">
+            <i class="fa fa fa-trash-o" aria-hidden="true" title="Lösche Projekt" (click)="removeGroup(team, 'team')"></i>
+          </div>
         </h4>
       </div>
       <div id="collapse-{{project.key}}" class="panel-collapse collapse">
         <div class="panel-body">
           <div *ngFor="let userName of project.userNames">
             <a routerLink="/profile/{{userName}}">{{userName}}</a>
+            <i class="fa fa-minus select-action" aria-hidden="true" 
+            (click)="removeUser(userName, project, 'project')"></i>
           </div>
-          <i class="fa fa-fw fa-plus" (click)="editGroup(project.name)"></i>
+          <app-all-user-search-field *ngIf="userAddingMode"
+            (update)="term = $event"
+            (keyup)="searchForUser(term, project.userNames)"
+            [addUserCallback]="addUserCallback"
+            [results]="users">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+          </app-all-user-search-field>
+          <i class="fa fa-fw fa-plus" (click)="editGroup(project, 'project')"></i>
         </div>
       </div>
     </div>
-    <i class="fa fa-fw fa-plus" (click)="addGroup()"></i>
+    <i class="fa fa-fw fa-plus" (click)="addGroup('project')"></i>
   </div>
