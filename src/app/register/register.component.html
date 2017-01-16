@@ -1,7 +1,7 @@
 <div class="col-md-6 col-md-offset-3">
   <div *ngIf="error" class="alert alert-danger">{{error}}</div>
   <h2>Register</h2>
-  <form name="register-form" (ngSubmit)="register()" #registerForm="ngForm">
+  <form name="registerForm" (ngSubmit)="register()" #registerForm="ngForm">
     <div class="form-group">
       <label for="firstName">First name</label>
       <input type="text" name="firstName" id="firstName" [(ngModel)]="user.firstName" class="form-control" required />
@@ -12,18 +12,35 @@
     </div>
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" name="email" id="email" [(ngModel)]="user.email" class="form-control" required />
+      <input type="email" name="email" id="email" [(ngModel)]="user.email" class="form-control" required #email="ngModel"/>
+      <div *ngIf="!isEmailValid(user.email) && (email.dirty || email.touched)" class="alert alert-danger">
+        The email address is not valid.
+      </div>
+      <div *ngIf="!user.email.endsWith('@pim-plus.org') && (email.dirty || email.touched)" class="alert alert-danger">
+        The email address must end with "@pim-plus.org".
+      </div>
     </div>
     <div class="form-group">
       <label for="userName">Username</label>
-      <input type="text" name="userName" id="userName" [(ngModel)]="user.userName" class="form-control" required />
+      <input type="text" name="userName" id="userName" [(ngModel)]="user.userName" class="form-control" required #userName="ngModel"/>
+      <div *ngIf="containsSpecialCharacter(user.userName) && (userName.dirty || userName.touched)" class="alert alert-danger">
+        The user name should not contain any special characters.
+      </div>
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" name="password" id="password" [(ngModel)]="user.password" class="form-control" required />
+      <input type="password" name="password" id="password" [(ngModel)]="user.password" class="form-control" required minlength="8" maxlength="255" #password="ngModel"/>
+      <div *ngIf="password.errors && (password.dirty || password.touched)" class="alert alert-danger">
+        <div [hidden]="!password.errors.minlength">
+          The password must be at least 8 characters long.
+        </div>
+        <div [hidden]="!password.errors.maxlength">
+          Name password be more than 255 characters long.
+        </div>
+      </div>
     </div>
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Register</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid || !isEmailValid(user.email) || !user.email.endsWith('@pim-plus.org') || containsSpecialCharacter(user.userName)">Register</button>
       <a routerLink="/login" routerLinkActive="login" class="btn btn-link">Cancel</a>
     </div>
   </form>

@@ -25,7 +25,10 @@ export class RegisterComponent implements OnInit {
               private messageService: MessageService,
               private calendarService: CalendarService,
               private userService: UserService,
-              private groupsService: GroupsService) {}
+              private groupsService: GroupsService) {
+    this.user.email = '';
+    this.user.userName = '';
+  }
 
   ngOnInit() {
   }
@@ -55,17 +58,19 @@ export class RegisterComponent implements OnInit {
           this.error = 'We could not register you. ';
           switch (err.status)
           {
-            case 400:
-              this.error += 'The email address must end with "@pim-plus.org".';
-              break;
             case 409:
               this.error += 'The email address or username is already taken.';
-              break;
-            case 422:
-              this.error += 'The username should not contain any special characters and the password must be at least 8 characters long.';
               break;
           }
         }
       )
+  }
+
+  private isEmailValid(email: string): boolean {
+    return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+  }
+
+  private containsSpecialCharacter(s: string): boolean {
+    return ! /^[a-zA-Z0-9- ]*$/.test(s);
   }
 }
