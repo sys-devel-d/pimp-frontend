@@ -18,7 +18,6 @@ export class AdminComponent implements OnInit, OnDestroy {
   private groupsSubscriptions: Subscription[];
   private groupToEdit: Group;
   private typeToEdit: string;
-  private isAdmin: boolean;
 
   private userAddingMode: boolean = false;
   private term: string;
@@ -35,18 +34,15 @@ export class AdminComponent implements OnInit, OnDestroy {
       .allProjectsChange.subscribe(projects => this.projects = projects);
     this.groupsSubscriptions = [teamsSub, projectsSub];
     this.addUserCallback = this.addUserToGroup.bind(this);
-    this.isAdmin = this.authService.isAdmin();
   }
 
   ngOnInit() {
     this.teams = this.groupsService.getAllTeams();
     this.projects = this.groupsService.getAllProjects();
-    this.isAdmin = this.authService.isAdmin();
   }
 
   ngOnDestroy() {
     this.groupsSubscriptions.forEach(sub => sub.unsubscribe());
-    this.isAdmin = false;
   }
 
   editName(name, group, type) {

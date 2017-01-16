@@ -15,6 +15,7 @@ import { OtherProfileComponent } from './profile/other-profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './commons/auth.guard';
+import { AdminAuthGuard } from './commons/admin.auth.guard';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 import GroupsService from './services/groups.service';
@@ -80,7 +81,7 @@ import { AdminComponent } from './admin/admin.component';
       { path: 'login', component: LoginComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'profile/:userName', component: OtherProfileComponent, canActivate: [AuthGuard] },
-      { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+      { path: 'admin', component: AdminComponent, canActivate: [AdminAuthGuard] },
       { path: 'register', component: RegisterComponent },
       { path: '', component: LoginComponent },
       { path: '**', component: PageNotFoundComponent }
@@ -88,6 +89,7 @@ import { AdminComponent } from './admin/admin.component';
   ],
   providers: [
     AuthGuard,
+    AdminAuthGuard,
     AuthService,
     MessageService,
     UserService,

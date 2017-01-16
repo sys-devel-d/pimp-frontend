@@ -15,6 +15,7 @@ export class AuthService {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
     this.userName = currentUser && currentUser.userName;
+    this.roles = currentUser && currentUser.roles;
   }
 
   login(userName, password): Observable<boolean> {
@@ -32,7 +33,7 @@ export class AuthService {
         if (data) {
           this.token = data.access_token;
           this.userName = userName;
-          this.roles = data.roles;
+          this.roles = data.user_roles;
           localStorage.setItem('currentUser', JSON.stringify({
             userName: userName,
             token: this.token,
@@ -80,10 +81,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    if (this.roles.indexOf('ROLE_ADMIN') !== -1) {
-      return true;
-    }
-    return false;
+    return this.roles && this.roles.indexOf('ROLE_ADMIN') !== -1;
   }
 }
 

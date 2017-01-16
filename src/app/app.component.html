@@ -9,7 +9,7 @@
         <li> <a routerLink="/chat" routerLinkActive="active" class="link">Chat</a> </li>
         <li> <a routerLink="/calendar" routerLinkActive="active" class="link">Kalender</a> </li>
         <li> <a routerLink="/profile" routerLinkActive="active" class="link">Profil</a>  </li>
-        <li> <a routerLink="/admin" routerLinkActive="active" class="link">Teams & Projekte</a></li>
+        <li> <a routerLink="/admin" routerLinkActive="active" *ngIf="authService.isAdmin()" class="link">Teams & Projekte</a></li>
         <li> <a routerLink="/login" routerLinkActive="active" (click)="logout()" class="link">Logout</a> </li>
       </ul>
     </div>

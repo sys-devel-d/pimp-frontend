@@ -5,8 +5,11 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  router: Router;
 
-  constructor(private router: Router, private authService: AuthService) { }
+  constructor(router: Router, private authService: AuthService) {
+    this.router = router;
+  }
 
   canActivate(): boolean {
     const storageUser = localStorage.getItem('currentUser');

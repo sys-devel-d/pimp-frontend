@@ -73,8 +73,9 @@ export default class GroupsService {
     const headers = { headers: this.authService.getTokenHeader() };
     return this.http
       .post(Globals.BACKEND + type , group, headers)
+      .map(res => res.json)
       .subscribe(
-        () => this.addGroup(group, type),
+        grp => this.addGroup(grp, type),
         err => console.log(err)
       );
   }
@@ -132,7 +133,6 @@ export default class GroupsService {
           }
           return project;
         });
-      console.log(projects);
       this.allProjects = projects;
       this.allProjectsChange.next(projects);
     }
@@ -163,6 +163,8 @@ export default class GroupsService {
   tearDown() {
     this.teams = [];
     this.projects = [];
+    this.allTeams = [];
+    this.allProjects = [];
   }
 
   getTeams(): Team[] {
