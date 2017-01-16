@@ -7,9 +7,10 @@ import 'rxjs/add/operator/map';
 import { User } from '../models/base';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export class UserService {
+export class UserService implements IPimpService {
 
   currentUser: User;
   userChange: Subject<User> = new Subject<User>();
@@ -83,6 +84,19 @@ export class UserService {
       )
       .map((res: Response) => {
         return res.json()
+      })
+      .catch((error: any) => Observable
+        .throw(error.json() ? error.json().error : 'Server error while searching for users.'));
+  }
+
+  searchAll(term: string) {
+    return this.http
+      .get(
+        Globals.BACKEND + 'users/search/all/' + term,
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => {
+        return res.json();
       })
       .catch((error: any) => Observable
         .throw(error.json() ? error.json().error : 'Server error while searching for users.'));

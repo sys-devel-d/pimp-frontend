@@ -2,22 +2,25 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
-import { CalEvent, Calendar, SubscribedCalendar } from '../models/base';
+import NotificationService from './notification.service';
+import { CalEvent, Calendar, SubscribedCalendar, InvitationResponse, Notification } from '../models/base';
 import { Observable, Subject } from 'rxjs';
 import {DateFormatter} from "@angular/common/src/facade/intl";
 import {
   CalendarEventAction
 } from 'angular-calendar';
+import { IPimpService } from './pimp.services';
 
 const colors: any = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
   blue: { primary: '#1e90ff', secondary: '#D1E8FF' },
   yellow: { primary: '#e3bc08', secondary: '#FDF1BA' },
-  grey: { primary: '#d3d3d3', secondary: '#D4D4D4' }
+  grey: { primary: '#d3d3d3', secondary: '#D4D4D4' },
+  white: { primary: '#FFF', secondary: '#FFF' }
 };
 
 @Injectable()
-export default class CalendarService {
+export default class CalendarService implements IPimpService {
 
   isInitialized = false;
   private viewDate: Date = new Date();
@@ -50,10 +53,24 @@ export default class CalendarService {
     }
   ];
 
-  constructor(private authService: AuthService, private http: Http) {}
+  readOnlyActions: CalendarEventAction[] = [
+    {
+      label: '<i class="fa fa-info"></i>',
+      onClick: ({event}: { event: CalEvent }): void => {
+        this.eventClicked(event);
+      }
+    }
+  ];
+
+  constructor(
+    private authService: AuthService,
+    private http: Http,
+    private notificationService: NotificationService) {}
 
   init() {
     if (!this.isInitialized) {
+      this.notificationService.fetchSingleEvent = this.fetchSingleEvent.bind(this);
+      this.notificationService.removeEvent = this.removeEvent.bind(this);
       this.fetchUsersCalendars();
     }
   }
@@ -88,6 +105,7 @@ export default class CalendarService {
       this.subscribedCals = this.calendars.map( cal => {
         return {
           key: cal.key,
+          owner: cal.owner,
           title: cal.title,
           active: true,
           unsubscribable: cal.owner !== this.authService.getCurrentUserName()
@@ -98,6 +116,21 @@ export default class CalendarService {
       that events have changed, so the UI updates. */
       this.eventsChange.next(this.events);
       this.isInitialized = true;
+    });
+  }
+
+  fetchSingleEvent(calendarKey: string, eventKey: string) {
+    this.http.get(
+      Globals.BACKEND + `calendar/${calendarKey}/event/${eventKey}`,
+      { headers: this.authService.getTokenHeader() }
+    ).map( res => res.json() )
+    .subscribe( (event: CalEvent) => {
+      if(this.allEvents.find(evt => evt.key === event.key)) {
+        this.updateEvent(event);
+      }
+      else {
+        this.addEvent(event);
+      }
     });
   }
 
@@ -149,18 +182,27 @@ export default class CalendarService {
     return this.activeDayIsOpen;
   }
 
-  createEvent(event: CalEvent) {
-    event.creator = this.authService.getCurrentUserName();
-    this.http.post(
+  createEvent(event: CalEvent, shouldAnnounce = true): any {
+    if(!event.creator) {
+      event.creator = this.authService.getCurrentUserName();
+    }
+    return this.http.post(
       Globals.BACKEND + 'calendar/' + event.calendarKey,
       this.mapEventForBackend(event),
       { headers: this.authService.getTokenHeader() }
     )
-    .map(response => response.json())
-    .subscribe( (evt: CalEvent) => this.addEvent(evt) );
+    .map(response =>
+      response.json()
+    )
+    .subscribe( (evt: CalEvent) => {
+      this.addEvent(evt);
+      if(shouldAnnounce) {
+        this.notificationService.announceInvitation(evt);
+      }
+    });
   }
 
-  editEvent(event: CalEvent) {
+  editEvent(event: CalEvent, newlyInvitedUsers: string[]) {
     this.http.put(
       Globals.BACKEND + 'calendar/event/' + event.key,
       this.mapEventForBackend(event),
@@ -168,12 +210,17 @@ export default class CalendarService {
         headers: this.authService.getTokenHeader()
       }
     ).subscribe(
-      () => this.updateEvent(event),
+      () => {
+        this.updateEvent(event);
+        const copyEvent = Object.assign({}, event);
+        copyEvent.invited = newlyInvitedUsers;
+        this.notificationService.announceInvitation(copyEvent);
+      },
       err => console.log(err)
     )
   }
 
-  deleteEvent(event: any) {
+  deleteEvent(event: any, shouldAnnounce = true) {
     this.http.delete(
       Globals.BACKEND + 'calendar/event/' + event.key,
       {
@@ -181,7 +228,12 @@ export default class CalendarService {
         body: this.mapEventForBackend(event)
       }
     ).subscribe(
-      () => this.removeEvent(event),
+      () => {
+        this.removeEvent(event);
+        if(shouldAnnounce) {
+          this.notificationService.announceEventDeletion(event);
+        }
+      },
       err => console.log(err)
     );
   }
@@ -221,6 +273,59 @@ export default class CalendarService {
       ).subscribe( () => this.removeCalendar(key) );
   }
 
+  acceptOrDeclineInvitation(accept: boolean, notification: Notification, answer?: string) {
+    let invitationResponse = this.mapNotificationToInvitationResponse(accept, notification, answer);
+    return this.http.post(
+      Globals.BACKEND + 'calendar/invitation',
+      invitationResponse,
+      { headers: this.authService.getTokenHeader() }
+    ).subscribe( () => {
+      let invitationResponseNotification = this.mapInvitationResponseToNotification(invitationResponse);
+      this.notificationService.acknowledgeNotification(notification);
+      const eventToBeUpdated = this.allEvents.find( evt => evt.key === notification.referenceKey );
+      if(eventToBeUpdated) {
+        eventToBeUpdated.invited = eventToBeUpdated.invited.filter ( u => u !== this.authService.getCurrentUserName() );
+        if(accept) {
+          invitationResponseNotification.intent = 'success';
+          eventToBeUpdated.participants.push(this.authService.getCurrentUserName());
+        }
+        else {
+          invitationResponseNotification.intent = 'error'; // ;)
+          eventToBeUpdated.declined.push(this.authService.getCurrentUserName());
+        }
+        
+        this.notificationService.announce(invitationResponseNotification);
+        this.updateEvent(eventToBeUpdated);
+      }
+    });
+  }
+
+  private mapNotificationToInvitationResponse(accept: boolean, notification: Notification, answer?: string): InvitationResponse {
+    let r = new InvitationResponse();
+    r.state = accept ? InvitationResponse.ACCEPTED : InvitationResponse.DECLINED;
+    r.answer = answer || '';
+    r.eventKey = notification.referenceKey;
+    r.calendarKey = notification.referenceParentKey;
+    r.userName = notification.receivingUser;
+    r.invitee = notification.sendingUser;
+    return r;
+  }
+
+  private mapInvitationResponseToNotification(invitationResponse: InvitationResponse): Notification {
+    let n = new Notification();
+    n.type = 'EVENT_UPDATE';
+    n.acknowledged = false;
+    n.message = InvitationResponse.ACCEPTED === invitationResponse.state 
+      ? invitationResponse.userName + ' wird teilnehmen.' 
+      : invitationResponse.userName + ' wird nicht teilnehmen. Grund: ' 
+        + '"' + invitationResponse.answer + '"';
+    n.referenceKey = invitationResponse.eventKey;
+    n.referenceParentKey = invitationResponse.calendarKey;
+    n.receivingUser = invitationResponse.invitee;
+    n.sendingUser = invitationResponse.userName;
+    return n;
+  } 
+
   private addCalendar(calendar: Calendar) {
     calendar = this.mapCalendarEvents(calendar);
     this.events = this.events.concat(calendar.events);
@@ -228,6 +333,7 @@ export default class CalendarService {
     this.subscribedCals.push({
       key: calendar.key,
       title: calendar.title,
+      owner: calendar.owner,
       active: true,
       unsubscribable: calendar.owner !== this.authService.getCurrentUserName()
     });
@@ -243,9 +349,24 @@ export default class CalendarService {
     this.calendarsChange.next(this.calendars);
   }
 
-  private removeEvent(event: any) {
+  private removeEvent(event: any, viaNotification = false) {
+    let calendarKey = event.calendarKey;
+    if(viaNotification) {
+      // The event deletion was announced via notification
+      calendarKey = this.allEvents.find(evt => evt.key === event.key).calendarKey;
+      if(calendarKey !== event.calendarKey) {
+        // This event was copied from another event
+        const copiedEvent = new CalEvent();
+        copiedEvent.key = event.key;
+        copiedEvent.calendarKey = calendarKey;
+        // OK now we can delete this event from the server. 
+        // But don't announce the deletion again because this is a copied event.
+        this.deleteEvent(copiedEvent, false);
+        return;
+      }
+    }
     this.events = this.events.filter(evt => evt.key !== event.key);
-    this.allEvents= this.allEvents.filter(evt => evt.key !== event.key);
+    this.allEvents = this.allEvents.filter(evt => evt.key !== event.key);
     const correspondingCal = this.calendars.find(cal => cal.key === event.calendarKey);
     correspondingCal.events = correspondingCal.events.filter(evt => evt.key !== event.key);
     this.eventsChange.next(this.events);
@@ -255,6 +376,20 @@ export default class CalendarService {
     evt = this.mapEventForFrontend(evt);
     let calendar: Calendar = this.calendars
       .find(cal => cal.key === evt.calendarKey);
+    if(!calendar) {
+      /* So here is the case where we are probably invited to
+         an event which is part of a calendar that we are not subscribed to.
+         So now we just copy this event into our calendar (one of our calendars). */
+      calendar = this.calendars.find(cal => cal.owner === this.authService.getCurrentUserName());
+      if(!calendar) {
+        throw new Error("There is no calendar owned by the user. The event cannot be added.");
+      }
+      else {
+        evt.calendarKey = calendar.key;
+        this.createEvent(evt, false);
+        return;
+      }
+    }
     calendar.events.push(evt);
     this.events.push(evt);
     this.allEvents.push(evt);
@@ -262,6 +397,7 @@ export default class CalendarService {
   }
 
   private updateEvent(updatedEvent: CalEvent) {
+    updatedEvent = this.mapEventForFrontend(updatedEvent);
     const f = (evt) => evt.key === updatedEvent.key;
     let idx = this.events.findIndex(f);
     this.events[idx] = updatedEvent;
@@ -285,16 +421,22 @@ export default class CalendarService {
   }
 
   private mapEventForFrontend(evt: any): CalEvent {
+
+    const currentUserName = this.authService.getCurrentUserName();
+    const isEditable = evt.creator === currentUserName;
+
     evt.start = new Date(evt.start);
     evt.end = new Date(evt.end);
     evt.color = evt.isPrivate ? colors.red : colors.blue;
-    evt.draggable = true;
+    evt.draggable = isEditable;
     evt.resizable = {
-      beforeStart: true,
-      afterEnd: true
+      beforeStart: isEditable,
+      afterEnd: isEditable
     }
 
-    if (evt.creator === this.authService.getCurrentUserName()) {
+    evt.actions = this.readOnlyActions;
+
+    if (isEditable) {
       evt.actions = this.actions;
     }
     else if(evt.isPrivate) {
@@ -302,6 +444,10 @@ export default class CalendarService {
       const end = DateFormatter.format(evt.end, 'de', 'HH:mm');
       evt.title = `PRIVATER TERMIN (${evt.creator}, ${start} - ${end})`;
       evt.color = colors.grey;
+    }
+
+    if(evt.participants.findIndex(part => part === currentUserName) === -1) {
+      evt.color = colors.white;
     }
     
     return evt;

@@ -27,7 +27,9 @@ export default class CalendarServiceStub extends CalendarService {
             allDay: true,
             isPrivate: false,
             color: colors.red,
-            participants: []
+            participants: [],
+            invited: [],
+            declined: []
         }, {
             key: '2135356',
             calendarKey: '573ioeiog',
@@ -40,7 +42,9 @@ export default class CalendarServiceStub extends CalendarService {
             place: 'Room 5',
             description: 'Be punctual!',
             color: colors.yellow,
-            participants: []
+            participants: [],
+            invited: [],
+            declined: []
         }];
     }
 

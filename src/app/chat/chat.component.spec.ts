@@ -7,6 +7,8 @@ import { MessageService } from '../services/message.service';
 import { UserService } from '../services/user.service';
 import { MessageServiceStub } from '../services/test/message.service.stub';
 import { UserServiceStub } from '../services/test/user.service.stub';
+import { AuthService } from '../services/auth.service';
+import { AuthServiceStub } from '../services/test/auth.service.stub';
 
 import { UserSearchComponent } from '../user-search/user-search.component';
 import UserSelectionComponent from '../user-selection/user-selection.component';
@@ -41,6 +43,9 @@ describe('ChatComponent', () => {
         },
         {
           provide: UserService, useClass: UserServiceStub
+        },
+        {
+          provide: AuthService, useClass: AuthServiceStub
         }
       ]
     })

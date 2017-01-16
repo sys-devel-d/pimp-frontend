@@ -1,15 +1,25 @@
 #chat-message-container {
-    height: 65vh;
+    height: 86vh;
     overflow: auto;
 
     .chat-message {
         word-wrap: break-word;
         width: calc(100%);
         margin-bottom: 5px;
+        border: 0px;
+        float: right;
     }
 
     .chat-message-body {
         padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 60%;
+    }
+
+    .message-of-me {
+        background-color: #eee;
+        float: right;
     }
 
     .date {
@@ -23,7 +33,7 @@
 
 .chat-overview {
     box-shadow: 1px 0 0 #ccc;
-    height: 75vh;
+    height: 93vh;
 
   .btn-add-group {
       margin: 5px 0;
@@ -47,25 +57,26 @@
     .room-content {
         height: 100%;
         padding: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    margin-bottom: 1px;
     height: 50px;
     width: calc(100%);
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-width: 2px;
-    border-color: #000;
-    background-color: #eee
+    border-top: 1px solid #ddd;
 
     p {
         margin: 0;
     }
 
     &.selected {
-        background-color: #eee;
+        background-color: #444;
+        color: #fff;
     }
 
     .edit-room-actions {
@@ -82,4 +93,5 @@
 
 a {
   cursor: pointer;
+  color: #ea4d2a;
 }

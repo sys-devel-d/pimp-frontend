@@ -3,43 +3,43 @@ import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { Message, User, Room } from '../models/base';
 import { AuthService } from './auth.service';
+import WebsocketService from './websocket.service';
+import NotificationService from './notification.service';
 import { Http, Response } from '@angular/http';
 import { Globals } from '../commons/globals';
 import { Observable, Subject } from 'rxjs';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export class MessageService {
+export class MessageService implements IPimpService {
 
-  private socket: any;
   private stompClient: any;
   private stompSubscriptions: Object = {};
-  connected = false;
   private currentRoom: Room;
   currentRoomChange: Subject<Room> = new Subject<Room>();
   private rooms: Room[] = [];
   roomsChange: Subject<Room[]> = new Subject<Room[]>();
-
   chatErrorMessageChange : Subject<string> = new Subject<string>();
 
-  constructor(private authService: AuthService, private http: Http) {}
+  constructor(
+    private authService: AuthService,
+    private notificationService: NotificationService,
+    private http: Http,
+    private websocketService: WebsocketService) { }
 
   init() {
-    if(!this.connected) {
-      this.getInitialRooms().subscribe( (rooms: Room[]) => {
-        let socket = new SockJS(`${Globals.BACKEND}chat/?access_token=${this.authService.getToken()}`);
-        this.socket = socket;
-        this.stompClient = Stomp.over(socket);
-        this.stompClient.debug = null;
+    this.notificationService.fetchSingleRoom = this.fetchSingleRoom.bind(this);
+    this.getInitialRooms().subscribe( (rooms: Room[]) => {
+      this.stompClient = this.websocketService.getStompClient();
 
-        if(rooms.length > 0) {
-          this.setCurrentRoom(rooms[0]);
-          this.rooms = rooms;
-          this.roomsChange.next(rooms);
-        }
+      if(rooms.length > 0) {
+        this.setCurrentRoom(rooms[0]);
+        this.rooms = rooms;
+        this.roomsChange.next(rooms);
+      }
 
-        this.connectAndSubscribeMultiple(rooms);
-      });
-    }
+      this.connectAndSubscribeMultiple(rooms);
+    });
   }
 
   /* Get all rooms in which user is member */
@@ -93,6 +93,7 @@ export class MessageService {
         this.rooms.push(room);
         this.roomsChange.next(this.rooms);
         this.currentRoomChange.next(room);
+        this.notificationService.announceNewChat(room);
       },
       err => {
         const message = err.status == 409 ?
@@ -103,13 +104,23 @@ export class MessageService {
     );
   }
 
+  fetchSingleRoom(id: string) {
+    this.http.get(
+      Globals.BACKEND + 'rooms/' + id,
+      { headers: this.authService.getTokenHeader() }
+    ).map( res => {
+      return res.json() as Room
+    }).subscribe( (room: Room) => {
+      this.rooms.push(room);
+      this.roomsChange.next(this.rooms);
+      this.subscribeToRoom(room);
+    });
+  }
+
   private connectAndSubscribeMultiple(rooms: Room[]): void {
-    this.stompClient.connect({}, (/*frame*/) => {
-      this.connected = true;
-      for(let room of rooms) {
-        this.subscribeToRoom(room);
-      }
-    }, err => console.log('err', err) );
+    for(let room of rooms) {
+      this.subscribeToRoom(room);
+    }
   }
 
   private handleIncomingMessage(roomName: string, { body }) {
@@ -172,10 +183,7 @@ export class MessageService {
   }
 
   tearDown(): void {
-    this.stompClient.disconnect();
-    this.socket.close();
     this.rooms =  [];
-    this.connected = false;
   }
 
 }

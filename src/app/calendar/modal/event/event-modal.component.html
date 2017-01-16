@@ -53,22 +53,23 @@
         <datetime id="eventEnd" [datepicker]="datepickerOpts" [timepicker]="timepickerOpts" [(ngModel)]="event.end"></datetime>
       </div>
 
-      <div class="col-md-12">
-        <user-selection
+      <div *ngIf="!event.isPrivate" class="col-md-12">
+        <user-invitation
           (update)="onSelectedUsersUpdate($event)"
           [users]="users"
-          [selectedUsers]="selectedUsers"
+          [invited]="invited"
+          [declined]="declined"
+          [participants]="participants"
           [displayUser]="displayUser"
-          [displaySelectedUser]="displayUser"
           [canRemoveUsers]="!inEditingMode">
-        </user-selection>
+        </user-invitation>
       </div>
     </div>
   </div>
 
   <div modal-footer>
-    <button *ngIf="inEditingMode" class="btn btn-primary" (click)="deleteEvent()">Löschen</button>
-    <button class="btn btn-primary" (click)="saveEvent()">Speichern</button>
+    <button *ngIf="inEditingMode" class="btn pimp-btn" (click)="deleteEvent()">Löschen</button>
+    <button class="btn pimp-btn" (click)="saveEvent()">Speichern</button>
   </div>
-  
+
 </modal-dialog>

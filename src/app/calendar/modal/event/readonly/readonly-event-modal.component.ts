@@ -4,6 +4,7 @@ import { showAppModal, hideAppModal } from '../../../../commons/dom-functions';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import CalendarService from '../../../../services/calendar.service';
+import {DateFormatter} from "@angular/common/src/facade/intl";
 
 @Component({
   selector: 'readonly-event-modal',
@@ -66,6 +67,10 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
       this.router.navigate(['calendar']);
     }
     // else calendarService is not initialized yet. When it is, this function will be called again.
+  }
+
+  private formatDate(date) {
+    return DateFormatter.format(date, 'de', 'dd.MM.yyyy HH:mm');
   }
 
 }

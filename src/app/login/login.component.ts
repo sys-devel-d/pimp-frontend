@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../services/auth.service';
-import { MessageService } from '../services/message.service';
-import { UserService } from '../services/user.service';
-import CalendarService from '../services/calendar.service';
-import GroupsService from '../services/groups.service';
+import PimpServices from '../services/pimp.services';
 import { User } from '../models/base';
 
 @Component({
@@ -18,10 +15,7 @@ export class LoginComponent implements OnInit {
   error: String;
   constructor(private authService: AuthService,
               private router: Router,
-              private messageService: MessageService,
-              private calendarService: CalendarService,
-              private userService: UserService,
-              private groupsService: GroupsService) {}
+              private pimpServices: PimpServices) {}
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
@@ -35,10 +29,7 @@ export class LoginComponent implements OnInit {
         result => {
           if (result === true) {
             this.router.navigate(['profile']);
-            this.messageService.init();
-            this.calendarService.init();
-            this.userService.init();
-            this.groupsService.init();
+            this.pimpServices.init();
           } else {
             this.error = 'We are sorry. We could not log you in. Please try again.';
           }

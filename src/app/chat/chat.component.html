@@ -1,6 +1,6 @@
 <div class="row">
 
-  <div class="col-md-3 chat-overview">
+  <div class="col-xs-3 chat-overview">
 
     <div id="user-search-container">
       <app-user-search-field
@@ -12,28 +12,27 @@
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
       </app-user-search-field>
       <button class="btn btn-default btn-add-group" (click)="fetchUsersForSelectionAndOpenDialog()">
-        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        Neuer Gruppenchat</button>
+        <i title="Gruppenchat hinzufügen" class="fa fa-plus"></i>
+        <i title="Gruppenchat hinzufügen" class="fa fa-users"></i>
+      </button>
       <div *ngIf="error" class="alert alert-danger">{{error}}</div>
     </div>
 
     <div id="room-container">
       <div *ngFor='let room of rooms' (click)="setCurrentRoom(room)">
         <div class="room-container" [ngClass]="{ 'selected': room.roomName == currentRoom.roomName }">
-          <div class="col-md-8 room-content">
+          <div class="col-xs-9 room-content">
             <div class="roomname">
-              <div *ngIf="room.roomType === 'PRIVATE'">
-                <a (click)="linkToPrivateChatPartner(room.participants)">
-                  {{ room | roomName }}
-                </a>
-              </div>
-              <div *ngIf="room.roomType !== 'PRIVATE'">
-                {{ room | roomName }}
-              </div>
+              <i title="Privatchat" class="fa fa-user" aria-hidden="true" *ngIf="room.roomType == 'PRIVATE'"></i>
+              <i title="Gruppenchat" class="fa fa-users" aria-hidden="true" *ngIf="room.roomType == 'GROUP'"></i>
+              {{ room | roomName }}
             </div>
             <div class="most-recent-message">{{ room.messages.length > 0 ? room.messages[room.messages.length - 1].message : "..." }}</div>
           </div>
-          <div class="col-md-4 edit-room-actions">
+          <div class="col-xs-3 edit-room-actions">
+            <i title="Profil" class="fa fa-address-book" aria-hidden="true" *ngIf="room.roomType == 'PRIVATE'"
+               (click)="linkToPrivateChatPartner(room.participants)">
+            </i>
             <i title="Bearbeiten" class="fa fa-pencil-square-o" aria-hidden="true" *ngIf="room.roomType == 'GROUP'" (click)="prepareEditingRoom(room)"></i>
             <i title="Verlassen" class="fa fa-sign-out" aria-hidden="true" *ngIf="room.roomType == 'GROUP'" (click)="exitRoom(room)"></i>
           </div>
@@ -43,25 +42,30 @@
 
   </div>
 
-  <div class="col-md-9 pull-right chat-col">
+  <div class="col-xs-9 pull-right chat-col">
     <div *ngIf="currentRoom" id="chat-message-container">
-      <div class="panel panel-default chat-message" *ngFor='let message of currentRoom.messages'>
-        <div class="panel-body chat-message-body">
-          <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
-          <div *ngIf="message.userName === userService.currentUser.userName">
-            <span class="name">{{ message.userName }}: </span>
+      <div class="chat-message" *ngFor='let message of currentRoom.messages'>
+        <div *ngIf="message.userName === currentUserName">
+          <div class="panel-body chat-message-body message-of-me">
+            <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
+            <br/>
             <span class="message">{{ message.message }}</span>
           </div>
-          <div *ngIf="message.userName !== userService.currentUser.userName">
+        </div>
+        <div *ngIf="message.userName !== currentUserName">
+          <div class="panel-body chat-message-body">
+            <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
+            <br/>
             <a  class="name" (click)="linkToChatPartner(message.userName)">{{ message.userName }}</a><span class="message">: {{ message.message }}</span>
           </div>
         </div>
       </div>
     </div>
-    <form (ngSubmit)="send()">
+    <form *ngIf="currentRoom" (ngSubmit)="send()">
       <input id="message-input" type="text" [(ngModel)]="text" class="form-control message-input"
              placeholder="Enter message..." [ngModelOptions]="{standalone: true}">
     </form>
+    <p *ngIf="!currentRoom">Keine Chats ;(</p>
   </div>
 
 </div>

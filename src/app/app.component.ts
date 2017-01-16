@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
-import { AuthService } from "./services/auth.service";
-import { MessageService } from "./services/message.service";
-import { UserService } from './services/user.service';
-import CalendarService from './services/calendar.service';
-import GroupsService from './services/groups.service';
+import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
+import NotificationService from './services/notification.service';
+import PimpServices from './services/pimp.services';
 
 @Component({
   selector: 'app-root',
@@ -12,30 +10,34 @@ import GroupsService from './services/groups.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'PIMP';
+
+  unreadNotificationsCount: number = 0;
+  options = {
+    position: ["bottom", "right"],
+    timeOut: 5000,
+    lastOnBottom: true
+  }
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService,
-    private messageService: MessageService,
-    private calendarService: CalendarService,
-    private groupsService: GroupsService) {}
+    private pimpServices: PimpServices,
+    notificationService: NotificationService) {
+      notificationService.notificationsChange.subscribe(notifications => {
+        this.unreadNotificationsCount = Object.getOwnPropertyNames(notifications).reduce( (carry: number, key: string) => {
+          return carry + notifications[key].length;
+        }, 0);
+      });
+    }
 
   ngOnInit() {
     if(this.authService.isLoggedIn()) {
-      this.messageService.init();
-      this.userService.init();
-      this.calendarService.init();
-      this.groupsService.init();
+      this.pimpServices.init();
     }
   }
 
   logout() {
     this.authService.logout();
-    this.messageService.tearDown();
-    this.userService.tearDown();
-    this.calendarService.tearDown();
-    this.groupsService.tearDown();
+    this.pimpServices.tearDown();
   }
 }

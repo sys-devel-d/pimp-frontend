@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, URLSearchParams } from '@angular/http';
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
 import { Globals } from '../commons/globals';
@@ -9,11 +9,13 @@ import { Globals } from '../commons/globals';
 export class AuthService {
   private token: string;
   private userName: string;
+  private roles: string[];
 
   constructor(private http: Http) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
     this.userName = currentUser && currentUser.userName;
+    this.roles = currentUser && currentUser.roles;
   }
 
   login(userName, password): Observable<boolean> {
@@ -27,23 +29,24 @@ export class AuthService {
     return this.http
       .post(Globals.BACKEND + 'oauth/token', urlSearchParams.toString(), {headers: headers})
       .map((res: Response) => {
-        let token = res.json() && res.json().access_token;
-        let expiresIn = res.json() && res.json().expires_in;
-        if (token) {
-          this.token = token;
+        const data = res.json();
+        if (data) {
+          this.token = data.access_token;
           this.userName = userName;
+          this.roles = data.user_roles;
           localStorage.setItem('currentUser', JSON.stringify({
             userName: userName,
-            token: token,
-            expiresIn: expiresIn,
-            startDate: new Date()
+            token: this.token,
+            expiresAt: Date.now() + (data.expires_in * 1000),
+            startDate: new Date(),
+            roles: this.roles
           }));
         }
-        return token && true;
+        return this.token && true;
       })
       .catch( (error:any) => {
         const err = (400 <= error.status && error.status < 500) ?
-                    'Username or password is wrong' : 'Server Error'
+                    'Zugangsdaten ungültig.' : 'Server Error'
         return Observable.throw(err)
       });
   }
@@ -56,6 +59,8 @@ export class AuthService {
 
   logout(): void {
     this.token = null;
+    this.roles = null;
+    this.userName = null;
     localStorage.removeItem('currentUser');
   }
 
@@ -71,5 +76,12 @@ export class AuthService {
     return this.userName;
   }
 
+  getRoles(): string[] {
+    return this.roles;
+  }
+
+  isAdmin(): boolean {
+    return this.roles && this.roles.indexOf('ROLE_ADMIN') !== -1;
+  }
 }
 

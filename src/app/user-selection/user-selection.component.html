@@ -13,7 +13,7 @@
 		<h4>{{ isInEditMode ? 'Teilnehmer' : 'Hinzugefügt'}}: {{ selectedUsers ? selectedUsers.length : 0 }}</h4>
 		<div *ngFor="let user of selectedUsers">
 			<i class="fa fa-minus select-action" aria-hidden="true" *ngIf="canRemoveUsers" (click)="removeFromSelectedUsers(user)"></i>
-      {{ displaySelectedUser(user) }}
+      {{ displayUser(user) }}
 		</div>
 	</div>
 </div>
