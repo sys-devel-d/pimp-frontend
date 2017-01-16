@@ -38,6 +38,7 @@ export class Calendar {
 export class SubscribedCalendar {
   key: string;
   title: string;
+  owner: string;
   active: boolean;
   unsubscribable: boolean;
 }

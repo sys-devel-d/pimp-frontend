@@ -3,8 +3,8 @@
 }
 
 .table td {
-   vertical-align: middle;
-   border: none;
+  vertical-align: middle;
+  border-top: 1px solid #ddd;
 }
 
 .checkbox {

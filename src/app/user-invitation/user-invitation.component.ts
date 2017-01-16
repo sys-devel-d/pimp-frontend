@@ -3,8 +3,7 @@ import { User } from '../models/base';
 
 @Component({
   selector: 'user-invitation',
-  templateUrl: './user-invitation.component.html',
-  styles: ['.select-action { color: lightsalmon; }']
+  templateUrl: './user-invitation.component.html'
 })
 export default class UserInvitationComponent {
   

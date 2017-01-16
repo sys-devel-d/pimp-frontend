@@ -105,6 +105,7 @@ export default class CalendarService implements IPimpService {
       this.subscribedCals = this.calendars.map( cal => {
         return {
           key: cal.key,
+          owner: cal.owner,
           title: cal.title,
           active: true,
           unsubscribable: cal.owner !== this.authService.getCurrentUserName()
@@ -332,6 +333,7 @@ export default class CalendarService implements IPimpService {
     this.subscribedCals.push({
       key: calendar.key,
       title: calendar.title,
+      owner: calendar.owner,
       active: true,
       unsubscribable: calendar.owner !== this.authService.getCurrentUserName()
     });

@@ -9,15 +9,16 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { ChatComponent } from './chat/chat.component';
 import GroupChatEditorComponent from './chat/editor/group-chat-editor.component';
 import { LoginComponent } from './login/login.component';
-import { RouterModule } from "@angular/router";
+import { RouterModule } from '@angular/router';
 import { ProfileComponent } from './profile/profile.component';
 import DashboardComponent from './dashboard/dashboard.component';
 import { OtherProfileComponent } from './profile/other-profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RegisterComponent } from './register/register.component';
-import { AuthGuard } from "./commons/auth.guard";
-import { AuthService } from "./services/auth.service";
-import { UserService } from "./services/user.service";
+import { AuthGuard } from './commons/auth.guard';
+import { AdminAuthGuard } from './commons/admin.auth.guard';
+import { AuthService } from './services/auth.service';
+import { UserService } from './services/user.service';
 import GroupsService from './services/groups.service';
 import CalendarService from './services/calendar.service';
 import { MessageService } from "./services/message.service";
@@ -25,7 +26,8 @@ import NotificationService from './services/notification.service';
 import WebsocketService from './services/websocket.service';
 import PimpServices from './services/pimp.services';
 import { UserSearchComponent } from "./user-search/user-search.component";
-import { CalendarSearchComponent } from "./user-search/calendar-search.component";
+import { AllUserSearchComponent } from './user-search/all-user-search.component';
+import { CalendarSearchComponent } from './user-search/calendar-search.component';
 import { HighlightDirective } from './directives/highlight.directive';
 import { RoomNamePipe } from './pipes/room-name.pipe';
 import InlineEdit from './inline-edit/inline-edit.component';
@@ -40,6 +42,7 @@ import UserInvitationComponent from './user-invitation/user-invitation.component
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
 import { SimpleNotificationsModule } from 'angular2-notifications';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +68,9 @@ import { SimpleNotificationsModule } from 'angular2-notifications';
     CreateEventModalComponent,
     ReadOnlyEventModalComponent,
     UserSelectionComponent,
-    UserInvitationComponent
+    UserInvitationComponent,
+    AdminComponent,
+    AllUserSearchComponent
   ],
   imports: [
     BrowserModule,
@@ -86,6 +91,7 @@ import { SimpleNotificationsModule } from 'angular2-notifications';
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
       { path: 'profile/:userName', component: OtherProfileComponent, canActivate: [AuthGuard] },
+      { path: 'admin', component: AdminComponent, canActivate: [AdminAuthGuard] },
       { path: 'register', component: RegisterComponent },
       { path: '', component: LoginComponent },
       { path: '**', component: PageNotFoundComponent }
@@ -93,6 +99,7 @@ import { SimpleNotificationsModule } from 'angular2-notifications';
   ],
   providers: [
     AuthGuard,
+    AdminAuthGuard,
     AuthService,
     MessageService,
     UserService,

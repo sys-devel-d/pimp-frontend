@@ -6,7 +6,8 @@ import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'calendar-modal',
-  templateUrl: 'calendar-modal.component.html'
+  templateUrl: './calendar-modal.component.html',
+  styleUrls: ['./calendar-modal.component.css']
 })
 export default class CalendarModalComponent {
 
@@ -34,6 +35,6 @@ export default class CalendarModalComponent {
       shakeInput('#calendarTitle');
     }
 
-    
+
   }
 }
