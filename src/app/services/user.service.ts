@@ -7,9 +7,10 @@ import 'rxjs/add/operator/map';
 import { User } from '../models/base';
 import { Globals } from '../commons/globals';
 import { AuthService } from './auth.service';
+import { IPimpService } from './pimp.services';
 
 @Injectable()
-export class UserService {
+export class UserService implements IPimpService {
 
   currentUser: User;
   userChange: Subject<User> = new Subject<User>();

@@ -3,6 +3,10 @@
     <div class="col-xs-2 pimp-navbar">
 
       <ul class="nav nav-pills nav-stacked">
+        <li> <a routerLink="/dashboard" routerLinkActive="active" class="link">
+          <i class="fa fa-list" aria-hidden="true"></i>
+          Dashboard <span *ngIf="unreadNotificationsCount > 0" class="badge">{{ unreadNotificationsCount }}</span>
+        </a> </li>
         <li> <a routerLink="/chat" routerLinkActive="active" class="link">
           <i class="fa fa-weixin"></i>
           Chat
@@ -24,11 +28,14 @@
           Logout
         </a> </li>
       </ul>
+
     </div>
 
     <div class="col-xs-10 pimp-content">
       <router-outlet></router-outlet>
     </div>
+
+    <simple-notifications [options]="options"></simple-notifications>
 
   </div>
 </div>

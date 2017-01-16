@@ -6,6 +6,8 @@ import { CalendarModule } from 'angular-calendar';
 
 import { CalendarComponent } from './calendar.component';
 import CalendarService from '../services/calendar.service';
+import NotificationService from '../services/notification.service';
+import NotificationServiceStub from '../services/test/notification.service.stub';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 import CalendarServiceStub from '../services/test/calendar.service.stub';
@@ -20,6 +22,7 @@ import ModalDialogComponent from '../modal-dialog/modal-dialog.component';
 import CreateEventModalComponent from './modal/event/create-event-modal.component';
 import ReadOnlyEventModalComponent from './modal/event/readonly/readonly-event-modal.component';
 import UserSelectionComponent from '../user-selection/user-selection.component';
+import UserInvitationComponent from '../user-invitation/user-invitation.component';
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import { HighlightDirective } from '../directives/highlight.directive';
 
@@ -47,7 +50,8 @@ describe('CalendarComponent', () => {
         HighlightDirective,
         ModalDialogComponent,
         ReadOnlyEventModalComponent,
-        UserSelectionComponent
+        UserSelectionComponent,
+        UserInvitationComponent
       ],
       providers: [
         {
@@ -58,6 +62,9 @@ describe('CalendarComponent', () => {
         },
         {
           provide: AuthService, useClass: AuthServiceStub
+        },
+        {
+          provide: NotificationService, useClass: NotificationServiceStub
         }
       ]
     })

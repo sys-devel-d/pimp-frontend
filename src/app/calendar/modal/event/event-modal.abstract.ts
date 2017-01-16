@@ -1,5 +1,6 @@
 import { CalEvent, User } from '../../../models/base';
 import CalendarService from '../../../services/calendar.service';
+import NotificationService from '../../../services/notification.service';
 import { UserService } from './../../../services/user.service';
 import { hideAppModal, showAppModal, shakeInput, fadeIn, fadeOut } from '../../../commons/dom-functions';
 
@@ -8,7 +9,9 @@ export abstract class EventModalAbstract {
   modalTitle: string;
   event: CalEvent = new CalEvent();
   users: User[];
-  selectedUsers: User[] = [];
+  invited: User[] = [];
+  declined: User[] = [];
+  participants: User[] = [];
   datepickerOpts = {
     //startDate: new Date(),
     autoclose: true,
@@ -25,11 +28,14 @@ export abstract class EventModalAbstract {
 
   calendarService: CalendarService;
   userService: UserService;
+  notificationService: NotificationService;
 
-  constructor(calendarService: CalendarService, userService: UserService) {
+  constructor(calendarService: CalendarService, userService: UserService,
+  notificationService: NotificationService) {
     this.calendarService = calendarService;
     this.userService = userService;
     this.event.start = new Date();
+    this.notificationService = notificationService;
   }
 
   showDialog(evt?: CalEvent) {
@@ -71,7 +77,7 @@ export abstract class EventModalAbstract {
       e.allDay = false;
     }
 
-    e.participants = this.selectedUsers.map( usr => usr.userName);
+    e.invited = this.invited.map( usr => usr.userName);
 
     this.saveAction(e);
     hideAppModal();
@@ -83,7 +89,7 @@ export abstract class EventModalAbstract {
   }
 
   private onSelectedUsersUpdate(users: User[]) {
-    this.selectedUsers = users;
+    this.invited = users;
   }
 
   private getTimePickerOpts() {

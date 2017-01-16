@@ -3,16 +3,18 @@ import { MessageService } from '../message.service';
 import { Observable } from "rxjs";
 import { Message, Room } from '../../models/base';
 import { Http } from '@angular/http';
-import { Globals } from '../../commons/globals'
+import { Globals } from '../../commons/globals';
 
-const generalMessages = [
+const generalMessages: Message[] = [
   {
       message: "Hi",
+      key: "34890zewuhjdf9324",
       userName: "test1",
       creationDate: new Date(1479842165 * 1000)
   },
   {
       message: "Hu",
+      key: "dfgdfh446zegtdgfd",
       userName: "test2",
       creationDate: new Date(1479842175 * 1000)
   },
@@ -21,6 +23,7 @@ const generalMessages = [
 const watercoolerMessages = [
   {
     message: "Bitte ein Bit!",
+    key: "dsadas56457uztgfjughed",
     userName: "Napoleon",
     creationDate: new Date(1479842165 * 1000)
   }

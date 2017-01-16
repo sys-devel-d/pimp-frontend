@@ -3,8 +3,7 @@ import { User } from '../models/base';
 
 @Component({
   selector: 'user-selection',
-  templateUrl: './user-selection.component.html',
-  styleUrls: ['./user-selection.component.scss']
+  templateUrl: './user-selection.component.html'
 })
 export default class UserSelectionComponent {
   
