@@ -88,6 +88,19 @@ export class UserService {
         .throw(error.json() ? error.json().error : 'Server error while searching for users.'));
   }
 
+  searchAll(term: string) {
+    return this.http
+      .get(
+        Globals.BACKEND + 'users/search/all/' + term,
+        { headers: this.authService.getTokenHeader() }
+      )
+      .map((res: Response) => {
+        return res.json();
+      })
+      .catch((error: any) => Observable
+        .throw(error.json() ? error.json().error : 'Server error while searching for users.'));
+  }
+
   getAllUsers() {
     return this.http
       .get(

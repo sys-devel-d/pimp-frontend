@@ -15,6 +15,10 @@
           <i class="fa fa-user"></i>
           Profil
         </a>  </li>
+        <li> <a routerLink="/admin" routerLinkActive="active" *ngIf="authService.isAdmin()" class="link">
+          <i class="fa fa-users"></i>
+          Teams & Projekte
+        </a></li>
         <li> <a routerLink="/login" routerLinkActive="active" (click)="logout()" class="link">
           <i class="fa fa-sign-out"></i>
           Logout
