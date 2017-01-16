@@ -48,18 +48,18 @@ export class RegisterComponent implements OnInit {
                 this.userService.init();
                 this.groupsService.init();
               } else {
-                this.error = 'We could register you, but could not log you in. Please try again.';
+                this.error = 'Wir konnten Sie registrieren, aber nicht einloggen. Bitte versuchen Sie es erneut.';
               }
             },
             error => this.error = error
           );
         },
         err => {
-          this.error = 'We could not register you. ';
+          this.error = 'Wir konnten Sie nicht registrieren. ';
           switch (err.status)
           {
             case 409:
-              this.error += 'The email address or username is already taken.';
+              this.error += 'Die E-Mail-Adresse ist bereits vergeben.';
               break;
           }
         }
