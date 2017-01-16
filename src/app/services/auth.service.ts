@@ -28,22 +28,20 @@ export class AuthService {
     return this.http
       .post(Globals.BACKEND + 'oauth/token', urlSearchParams.toString(), {headers: headers})
       .map((res: Response) => {
-        let token = res.json() && res.json().access_token;
-        let expiresIn = res.json() && res.json().expires_in;
-        let roles = res.json() && res.json().user_roles;
-        if (token) {
-          this.token = token;
+        const data = res.json();
+        if (data) {
+          this.token = data.access_token;
           this.userName = userName;
-          this.roles = roles;
+          this.roles = data.roles;
           localStorage.setItem('currentUser', JSON.stringify({
             userName: userName,
-            token: token,
-            expiresIn: expiresIn,
+            token: this.token,
+            expiresAt: Date.now() + (data.expires_in * 1000),
             startDate: new Date(),
-            roles: roles
+            roles: this.roles
           }));
         }
-        return token && true;
+        return this.token && true;
       })
       .catch( (error:any) => {
         const err = (400 <= error.status && error.status < 500) ?
