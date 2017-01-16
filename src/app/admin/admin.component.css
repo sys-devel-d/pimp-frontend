@@ -1,0 +1,13 @@
+.delete-group-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.add-group-icon {
+    margin-top: 8px;
+}
+
+.panel-heading {
+    position: relative;
+}

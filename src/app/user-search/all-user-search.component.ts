@@ -2,30 +2,23 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {SearchComponent} from './search.abstract.component';
 
 @Component({
-  selector: 'app-user-search-field',
+  selector: 'app-all-user-search-field',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class UserSearchComponent extends SearchComponent {
+export class AllUserSearchComponent extends SearchComponent {
   @Output() update = new EventEmitter();
   @Input() results: Object[] = [];
-  @Input() privateChatCallback: Function;
-  @Input() groupChatCallback: Function;
+  @Input() addUserCallback: Function;
 
   constructor() {
     super();
     this.userSearch = true;
-    this.forChat = true;
+    this.forChat = false;
   }
 
-  privateChat(item) {
-    this.privateChatCallback(item);
-    this.results = [];
-    this.term = '';
-  }
-
-  groupChat(item) {
-    this.groupChatCallback(item);
+  addUser(item) {
+    this.addUserCallback(item);
     this.results = [];
     this.term = '';
   }
