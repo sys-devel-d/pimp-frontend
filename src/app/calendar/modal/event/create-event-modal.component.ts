@@ -6,10 +6,11 @@ import { EventModalAbstract } from './event-modal.abstract';
 
 @Component({
   selector: 'create-event-modal',
-  templateUrl: './event-modal.component.html'
+  templateUrl: './event-modal.component.html',
+  styleUrls: ['./event-modal.component.css']
 })
 export default class CreateEventModalComponent extends EventModalAbstract {
-  
+
   private calendars: Calendar[];
 
   constructor(calendarService: CalendarService, userService: UserService) {

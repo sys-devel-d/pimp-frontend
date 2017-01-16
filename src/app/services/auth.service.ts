@@ -46,7 +46,7 @@ export class AuthService {
       })
       .catch( (error:any) => {
         const err = (400 <= error.status && error.status < 500) ?
-                    'Username or password is wrong' : 'Server Error'
+                    'Zugangsdaten ungültig.' : 'Server Error'
         return Observable.throw(err)
       });
   }

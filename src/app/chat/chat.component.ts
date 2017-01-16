@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from '../services/message.service';
+import { AuthService } from '../services/auth.service';
 import { Message, User, Room } from '../models/base';
 import { UserService } from '../services/user.service';
 import { Globals } from '../commons/globals';
@@ -28,11 +29,14 @@ export class ChatComponent implements OnInit {
   private privateChatCallback: Function;
   private groupChatCallback: Function;
   private updateRoomCallback: Function;
+  private currentUserName: string;
 
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private userService: UserService) {
+    private userService: UserService,
+    private authService: AuthService) {
+      this.currentUserName = authService.getCurrentUserName();
       this.router = router;
       this.privateChatCallback = this.startPrivatChat.bind(this);
       this.groupChatCallback = this.fetchUsersForSelectionAndOpenDialog.bind(this);

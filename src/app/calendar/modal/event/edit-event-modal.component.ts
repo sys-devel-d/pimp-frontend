@@ -8,7 +8,8 @@ import { Globals } from '../../../commons/globals';
 
 @Component({
   selector: 'edit-event-modal',
-  templateUrl: './event-modal.component.html'
+  templateUrl: './event-modal.component.html',
+  styleUrls: ['./event-modal.component.css']
 })
 export default class EditEventModalComponent extends EventModalAbstract {
 
