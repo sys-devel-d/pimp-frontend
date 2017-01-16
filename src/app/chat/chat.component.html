@@ -49,11 +49,16 @@
         <div class="panel-body chat-message-body">
           <span class="date">{{ message.creationDate * 1000 | date:'medium' }}</span>
           <div *ngIf="message.userName === userService.currentUser.userName">
-            <span class="name">{{ message.userName }}: </span>
+            <span class="name">
+              {{ getUserNameOfParticipants(message.userName).firstName }} {{ getUserNameOfParticipants(message.userName).lastName }}: 
+            </span>
             <span class="message">{{ message.message }}</span>
           </div>
           <div *ngIf="message.userName !== userService.currentUser.userName">
-            <a  class="name" (click)="linkToChatPartner(message.userName)">{{ message.userName }}</a><span class="message">: {{ message.message }}</span>
+            <a  class="name" (click)="linkToChatPartner(message.userName)">
+              {{ getUserNameOfParticipants(message.userName).firstName }} {{ getUserNameOfParticipants(message.userName).lastName }}
+            </a>
+            <span class="message">: {{ message.message }}</span>
           </div>
         </div>
       </div>

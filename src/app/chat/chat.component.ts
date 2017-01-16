@@ -127,6 +127,11 @@ export class ChatComponent implements OnInit {
     this.currentRoom = room;
   }
 
+  getUserNameOfParticipants(userName: string): User {
+    return this.currentRoom.participants
+      .find(participant => participant.userName === userName);
+  }
+
   ngOnDestroy() {
     // Maybe unsubscribe from subcriptions to save mem?
     // http://stackoverflow.com/a/34714574
