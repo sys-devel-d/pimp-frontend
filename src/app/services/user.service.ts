@@ -51,6 +51,9 @@ export class UserService implements IPimpService {
           error => this.errorChange.next(error)
         );
     }
+    else {
+      user.photoData = 'http://www.i-dedicate.com/media/profile_images/default.png';
+    }
   }
 
   private userRequest(userName: string, successFunc) {

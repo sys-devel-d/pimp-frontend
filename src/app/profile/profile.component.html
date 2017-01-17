@@ -4,8 +4,14 @@
   <h2>{{ user.userName }}</h2>
   <div class="row">
     <div class="col-md-4">
+      <div *ngIf="!user.photoData" class="spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+      </div>
       <img *ngIf="user.photoData" [src]="user.photoData" width="100%" alt="Profile image of {{ user.firstName }}">
-      <img  *ngIf="user && !user.photoData" src="https://d30y9cdsu7xlg0.cloudfront.net/png/2553-200.png"  width="100%" alt="Profile image of {{ user.firstName }}">
       <input id="fileUploadInput" *ngIf="isPrivate" (change)="fileChangeEvent($event)" accept="image/*" type="file"/>
       <p class="alert alert-danger" *ngFor="let error of uploadErrorMessages">{{ error }}</p>
     </div>
