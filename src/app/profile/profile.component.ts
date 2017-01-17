@@ -5,6 +5,9 @@ import { UserService } from '../services/user.service';
 import GroupsService from '../services/groups.service';
 import { Subscription } from 'rxjs';
 
+const maxPhotoSizeMB = 3;
+const maxPhotoSize = maxPhotoSizeMB * 1024 * 1024;
+
 @Component({
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
@@ -19,6 +22,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   isPrivate = true;
   error: string;
   photoFile: File;
+  uploadErrorMessages: string[] = [];
 
   teams: Team[];
   projects: Project[];
@@ -67,15 +71,36 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   uploadPhoto() {
-    this.getImageData((e) => {
+    this.getImageData( e => {
       let imageData = e.target.result;
-      this.userService
-        .postUserPhoto(this.user.userName, imageData);
+      this.userService.postUserPhoto(this.user.userName, imageData);
+      this.photoFile = null;
+      const input: any = document.getElementById('fileUploadInput');
+      input.value = '';
     });
   }
 
-  fileChangeEvent(fileInput: any){
-    this.photoFile = fileInput.target.files[0];
+  fileChangeEvent(fileInput: any) {
+    const file = fileInput.target.files[0];
+    if(file) {
+      const messages = [];
+      if(file.size > maxPhotoSize) {
+        messages.push(`Bitte wählen Sie ein Foto mit einer maximalen Größe von ${maxPhotoSizeMB} MB.`);
+      }
+      if(!/image\/[a-z]+/.test(file.type)) {
+        messages.push(`Dateien des Typs ${file.type} sind nicht zulässig.`);
+      }
+
+      this.uploadErrorMessages = messages;
+
+      if(messages.length === 0) {
+        this.photoFile = file;
+        this.uploadPhoto();
+        return;
+      }
+
+      this.photoFile = null;
+    }
   }
 
   getImageData(onLoadCallback) {

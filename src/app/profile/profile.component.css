@@ -12,7 +12,7 @@ a {
   color: #ea4d2a;
 }
 
-.fileUploadBtn{
+#fileUploadInput {
     right: 0;
     margin: 12px 0;
     padding: 0;
@@ -22,4 +22,8 @@ a {
   height: 95vh;
 }
 
+.error {
+  font-size: small;
+  color: red;
+}
 
