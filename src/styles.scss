@@ -202,3 +202,22 @@ i.fa {
     transform: scale3D(0, 0, 1);
   }
 }
+
+.pimp-event .cal-event-title::before {
+  font-family: FontAwesome;
+  margin-right: 4px;
+  color: #eee;
+  display:inline-block;
+}
+
+.pimp-event.private .cal-event-title::before {
+  content: '\f023';
+}
+
+.pimp-event.not-attending .cal-event-title::before {
+  content: '\f0c0 \f05e';
+}
+
+.pimp-event.public .cal-event-title::before {
+  content: '\f0c0 \f00c';
+}

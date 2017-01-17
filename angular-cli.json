@@ -29,7 +29,8 @@
         "../node_modules/bootstrap/dist/js/bootstrap.min.js",
         "../node_modules/ng2-datetime/src/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js",
         "../node_modules/ng2-datetime/src/vendor/bootstrap-timepicker/bootstrap-timepicker.min.js",
-        "./assets/js/calendar.locale.de.js"
+        "./assets/js/calendar.locale.de.js",
+        "../node_modules/tinycolor2/dist/tinycolor-min.js"
       ],
       "environments": {
         "source": "environments/environment.ts",

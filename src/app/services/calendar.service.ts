@@ -11,13 +11,7 @@ import {
 } from 'angular-calendar';
 import { IPimpService } from './pimp.services';
 
-const colors: any = {
-  red: { primary: '#ad2121', secondary: '#FAE3E3' },
-  blue: { primary: '#1e90ff', secondary: '#D1E8FF' },
-  yellow: { primary: '#e3bc08', secondary: '#FDF1BA' },
-  grey: { primary: '#d3d3d3', secondary: '#D4D4D4' },
-  white: { primary: '#FFF', secondary: '#FFF' }
-};
+declare var tinycolor: any;
 
 @Injectable()
 export default class CalendarService implements IPimpService {
@@ -80,7 +74,7 @@ export default class CalendarService implements IPimpService {
   so they are in the right format
   */
   private mapCalendarEvents(calendar: Calendar): Calendar {
-    calendar.events = calendar.events.map(evt => this.mapEventForFrontend(evt));
+    calendar.events = calendar.events.map(evt => this.mapEventForFrontend(evt, calendar));
     return calendar;
   }
 
@@ -108,6 +102,7 @@ export default class CalendarService implements IPimpService {
           owner: cal.owner,
           title: cal.title,
           active: true,
+          hexColor: cal.hexColor,
           unsubscribable: cal.owner !== this.authService.getCurrentUserName()
         }
       });
@@ -335,6 +330,7 @@ export default class CalendarService implements IPimpService {
       title: calendar.title,
       owner: calendar.owner,
       active: true,
+      hexColor: calendar.hexColor,
       unsubscribable: calendar.owner !== this.authService.getCurrentUserName()
     });
     this.eventsChange.next(this.events);
@@ -373,7 +369,6 @@ export default class CalendarService implements IPimpService {
   }
 
   private addEvent(evt: CalEvent) {
-    evt = this.mapEventForFrontend(evt);
     let calendar: Calendar = this.calendars
       .find(cal => cal.key === evt.calendarKey);
     if(!calendar) {
@@ -390,6 +385,7 @@ export default class CalendarService implements IPimpService {
         return;
       }
     }
+    evt = this.mapEventForFrontend(evt, calendar);
     calendar.events.push(evt);
     this.events.push(evt);
     this.allEvents.push(evt);
@@ -397,13 +393,13 @@ export default class CalendarService implements IPimpService {
   }
 
   private updateEvent(updatedEvent: CalEvent) {
-    updatedEvent = this.mapEventForFrontend(updatedEvent);
+    const calendar = this.calendars.find(cal => cal.key === updatedEvent.calendarKey);
+    updatedEvent = this.mapEventForFrontend(updatedEvent, calendar);
     const f = (evt) => evt.key === updatedEvent.key;
     let idx = this.events.findIndex(f);
     this.events[idx] = updatedEvent;
     idx = this.allEvents.findIndex(f);
     this.allEvents[idx] = updatedEvent;
-    const calendar = this.calendars.find(cal => cal.key === updatedEvent.calendarKey);
     idx = calendar.events.findIndex(f);
     calendar.events[idx] = updatedEvent;
     this.eventsChange.next(this.events);
@@ -420,35 +416,51 @@ export default class CalendarService implements IPimpService {
     return evt;
   }
 
-  private mapEventForFrontend(evt: any): CalEvent {
+  private mapEventForFrontend(evt: any, cal: Calendar): CalEvent {
 
     const currentUserName = this.authService.getCurrentUserName();
     const isEditable = evt.creator === currentUserName;
 
     evt.start = new Date(evt.start);
     evt.end = new Date(evt.end);
-    evt.color = evt.isPrivate ? colors.red : colors.blue;
+    const color = cal.hexColor ? cal.hexColor : Calendar.FALLBACK_COLOR;
+    evt.color = {
+      primary: color,
+      secondary: tinycolor(color).lighten(30)
+    };
     evt.draggable = isEditable;
     evt.resizable = {
       beforeStart: isEditable,
       afterEnd: isEditable
     }
 
-    evt.actions = this.readOnlyActions;
+    // Now it's getting dirty
+
+    let cssClass = 'public';
+
+    if(evt.isPrivate) {
+      cssClass = 'private';
+    }
 
     if (isEditable) {
       evt.actions = this.actions;
     }
-    else if(evt.isPrivate) {
-      const start = DateFormatter.format(evt.start, 'de', 'HH:mm');
-      const end = DateFormatter.format(evt.end, 'de', 'HH:mm');
-      evt.title = `PRIVATER TERMIN (${evt.creator}, ${start} - ${end})`;
-      evt.color = colors.grey;
+    else {
+      if(evt.isPrivate) {
+        const start = DateFormatter.format(evt.start, 'de', 'HH:mm');
+        const end = DateFormatter.format(evt.end, 'de', 'HH:mm');
+        evt.title = `PRIVATER TERMIN (${evt.creator}, ${start} - ${end})`;
+      }
+      else {
+        evt.actions = this.readOnlyActions;
+        if(evt.participants.findIndex(part => part === currentUserName) === -1) {
+          // not our event, but public, we are not attending
+          cssClass = 'not-attending';
+        }
+      }
     }
 
-    if(evt.participants.findIndex(part => part === currentUserName) === -1) {
-      evt.color = colors.white;
-    }
+    evt.cssClass = 'pimp-event ' + cssClass;
     
     return evt;
   }

@@ -119,7 +119,7 @@ export class UserService implements IPimpService {
       )
       .map((res: Response) => res.text())
       .catch((error: any) => Observable
-        .throw(error.json().error || 'Server error while searching for users.'))
+        .throw(error.json().error || 'Server error while fetching photo.'))
   }
 
   postUserPhoto(userName: string, files: Blob) {
@@ -131,7 +131,7 @@ export class UserService implements IPimpService {
       )
       .map((res: Response) => res.text())
       .catch((error: any) => Observable
-        .throw(error.json().error || 'Server error while searching for users.'))
+        .throw(error.json().error || 'Server error while uploading photo.'))
       .subscribe(
         photo => {
           let data = JSON.parse(photo);

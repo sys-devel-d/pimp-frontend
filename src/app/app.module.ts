@@ -43,6 +43,7 @@ import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 import CalendarSubscriptionComponent from './calendar/calendar-subscription/calendar-subscription.component';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { AdminComponent } from './admin/admin.component';
+import { ColorPickerModule } from 'angular2-color-picker';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { AdminComponent } from './admin/admin.component';
     FormsModule,
     HttpModule,
     NKDatetimeModule,
+    ColorPickerModule,
     CalendarModule.forRoot(),
     RouterModule.forRoot([
       { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard],
