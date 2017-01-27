@@ -1,11 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {User} from "../models/base";
 import {AuthService} from "../services/auth.service";
 import {Router} from "@angular/router";
-import {MessageService} from "../services/message.service";
-import CalendarService from "../services/calendar.service";
-import {UserService} from "../services/user.service";
-import GroupsService from "../services/groups.service";
+import PimpServices from '../services/pimp.services';
 import {Globals} from "../commons/globals";
 import {Http, Headers} from "@angular/http";
 
@@ -14,7 +11,7 @@ import {Http, Headers} from "@angular/http";
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
 
   user: User = new User();
   error: String;
@@ -22,15 +19,9 @@ export class RegisterComponent implements OnInit {
   constructor(private http: Http,
               private authService: AuthService,
               private router: Router,
-              private messageService: MessageService,
-              private calendarService: CalendarService,
-              private userService: UserService,
-              private groupsService: GroupsService) {
+              private pimpServices: PimpServices) {
     this.user.email = '';
     this.user.userName = '';
-  }
-
-  ngOnInit() {
   }
 
   register() {
@@ -43,10 +34,7 @@ export class RegisterComponent implements OnInit {
           .subscribe(result => {
               if (result === true) {
                 this.router.navigate(['profile']);
-                this.messageService.init();
-                this.calendarService.init();
-                this.userService.init();
-                this.groupsService.init();
+                this.pimpServices.init();
               } else {
                 this.error = 'Wir konnten Sie registrieren, aber nicht einloggen. Bitte versuchen Sie es erneut.';
               }
