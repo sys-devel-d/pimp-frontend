@@ -4,20 +4,16 @@
   <h2>{{ user.userName }}</h2>
   <div class="row">
     <div class="col-md-4">
-      <div *ngIf="user.photoData" class="image">
-        <img [src]="user.photoData" width=200 height=200  alt="Profile image of {{ user.firstName }}">
-        <input class="fileUploadBtn" *ngIf="isPrivate" name="photoFile" (change)="fileChangeEvent($event)" type="file"/>
-        <i title="Hochladen" class="fa fa-cloud-upload" aria-hidden="true"
-          *ngIf="photoFile" (click)="uploadPhoto()">
-        </i>
+      <div *ngIf="!user.photoData" class="spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
       </div>
-      <div *ngIf="user && !user.photoData">
-        <img src="https://placekitten.com/g/200/200"  alt="Profile image of {{ user.firstName }}">
-        <input class="fileUploadBtn" name="photoFile" *ngIf="isPrivate" (change)="fileChangeEvent($event)" type="file"/>
-        <i title="Hochladen" class="fa fa-cloud-upload" aria-hidden="true"
-          *ngIf="photoFile" (click)="uploadPhoto()">
-        </i>
-      </div>
+      <img *ngIf="user.photoData" [src]="user.photoData" width="100%" alt="Profile image of {{ user.firstName }}">
+      <input id="fileUploadInput" *ngIf="isPrivate" (change)="fileChangeEvent($event)" accept="image/*" type="file"/>
+      <p class="alert alert-danger" *ngFor="let error of uploadErrorMessages">{{ error }}</p>
     </div>
     <div class="col-md-8">
       <table class="table">
