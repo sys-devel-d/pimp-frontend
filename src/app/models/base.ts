@@ -28,17 +28,16 @@ export class User {
 
 export class Calendar {
   key: string;
+  hexColor: string;
   title: string;
-  isPrivate: boolean;
+  isPrivate?: boolean;
   owner: string;
-  subscribers: User[];
-  events: CalEvent[];
+  subscribers?: User[];
+  events?: CalEvent[];
+  public static readonly FALLBACK_COLOR = '#ad2121';
 }
 
-export class SubscribedCalendar {
-  key: string;
-  title: string;
-  owner: string;
+export class SubscribedCalendar extends Calendar {
   active: boolean;
   unsubscribable: boolean;
 }

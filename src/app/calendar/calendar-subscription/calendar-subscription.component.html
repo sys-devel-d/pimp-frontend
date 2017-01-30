@@ -1,5 +1,10 @@
 <table class="table table-responsive">
   <tr *ngFor="let cal of subscribedCals">
+    <td width="14">
+      <svg width="14" height="14">
+        <circle cx="7" cy="7" r="7" [attr.fill]="cal.hexColor ? cal.hexColor : fallbackColor"></circle>
+      </svg>
+    </td>
     <td>
       <div class="checkbox">
         <label>

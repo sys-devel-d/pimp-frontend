@@ -1,17 +1,35 @@
 <modal-dialog title="Kalender erstellen">
 
   <div modal-body>
+
     <div class="form-group">
-      <label for="calendarTitle">Name</label>
-      <input id="calendarTitle" type="text" class="form-control" placeholder="Team DevOps" [(ngModel)]="calendar.title" required>
+      <label for="calendarTitle">Name (mindestens 2-stellig)</label>
+      <input id="calendarTitle" type="text" class="form-control" placeholder="Team DevOps" [(ngModel)]="calendar.title" name="title" required>
+    </div>
+
+    <div class="form-group">
+      <label for="color">Farbe</label>
+      <input 
+        class="form-control"
+        disabled
+        [(colorPicker)]="calendar.hexColor"
+        [style.background]="calendar.hexColor"
+        [cpPositionOffset]="'-30%'"
+        [cpFallbackColor]="'#469166'"
+        [cpOKButton]="true"
+        [cpOKButton]="Ztrue"
+        [cpAlphaChannel]="'disabled'"
+        name="hexColor"
+        [cpPosition]="'bottom'"/>
     </div>
 
     <div class="checkbox">
       <label>
-        <input id="isPrivate" type="checkbox" class="form-check-input" [(ngModel)]="calendar.isPrivate" />
+        <input id="isPrivate" type="checkbox" class="form-check-input" name="isPrivate" [(ngModel)]="calendar.isPrivate" />
         Privater Kalender?
       </label>
     </div>
+
   </div>
 
   <div modal-footer>

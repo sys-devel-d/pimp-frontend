@@ -10,6 +10,8 @@ import CalendarService from '../../services/calendar.service';
 })
 export default class CalendarSubscriptionComponent implements OnInit {
 
+  fallbackColor = Calendar.FALLBACK_COLOR;
+
   @Output()
   subscribedCalendar: EventEmitter<SubscribedCalendar[]> =
     new EventEmitter<SubscribedCalendar[]>();

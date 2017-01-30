@@ -12,7 +12,8 @@ import {
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import {
-  CalendarEventTimesChangedEvent
+  CalendarEventTimesChangedEvent,
+  CalendarEventTitleFormatter
 } from 'angular-calendar';
 import CalendarModalComponent from './modal/calendar-modal.component';
 import EditEventModalComponent from './modal/event/edit-event-modal.component';
@@ -23,13 +24,18 @@ import NotificationService from '../services/notification.service'
 import { AuthService } from '../services/auth.service';
 import { CalEvent, SubscribedCalendar, Calendar } from '../models/base';
 import { Globals } from '../commons/globals';
+import { CustomEventTitleFormatter } from './custom-event-title-formatter';
 
 type Mode = 'edit-event' | 'create-event' | 'create-calendar' | 'edit-calendar' | 'read-event';
 
 @Component({
   selector: 'angular-calendar',
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
+  styleUrls: ['./calendar.component.css'],
+  providers: [{
+    provide: CalendarEventTitleFormatter,
+    useClass: CustomEventTitleFormatter
+  }]
 })
 export class CalendarComponent implements OnInit {
 

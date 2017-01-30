@@ -23,7 +23,7 @@ export default class CalendarModalComponent {
   }
 
   public createCalendar() {
-    if (this.calendar.title && /\S/.test(this.calendar.title)) {
+    if (this.calendar.title && /\S/.test(this.calendar.title) && this.calendar.title.length >= 2) {
       this.calendar.owner = this.userService.currentUser.userName;
       this.calendar.events = [];
       this.calendarService.createNewCalendar(this.calendar);
