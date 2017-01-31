@@ -1,10 +1,10 @@
 <div class="row">
 	<div class="col-md-4">
 		<h4>Lade Teilnehmer ein:</h4>
-		<div *ngFor="let user of users">
-			<div>
+		<div class="max-height-list">
+			<div *ngFor="let user of users">
 				<i (click)="addToInvitedUsers(user)" class="fa fa-plus select-action" aria-hidden="true"></i>
-                {{ displayUser(user) }}
+				{{ displayUser(user) }}
 			</div>
 		</div>
 	</div>

@@ -221,3 +221,12 @@ i.fa {
 .pimp-event.public .cal-event-title::before {
   content: '\f0c0 \f00c';
 }
+
+.max-height-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-search {
+  position: relative;
+}
