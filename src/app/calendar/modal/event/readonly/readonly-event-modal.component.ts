@@ -78,7 +78,7 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
   }
 
   private showButtons():boolean {
-    return this.event.invited && 
+    return this.event.invited &&
       this.event.invited.indexOf(this.authService.getCurrentUserName()) !== -1;
   }
 
@@ -88,8 +88,11 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
       answer = prompt('Nennen Sie bitte den Grund der Absage!');
     }
     const notification = this.notificationService.getEventInvitationNotificationByEvent(this.event);
-    notification.acknowledged = true;
-    this.calendarService.acceptOrDeclineInvitation(accept, notification, answer);
+    if(notification) {
+      notification.acknowledged = true;
+      this.calendarService.acceptOrDeclineInvitation(accept, notification, answer);
+    }
+    // else there does not seem to be a notificaiton
   }
 
 }

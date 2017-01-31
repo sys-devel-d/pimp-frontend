@@ -86,9 +86,19 @@ export default class NotificationService implements IPimpService {
   }
 
   getEventInvitationNotificationByEvent(event: CalEvent): Notification {
-    return this.notifications['EVENT_INVITATION'].find(
+    if(!this.notifications['EVENT_INVITATION']) {
+      return null;
+    }
+    let not = this.notifications['EVENT_INVITATION'].find(
       n => n.referenceKey === event.key && n.referenceParentKey === event.calendarKey
     );
+    if(!not) {
+      // Must be a copied event. Thus the calendarKey has changed
+      not = this.notifications['EVENT_INVITATION'].find(
+        n => n.referenceKey === event.key
+      );
+    }
+    return not;
   }
 
   private displayToastNotification(n: Notification): void {
