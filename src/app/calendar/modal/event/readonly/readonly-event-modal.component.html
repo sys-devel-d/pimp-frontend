@@ -28,17 +28,33 @@
             <td class="col-md-6"><strong>Ersteller des Termins</strong></td>
             <td class="col-md-6"><a routerLink="/profile/{{ event.creator }}">{{ event.creator }}</a></td>
           </tr>
-          <tr>
-            <td class="col-md-6"><strong>Teilnehmer</strong></td>
-            <td class="col-md-6">
-              <p *ngFor="let participant of event.participants">
-                <a (click)="navigateToUser(participant)">{{ participant }}</a>
-              </p>
-            </td>
-          </tr>
         </table>
+
+        <hr/>
+
+        <div class="col-md-6">
+          <h4 class="centered-content">Teilnehmer</h4>
+          <div class="max-height-list">
+            <span *ngFor="let participant of event.participants">
+              <a (click)="navigateToUser(participant)">{{ participant }}</a>&nbsp;
+            </span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4 class="centered-content">Eingeladene</h4>
+          <div class="max-height-list">
+            <span *ngFor="let participant of event.invited">
+              <a (click)="navigateToUser(participant)">{{ participant }}</a>&nbsp;
+            </span>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="showButtons()" modal-footer>
+    <button class="btn pimp-btn" (click)="acceptOrDeclineInvitation(true)">Teilnehmen</button>
+    <button class="btn btn-default" (click)="acceptOrDeclineInvitation(false)">Ablehnen</button>
   </div>
 
 </modal-dialog>

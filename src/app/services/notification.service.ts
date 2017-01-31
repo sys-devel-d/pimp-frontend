@@ -85,6 +85,12 @@ export default class NotificationService implements IPimpService {
     }
   }
 
+  getEventInvitationNotificationByEvent(event: CalEvent): Notification {
+    return this.notifications['EVENT_INVITATION'].find(
+      n => n.referenceKey === event.key && n.referenceParentKey === event.calendarKey
+    );
+  }
+
   private displayToastNotification(n: Notification): void {
     if(window.location.pathname.startsWith('/dashboard')) {
       return;

@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CalEvent } from '../../../../models/base';
+import { CalEvent, Notification } from '../../../../models/base';
 import { showAppModal, hideAppModal } from '../../../../commons/dom-functions';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import CalendarService from '../../../../services/calendar.service';
+import NotificationService from '../../../../services/notification.service';
+import { AuthService } from '../../../../services/auth.service';
 import {DateFormatter} from "@angular/common/src/facade/intl";
 
 @Component({
@@ -21,6 +23,8 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private _location: Location,
+    private authService: AuthService,
+    private notificationService: NotificationService,
     private calendarService: CalendarService) {
 
     this.calendarService.initializedChange.subscribe(isInitialized => {
@@ -71,6 +75,21 @@ export default class ReadOnlyEventModalComponent implements OnInit, OnDestroy {
 
   private formatDate(date) {
     return DateFormatter.format(date, 'de', 'dd.MM.yyyy HH:mm');
+  }
+
+  private showButtons():boolean {
+    return this.event.invited && 
+      this.event.invited.indexOf(this.authService.getCurrentUserName()) !== -1;
+  }
+
+  private acceptOrDeclineInvitation(accept: boolean) {
+    let answer = 'Grundlos';
+    if (!accept) {
+      answer = prompt('Nennen Sie bitte den Grund der Absage!');
+    }
+    const notification = this.notificationService.getEventInvitationNotificationByEvent(this.event);
+    notification.acknowledged = true;
+    this.calendarService.acceptOrDeclineInvitation(accept, notification, answer);
   }
 
 }
