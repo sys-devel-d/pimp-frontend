@@ -85,6 +85,22 @@ export default class NotificationService implements IPimpService {
     }
   }
 
+  getEventInvitationNotificationByEvent(event: CalEvent): Notification {
+    if(!this.notifications['EVENT_INVITATION']) {
+      return null;
+    }
+    let not = this.notifications['EVENT_INVITATION'].find(
+      n => n.referenceKey === event.key && n.referenceParentKey === event.calendarKey
+    );
+    if(!not) {
+      // Must be a copied event. Thus the calendarKey has changed
+      not = this.notifications['EVENT_INVITATION'].find(
+        n => n.referenceKey === event.key
+      );
+    }
+    return not;
+  }
+
   private displayToastNotification(n: Notification): void {
     if(window.location.pathname.startsWith('/dashboard')) {
       return;
@@ -202,8 +218,9 @@ export default class NotificationService implements IPimpService {
         headers: this.authService.getTokenHeader()
       }
     ).subscribe((res) => {
-      this.notifications[notification.type] 
-        = this.notifications[notification.type].filter(not => not.key !== notification.key);
+      const key = this.getMapKey(notification);
+      this.notifications[key] 
+        = this.notifications[key].filter(not => not.key !== notification.key);
       this.notificationsChange.next(this.notifications);
     });
   }

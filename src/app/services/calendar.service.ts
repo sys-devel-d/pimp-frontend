@@ -217,10 +217,9 @@ export default class CalendarService implements IPimpService {
 
   deleteEvent(event: any, shouldAnnounce = true) {
     this.http.delete(
-      Globals.BACKEND + 'calendar/event/' + event.key,
+      Globals.BACKEND + 'calendar/' + event.calendarKey + '/' + event.key,
       {
-        headers: this.authService.getTokenHeader(),
-        body: this.mapEventForBackend(event)
+        headers: this.authService.getTokenHeader()
       }
     ).subscribe(
       () => {
@@ -412,8 +411,12 @@ export default class CalendarService implements IPimpService {
     delete evt.draggable;
     delete evt.resizable;
     delete evt.cssClass;
-    evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
-    evt.end = DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm');
+    if(event.start instanceof Date) {
+      evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
+    }
+    if(event.end instanceof Date) {
+      evt.end = DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm');
+    }
     return evt;
   }
 
