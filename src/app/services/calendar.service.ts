@@ -411,6 +411,7 @@ export default class CalendarService implements IPimpService {
     delete evt.actions;
     delete evt.draggable;
     delete evt.resizable;
+    delete evt.cssClass;
     evt.start = DateFormatter.format(event.start, 'de', 'yyyy-MM-dd HH:mm');
     evt.end = DateFormatter.format(event.end, 'de', 'yyyy-MM-dd HH:mm');
     return evt;
