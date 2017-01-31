@@ -1,19 +1,21 @@
 <div class="row">
 	<div class="col-md-6">
 		<h4>Füge Teilnehmer hinzu:</h4>
-		<div *ngFor="let user of users">
-			<div>
+		<div class="max-height-list">
+			<div *ngFor="let user of users">
 				<i (click)="addToSelectedUsers(user)" class="fa fa-plus select-action" aria-hidden="true"></i>
-        {{ displayUser(user) }}
+				{{ displayUser(user) }}
 			</div>
 		</div>
 	</div>
 
 	<div class="col-md-6">
 		<h4>{{ isInEditMode ? 'Teilnehmer' : 'Hinzugefügt'}}: {{ selectedUsers ? selectedUsers.length : 0 }}</h4>
-		<div *ngFor="let user of selectedUsers">
-			<i class="fa fa-minus select-action" aria-hidden="true" *ngIf="canRemoveUsers" (click)="removeFromSelectedUsers(user)"></i>
-      {{ displayUser(user) }}
+		<div class="max-height-list">
+			<div *ngFor="let user of selectedUsers">
+				<i class="fa fa-minus select-action" aria-hidden="true" *ngIf="canRemoveUsers" (click)="removeFromSelectedUsers(user)"></i>
+				{{ displayUser(user) }}
+			</div>
 		</div>
 	</div>
 </div>
