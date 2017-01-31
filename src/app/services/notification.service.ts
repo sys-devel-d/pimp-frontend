@@ -218,8 +218,9 @@ export default class NotificationService implements IPimpService {
         headers: this.authService.getTokenHeader()
       }
     ).subscribe((res) => {
-      this.notifications[notification.type] 
-        = this.notifications[notification.type].filter(not => not.key !== notification.key);
+      const key = this.getMapKey(notification);
+      this.notifications[key] 
+        = this.notifications[key].filter(not => not.key !== notification.key);
       this.notificationsChange.next(this.notifications);
     });
   }
