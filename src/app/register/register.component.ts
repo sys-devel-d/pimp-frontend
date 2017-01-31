@@ -44,11 +44,12 @@ export class RegisterComponent {
         },
         err => {
           this.error = 'Wir konnten Sie nicht registrieren. ';
-          switch (err.status)
-          {
-            case 409:
-              this.error += 'Die E-Mail-Adresse ist bereits vergeben.';
-              break;
+          const message = err.json().message;
+          if(message.includes('User already exists with username')) {
+            this.error += 'Der Username ist bereits vergeben. '
+          }
+          if(message.includes('User already exists with email')) {
+            this.error += 'Die E-Mail-Adresse ist bereits vergeben. '
           }
         }
       )

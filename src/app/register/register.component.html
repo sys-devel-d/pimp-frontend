@@ -13,11 +13,8 @@
     <div class="form-group">
       <label for="email">Email</label>
       <input type="email" name="email" id="email" [(ngModel)]="user.email" class="form-control" required #email="ngModel"/>
-      <div *ngIf="!isEmailValid(user.email) && (email.dirty || email.touched)" class="alert alert-danger">
-        Die E-Mail-Adresse ist ungültig.
-      </div>
-      <div *ngIf="!user.email.endsWith('@pim-plus.org') && (email.dirty || email.touched)" class="alert alert-danger">
-        Die E-Mail-Adresse muss auf "pim-plus.org" enden.
+      <div *ngIf="(!isEmailValid(user.email) || !user.email.endsWith('@pim-plus.org')) && (email.dirty || email.touched)" class="alert alert-danger">
+        Die E-Mail-Adresse muss gültig sein und auf "pim-plus.org" enden.
       </div>
     </div>
     <div class="form-group">
