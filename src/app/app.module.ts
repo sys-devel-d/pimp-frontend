@@ -75,7 +75,7 @@ import { ColorPickerModule } from 'angular2-color-picker';
   ],
   imports: [
     BrowserModule,
-    SimpleNotificationsModule,
+    SimpleNotificationsModule.forRoot(),
     FormsModule,
     HttpModule,
     NKDatetimeModule,
