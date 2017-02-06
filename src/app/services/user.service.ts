@@ -52,7 +52,7 @@ export class UserService implements IPimpService {
         );
     }
     else {
-      user.photoData = 'http://www.i-dedicate.com/media/profile_images/default.png';
+      user.photoData = '/assets/images/default.png';
     }
   }
 
